@@ -1,0 +1,106 @@
+{
+  "campaigns": [
+    {
+      "id": "campaign-1",
+      "title": "Sponsor Nutrition & Meals for Orphaned Children",
+      "description": "Provides hot, fresh, and nutritious meals to orphaned children and single-parent households in Solapur's slum settlements. Good health starts with basic nutrition. A meal costs just ₹40, and your contribution feeds them daily, ensuring they do not go to sleep hungry.",
+      "goal_amount": 300000,
+      "amount_raised": 185000,
+      "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop",
+      "is_completed": false,
+      "created_at": "2026-05-17T04:56:33.870Z"
+    },
+    {
+      "id": "campaign-2",
+      "title": "Primary Education Kits & School Support",
+      "description": "Empowers girls and boys from marginalized families with comprehensive school kits containing books, notebooks, writing materials, uniforms, school bags, and sturdy footwear. Help us prevent dropouts by covering their yearly educational expenses and registration fees.",
+      "goal_amount": 250000,
+      "amount_raised": 95000,
+      "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop",
+      "is_completed": false,
+      "created_at": "2026-05-27T04:56:33.870Z"
+    },
+    {
+      "id": "campaign-3",
+      "title": "Mobile Healthcare Unit & Free Medicines",
+      "description": "Deploys a weekly mobile medical clinic with volunteer doctors, providing primary health checkups, diagnostic support, and free essential prescription medicines to elderly widows, laborers, and children in under-resourced rural pockets of Solapur.",
+      "goal_amount": 500000,
+      "amount_raised": 323500,
+      "image": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=800&auto=format&fit=crop",
+      "is_completed": false,
+      "created_at": "2026-06-06T04:56:33.870Z"
+    }
+  ],
+  "donations": [
+    {
+      "id": "don-1",
+      "campaign_id": "campaign-1",
+      "donor_name": "Sunita Deshmukh",
+      "donor_email": "sunita.d@gmail.com",
+      "amount": 5000,
+      "payment_id": "pay_MOCK123456",
+      "payment_status": "success",
+      "created_at": "2026-06-16T02:56:33.870Z"
+    },
+    {
+      "id": "don-2",
+      "campaign_id": "campaign-3",
+      "donor_name": "Aniket Shinde",
+      "donor_email": "aniket.shinde@hotmail.com",
+      "amount": 10000,
+      "payment_id": "pay_MOCK654321",
+      "payment_status": "success",
+      "created_at": "2026-06-15T23:56:33.870Z"
+    },
+    {
+      "id": "don-3",
+      "campaign_id": "campaign-2",
+      "donor_name": "Rajesh Kulkarni",
+      "donor_email": "r.kulkarni@yahoo.com",
+      "amount": 2500,
+      "payment_id": "pay_MOCK789012",
+      "payment_status": "success",
+      "created_at": "2026-06-15T04:56:33.870Z"
+    },
+    {
+      "id": "don-4",
+      "campaign_id": "campaign-1",
+      "donor_name": "Priya Patil",
+      "donor_email": "priya.patil@outlook.com",
+      "amount": 1500,
+      "payment_id": "pay_MOCK345678",
+      "payment_status": "success",
+      "created_at": "2026-06-14T16:56:33.870Z"
+    },
+    {
+      "id": "don-5",
+      "campaign_id": "campaign-3",
+      "donor_name": "Dr. Amit Shah",
+      "donor_email": "amit.shah.clinic@gmail.com",
+      "amount": 25000,
+      "payment_id": "pay_MOCK901234",
+      "payment_status": "success",
+      "created_at": "2026-06-13T04:56:33.870Z"
+    },
+    {
+      "id": "don-v2runep",
+      "campaign_id": "campaign-3",
+      "donor_name": "Sachin",
+      "donor_email": "pariharsachin5002@gmail.com",
+      "amount": 1000,
+      "payment_id": "pay_sim_6seqkg7",
+      "payment_status": "success",
+      "created_at": "2026-06-16T06:29:23.183Z"
+    },
+    {
+      "id": "don-spaf8ta",
+      "campaign_id": "campaign-3",
+      "donor_name": "Sachin",
+      "donor_email": "pariharsachin5002@gmail.com",
+      "amount": 2500,
+      "payment_id": "pay_sim_xmbfo8g",
+      "payment_status": "success",
+      "created_at": "2026-06-16T06:40:21.327Z"
+    }
+  ]
+}
