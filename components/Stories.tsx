@@ -66,8 +66,12 @@ export default function Stories({ lang }: StoriesProps) {
   const story = stories[activeIndex];
 
   return (
-    <section id="stories" className="py-32 bg-brand-sand/30 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section id="stories" className="py-32 bg-brand-paper bg-grid-pattern relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" style={{ animationDelay: '-1.5s' }} />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
         {/* Section header */}
         <motion.div
@@ -104,7 +108,7 @@ export default function Stories({ lang }: StoriesProps) {
             >
               {/* Left: Image */}
               <div className="lg:col-span-5">
-                <div className="rounded-3xl overflow-hidden border border-brand-clay/60">
+                <div className="rounded-3xl overflow-hidden border border-brand-clay/60 shadow-xl hover:shadow-2xl transition-all duration-500">
                   <img
                     src={story.image}
                     alt={story.name}
@@ -147,14 +151,14 @@ export default function Stories({ lang }: StoriesProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => paginate(-1)}
-              className="w-11 h-11 rounded-full border-2 border-brand-charcoal text-brand-charcoal flex items-center justify-center hover:bg-brand-charcoal hover:text-white transition-colors duration-300"
+              className="w-11 h-11 rounded-full border border-brand-clay/60 bg-white/60 text-brand-charcoal flex items-center justify-center hover:bg-brand-saffron hover:text-white hover:border-brand-saffron transition-all duration-300 shadow-sm"
               aria-label="Previous story"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => paginate(1)}
-              className="w-11 h-11 rounded-full border-2 border-brand-charcoal text-brand-charcoal flex items-center justify-center hover:bg-brand-charcoal hover:text-white transition-colors duration-300"
+              className="w-11 h-11 rounded-full border border-brand-clay/60 bg-white/60 text-brand-charcoal flex items-center justify-center hover:bg-brand-saffron hover:text-white hover:border-brand-saffron transition-all duration-300 shadow-sm"
               aria-label="Next story"
             >
               <ChevronRight className="w-5 h-5" />
@@ -166,11 +170,7 @@ export default function Stories({ lang }: StoriesProps) {
             {stories.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => {
-                  const dir = idx > activeIndex ? 1 : -1;
-                  setActiveDirection(dir);
-                  // set index
-                }}
+                onClick={() => goTo(idx)}
                 className={`rounded-full transition-all duration-300 ${
                   idx === activeIndex
                     ? 'w-8 h-2 bg-brand-saffron'

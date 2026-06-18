@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
-import { Fraunces, DM_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import '../globals.css';
 
-const fraunces = Fraunces({
-  variable: '--font-serif',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  style: ['normal', 'italic'],
-});
-
-const dmSans = DM_Sans({
+const plusJakarta = Plus_Jakarta_Sans({
   variable: '--font-sans',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -28,9 +21,9 @@ export default function AdminLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${dmSans.variable} h-full`}
+      className={`${plusJakarta.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col bg-stone-950 text-stone-100 font-sans antialiased">
+      <body className="min-h-full flex flex-col bg-[#070a0e] text-[#e2e8f0] font-sans antialiased">
         {children}
       </body>
     </html>

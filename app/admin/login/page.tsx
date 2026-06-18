@@ -37,9 +37,13 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col items-center justify-center p-6 relative">
+    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col items-center justify-center p-6 bg-grid-pattern relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/8 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+
       {/* Login Card */}
-      <div className="relative w-full max-w-md bg-stone-900 border border-stone-800 p-8 rounded-2xl shadow-2xl space-y-6 z-10">
+      <div className="relative w-full max-w-md bg-stone-900/80 backdrop-blur-md border border-stone-800 p-8 rounded-2xl shadow-2xl space-y-6 z-10">
         
         {/* Header */}
         <div className="text-center space-y-2">
@@ -78,7 +82,7 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@prathana.org"
-                className="w-full pl-10 pr-4 py-2.5 bg-stone-950 border border-stone-800 rounded-lg text-sm text-stone-200 outline-none focus:border-brand-saffron transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-stone-950/60 border border-stone-800 rounded-lg text-sm text-stone-200 outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
               />
             </div>
           </div>
@@ -97,7 +101,7 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 bg-stone-950 border border-stone-800 rounded-lg text-sm text-stone-200 outline-none focus:border-brand-saffron transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-stone-950/60 border border-stone-800 rounded-lg text-sm text-stone-200 outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
               />
             </div>
           </div>
@@ -111,7 +115,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-brand-saffron hover:bg-white hover:text-stone-950 text-white rounded-lg text-xs font-semibold tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-3 btn-premium rounded-lg text-xs font-semibold tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-1.5"
           >
             {loading ? (
               <>

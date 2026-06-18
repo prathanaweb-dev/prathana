@@ -474,7 +474,11 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col relative">
+    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col relative bg-grid-pattern overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/5 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+
       {/* Admin Navbar */}
       <header className="border-b border-stone-850 bg-stone-900/50 py-4 px-6 md:px-12 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
@@ -511,40 +515,8 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* Main layout container with sidebar */}
-      <div className="flex-1 flex flex-col lg:flex-row w-full z-10 max-w-7xl mx-auto">
-        {/* Sidebar Navigation */}
-        <aside className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-stone-850 p-6 space-y-2 flex-shrink-0">
-          <span className="block text-[9px] uppercase tracking-widest text-stone-500 font-bold mb-4">
-            Navigation Menu
-          </span>
-          <nav className="space-y-1.5 flex flex-col">
-            {[
-              { id: 'dashboard', label: 'Dashboard', icon: ClipboardList },
-              { id: 'campaigns', label: 'Campaigns Manager', icon: Heart },
-              { id: 'volunteers', label: 'Volunteer Portal', icon: Users },
-              { id: 'content', label: 'Content Manager', icon: Layers },
-              { id: 'donations', label: 'Donations Ledger', icon: FileText },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setTab(item.id as any)}
-                  className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-xs font-semibold tracking-wide text-left transition-all ${
-                    tab === item.id
-                      ? 'bg-brand-saffron text-white'
-                      : 'text-stone-400 hover:text-white hover:bg-stone-900/60 border border-transparent hover:border-stone-800'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
-        </aside>
-
+      {/* Main layout container (full-width for dock layout) */}
+      <div className="flex-1 flex flex-col w-full z-10 max-w-7xl mx-auto pb-28">
         {/* Main Content Pane */}
         <main className="flex-1 p-6 md:p-8 flex flex-col gap-6 overflow-x-hidden">
           
@@ -1389,6 +1361,34 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Floating Bottom Nav Dock */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0c1017]/85 backdrop-blur-xl border border-white/10 px-4 py-2.5 rounded-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex items-center gap-1.5 sm:gap-3 max-w-[95vw] sm:max-w-max overflow-x-auto">
+        {[
+          { id: 'dashboard', label: 'Dashboard', icon: ClipboardList },
+          { id: 'campaigns', label: 'Campaigns', icon: Heart },
+          { id: 'volunteers', label: 'Volunteers', icon: Users },
+          { id: 'content', label: 'Content', icon: Layers },
+          { id: 'donations', label: 'Donations', icon: FileText },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = tab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id as any)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
+                isActive
+                  ? 'bg-brand-saffron text-white shadow-lg shadow-brand-saffron/25 scale-105'
+                  : 'text-stone-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
 
     </div>
   );

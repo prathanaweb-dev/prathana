@@ -74,7 +74,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled || mobileMenuOpen
-          ? 'bg-brand-paper border-b border-brand-clay py-3'
+          ? 'bg-brand-paper/90 backdrop-blur-md border-b border-brand-clay/60 py-3 shadow-[0_4px_30px_rgba(21,34,27,0.03)]'
           : 'bg-transparent py-5'
       }`}
     >
@@ -153,7 +153,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
 
           <button
             onClick={handleDonateTrigger}
-            className="rounded-full bg-brand-saffron text-white px-6 py-2.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal transition-all duration-300"
+            className="rounded-full btn-premium px-6 py-2.5 text-[13px] font-semibold tracking-wide"
           >
             {t.nav.donate}
           </button>
@@ -173,7 +173,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
 
           <button
             onClick={handleDonateTrigger}
-            className="rounded-full bg-brand-saffron text-white px-4 py-2 text-[12px] font-semibold tracking-wide"
+            className="rounded-full btn-premium px-4 py-2 text-[12px] font-semibold tracking-wide"
           >
             {lang === 'mr' ? 'मदत करा' : 'Donate'}
           </button>
@@ -225,7 +225,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                     setMobileMenuOpen(false);
                     handleDonateTrigger();
                   }}
-                  className="w-full py-3.5 rounded-full bg-brand-saffron text-white text-center font-semibold tracking-wide text-[14px] hover:bg-brand-charcoal transition-colors duration-300"
+                  className="w-full py-3.5 rounded-full btn-premium text-center font-semibold tracking-wide text-[14px]"
                 >
                   {t.nav.donate}
                 </button>

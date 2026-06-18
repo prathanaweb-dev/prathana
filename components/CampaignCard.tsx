@@ -29,7 +29,7 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7 }}
-      className={`flex flex-col md:flex-row bg-white border border-brand-clay/60 rounded-2xl overflow-hidden group ${
+      className={`flex flex-col md:flex-row premium-card rounded-2xl overflow-hidden group ${
         isCompleted ? 'opacity-70 saturate-[0.6]' : ''
       }`}
     >
@@ -128,8 +128,8 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
             disabled={isCompleted}
             className={`w-full py-3.5 rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
               isCompleted
-                ? 'bg-brand-sand border border-brand-clay text-brand-muted cursor-not-allowed'
-                : 'bg-brand-charcoal text-white hover:bg-brand-saffron hover:-translate-y-0.5 shadow-sm hover:shadow-md'
+                ? 'bg-brand-sand border border-brand-clay/60 text-brand-muted cursor-not-allowed'
+                : 'btn-premium hover:-translate-y-0.5'
             }`}
           >
             <Heart className={`w-3.5 h-3.5 ${isCompleted ? '' : 'fill-current'}`} />

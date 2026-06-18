@@ -18,7 +18,11 @@ export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsP
   const completedCampaigns = campaigns.filter((c) => c.status === 'completed' || c.is_completed);
 
   return (
-    <section id="campaigns" className="py-32 relative overflow-hidden">
+    <section id="campaigns" className="py-32 bg-brand-paper bg-grid-pattern relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" style={{ animationDelay: '-2s' }} />
+
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
         {/* Editorial Section Header */}
@@ -59,7 +63,7 @@ export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsP
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7 }}
-            className="text-center py-16 px-8 border border-dashed border-brand-clay rounded-3xl bg-white"
+            className="text-center py-16 px-8 border border-dashed border-brand-clay/60 rounded-3xl premium-card shadow-sm"
           >
             <p className="font-serif-display text-xl italic text-brand-muted">
               {t.donation.noActive}
@@ -86,7 +90,7 @@ export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsP
               </h3>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-75">
+            <div className="grid grid-cols-1 gap-6 opacity-75">
               {completedCampaigns.map((camp) => (
                 <CampaignCard
                   key={camp.id}

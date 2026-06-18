@@ -38,7 +38,11 @@ export default function About({ lang }: AboutProps) {
   ];
 
   return (
-    <section id="about" className="py-32 bg-brand-paper relative overflow-hidden">
+    <section id="about" className="py-32 bg-brand-paper bg-grid-pattern relative overflow-hidden">
+      {/* Background Glow Blobs */}
+      <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-3s' }} />
+
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-16 lg:gap-y-0 items-start">
 
@@ -50,7 +54,7 @@ export default function About({ lang }: AboutProps) {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.7 }}
           >
-            <div className="rounded-3xl overflow-hidden border border-brand-clay">
+            <div className="rounded-3xl overflow-hidden border border-brand-clay/60 shadow-xl hover:shadow-2xl transition-all duration-500">
               <img
                 src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
                 alt="Volunteer teaching children at a transit shelter"
@@ -133,7 +137,7 @@ export default function About({ lang }: AboutProps) {
             {timelineEvents.map((event, idx) => (
               <motion.div
                 key={event.year}
-                className="relative bg-white border border-brand-clay/60 rounded-2xl p-6 pt-10"
+                className="relative premium-card border border-brand-clay/50 rounded-2xl p-6 pt-10 shadow-md"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}

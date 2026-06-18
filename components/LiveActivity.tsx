@@ -60,7 +60,7 @@ export default function LiveActivity({ lang, donations, campaigns, stats }: Live
       <div className="max-w-7xl mx-auto px-6 md:px-12">
 
         {/* Single card container */}
-        <div className="bg-white border border-brand-clay rounded-2xl p-5">
+        <div className="premium-card rounded-2xl p-5 shadow-md">
           <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
 
             {/* ── Left: Live badge + stat pills ── */}
@@ -78,7 +78,7 @@ export default function LiveActivity({ lang, donations, campaigns, stats }: Live
 
               {/* Stat pills */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sand border border-brand-clay/60">
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sand/50 border border-brand-clay/40">
                   <span className="font-mono text-sm font-bold text-brand-charcoal">
                     {stats.donorsToday}
                   </span>
@@ -87,7 +87,7 @@ export default function LiveActivity({ lang, donations, campaigns, stats }: Live
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sand border border-brand-clay/60">
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sand/50 border border-brand-clay/40">
                   <span className="font-mono text-sm font-bold text-brand-charcoal">
                     {stats.totalDonors}
                   </span>

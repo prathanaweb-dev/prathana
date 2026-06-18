@@ -19,7 +19,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
   return (
     <footer className="relative overflow-hidden">
       {/* CTA Bar — Saffron accent strip */}
-      <div className="bg-brand-saffron">
+      <div className="bg-gradient-to-r from-brand-saffron to-[#C25E2E] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
           {onDonateClick ? (
             <button
               onClick={onDonateClick}
-              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0"
+              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0 shadow-md hover:-translate-y-0.5"
             >
               <Heart className="w-4 h-4 fill-current text-brand-saffron" />
               <span>{t.nav.donate}</span>
@@ -46,7 +46,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
           ) : (
             <a
               href={`/${lang}/donation`}
-              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0"
+              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0 shadow-md hover:-translate-y-0.5"
             >
               <Heart className="w-4 h-4 fill-current text-brand-saffron" />
               <span>{t.nav.donate}</span>

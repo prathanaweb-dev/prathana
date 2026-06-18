@@ -58,7 +58,7 @@ function MetricCard({
   return (
     <motion.div
       ref={ref}
-      className="bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4"
+      className="bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 hover:border-brand-saffron/40 p-8 rounded-2xl space-y-4 shadow-lg hover:shadow-[0_20px_50px_rgba(217,119,6,0.1)] hover:-translate-y-1 transition-all duration-500"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -68,10 +68,11 @@ function MetricCard({
         {animatedValue.toLocaleString('en-IN')}
         {suffix && <span className="text-4xl md:text-5xl">{suffix}</span>}
       </span>
+      <div className="w-8 h-[1.5px] bg-brand-gold/60" />
       <span className="block text-[10px] tracking-widest uppercase text-brand-gold font-bold">
         {label}
       </span>
-      <p className="text-white/50 text-sm font-light leading-relaxed">
+      <p className="text-white/70 text-sm font-light leading-relaxed">
         {description}
       </p>
     </motion.div>
@@ -115,10 +116,15 @@ export default function Impact({ lang, stats }: ImpactProps) {
 
   return (
     <section id="impact" className="py-28 bg-brand-charcoal text-white relative overflow-hidden">
-      {/* Top accent line */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-saffron/30 to-transparent" />
+      {/* Background glow blobs & grids */}
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-green/8 rounded-full blur-[140px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+      <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      {/* Top accent line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-saffron/35 to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         {/* Section header */}
         <motion.div
           className="max-w-3xl mb-20 space-y-4"

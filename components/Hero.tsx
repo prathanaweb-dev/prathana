@@ -23,7 +23,11 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
   const headlineWords = t.hero.title.split(' ');
 
   return (
-    <section className="relative min-h-[100vh] bg-brand-paper overflow-hidden">
+    <section className="relative min-h-[100vh] bg-brand-paper bg-grid-pattern overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-brand-green/6 rounded-full blur-[140px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+
       {/* Center-aligned content column */}
       <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-32 pb-20">
         {/* Top: Section Label */}
@@ -54,7 +58,11 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
                   delay: 0.2 + i * 0.06,
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
-                className={`inline-block mr-[0.28em] ${isHighlighted ? 'italic text-brand-saffron font-medium' : ''}`}
+                className={`inline-block mr-[0.28em] ${
+                  isHighlighted 
+                    ? 'italic text-brand-saffron font-serif font-semibold border-b-2 border-brand-saffron/20 pb-0.5' 
+                    : ''
+                }`}
               >
                 {word}
               </motion.span>
@@ -81,14 +89,14 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
         >
           <button
             onClick={onDonateClick}
-            className="rounded-full bg-brand-saffron text-white px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal transition-all duration-300 flex items-center gap-2"
+            className="rounded-full btn-premium px-8 py-3.5 text-[13px] font-semibold tracking-wide flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
           >
             <Heart className="w-4 h-4 fill-current" />
             {t.hero.donateBtn}
           </button>
           <button
             onClick={() => router.push(`/${lang}/donation`)}
-            className="rounded-full border-2 border-brand-charcoal text-brand-charcoal px-8 py-3 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300"
+            className="rounded-full border-2 border-brand-charcoal text-brand-charcoal px-8 py-3 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
           >
             {t.hero.viewBtn}
           </button>
@@ -101,7 +109,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative w-full max-w-3xl h-[350px] md:h-[420px] mx-auto rounded-3xl overflow-hidden border border-brand-clay bg-brand-sand z-10"
+            className="relative w-full max-w-3xl h-[350px] md:h-[420px] mx-auto rounded-3xl overflow-hidden border border-brand-clay/60 bg-brand-sand z-10 shadow-xl hover:shadow-2xl transition-all duration-500"
           >
             <img
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
@@ -124,7 +132,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, x: -40, rotate: -6 }}
             animate={{ opacity: 1, x: 0, rotate: -3 }}
             transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute top-8 left-0 lg:left-8 w-44 sm:w-52 md:w-60 h-[200px] md:h-[260px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block"
+            className="absolute top-8 left-0 lg:left-8 w-44 sm:w-52 md:w-60 h-[200px] md:h-[260px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block hover:rotate-0 hover:scale-[1.03] transition-all duration-500"
           >
             <img
               src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop"
@@ -138,7 +146,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, x: 40, rotate: 6 }}
             animate={{ opacity: 1, x: 0, rotate: 2 }}
             transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute top-12 right-0 lg:right-8 w-40 sm:w-48 md:w-56 h-[180px] md:h-[240px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block"
+            className="absolute top-12 right-0 lg:right-8 w-40 sm:w-48 md:w-56 h-[180px] md:h-[240px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block hover:rotate-0 hover:scale-[1.03] transition-all duration-500"
           >
             <img
               src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=400&auto=format&fit=crop"
@@ -156,9 +164,9 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.3 }}
-          className="max-w-2xl mx-auto mt-12 md:mt-16 bg-white border border-brand-clay rounded-2xl shadow-sm"
+          className="max-w-2xl mx-auto mt-12 md:mt-16 premium-card rounded-2xl border border-brand-clay/60"
         >
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-3 divide-x divide-brand-clay/60">
             {/* Stat 1 */}
             <div className="py-6 px-4 text-center">
               <span className="block font-mono text-2xl sm:text-3xl font-bold text-brand-charcoal leading-none">
@@ -169,8 +177,8 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
               </span>
             </div>
 
-            {/* Vertical Divider + Stat 2 */}
-            <div className="py-6 px-4 text-center border-x border-brand-clay">
+            {/* Stat 2 */}
+            <div className="py-6 px-4 text-center">
               <span className="block font-mono text-2xl sm:text-3xl font-bold text-brand-charcoal leading-none">
                 {(stats.kidsEducated || 380).toLocaleString()}+
               </span>
