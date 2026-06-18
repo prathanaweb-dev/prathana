@@ -13,7 +13,7 @@ export default function AdminLogin() {
 
   useEffect(() => {
     // Check if already logged in
-    const isLogged = localStorage.getItem('prarthana_admin_session') === 'true';
+    const isLogged = localStorage.getItem('prathana_admin_session') === 'true';
     if (isLogged) {
       router.push('/admin');
     }
@@ -25,9 +25,9 @@ export default function AdminLogin() {
     setLoading(true);
 
     setTimeout(() => {
-      // Mock credentials for review: admin@prarthana.org / prarthana2026
-      if (email === 'admin@prarthana.org' && password === 'prarthana2026') {
-        localStorage.setItem('prarthana_admin_session', 'true');
+      // Mock credentials for review: admin@prathana.org / prathana2026
+      if (email === 'admin@prathana.org' && password === 'prathana2026') {
+        localStorage.setItem('prathana_admin_session', 'true');
         router.push('/admin');
       } else {
         setError('Invalid administrative credentials.');
@@ -50,7 +50,7 @@ export default function AdminLogin() {
             Administrative Gateway
           </h2>
           <p className="text-xs text-stone-500 uppercase tracking-widest font-semibold">
-            Prarthana Foundation Solapur
+            Prathana Foundation Solapur
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export default function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@prarthana.org"
+                placeholder="admin@prathana.org"
                 className="w-full pl-10 pr-4 py-2.5 bg-stone-950 border border-stone-800 rounded-lg text-sm text-stone-200 outline-none focus:border-brand-saffron transition-all"
               />
             </div>
@@ -100,10 +100,10 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          <div className="p-3 bg-stone-950/60 border border-stone-850 rounded-lg text-[10px] text-stone-500 leading-normal">
+          <div className="p-3 bg-stone-950/60 border border-stone-855 rounded-lg text-[10px] text-stone-500 leading-normal">
             <strong>Mock Credentials for Verification:</strong> <br />
-            Email: <code className="text-amber-500">admin@prarthana.org</code> <br />
-            Password: <code className="text-amber-500">prarthana2026</code>
+            Email: <code className="text-amber-500">admin@prathana.org</code> <br />
+            Password: <code className="text-amber-500">prathana2026</code>
           </div>
 
           <button

@@ -1,4 +1,4 @@
--- SQL Database Schema for Prarthana Foundation Solapur
+-- SQL Database Schema for Prathana Foundation Solapur
 -- Execute this in your Supabase SQL Editor to set up the campaigns and donations tables
 
 -- 1. Create Campaigns Table

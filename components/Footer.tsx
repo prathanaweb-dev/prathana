@@ -2,12 +2,16 @@
 
 import { motion } from 'framer-motion';
 import { Heart, ArrowUp, Mail, MapPin, Phone } from 'lucide-react';
+import { translations } from '@/lib/translations';
 
 interface FooterProps {
-  onDonateClick: () => void;
+  lang: string;
+  onDonateClick?: () => void;
 }
 
-export default function Footer({ onDonateClick }: FooterProps) {
+export default function Footer({ lang, onDonateClick }: FooterProps) {
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -25,19 +29,29 @@ export default function Footer({ onDonateClick }: FooterProps) {
         >
           <div className="text-center sm:text-left">
             <h3 className="font-serif-display text-2xl md:text-3xl font-bold text-white tracking-tight">
-              Ready to make an impact?
+              {lang === 'mr' ? 'मदत करण्यास उत्सुक आहात का?' : 'Ready to make an impact?'}
             </h3>
-            <p className="text-white/80 text-sm mt-1">
-              Every rupee reaches the children who need it most.
+            <p className="text-white/80 text-sm mt-1 font-light">
+              {lang === 'mr' ? 'प्रत्येक गोळा झालेला रुपया थेट गरजू मुलांपर्यंत पोहोचतो.' : 'Every rupee reaches the children who need it most.'}
             </p>
           </div>
-          <button
-            onClick={onDonateClick}
-            className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0"
-          >
-            <Heart className="w-4 h-4 fill-current" />
-            Donate Now
-          </button>
+          {onDonateClick ? (
+            <button
+              onClick={onDonateClick}
+              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0"
+            >
+              <Heart className="w-4 h-4 fill-current text-brand-saffron" />
+              <span>{t.nav.donate}</span>
+            </button>
+          ) : (
+            <a
+              href={`/${lang}/donation`}
+              className="rounded-full bg-white text-brand-charcoal px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300 inline-flex items-center gap-2 shrink-0"
+            >
+              <Heart className="w-4 h-4 fill-current text-brand-saffron" />
+              <span>{t.nav.donate}</span>
+            </a>
+          )}
         </motion.div>
       </div>
 
@@ -59,16 +73,17 @@ export default function Footer({ onDonateClick }: FooterProps) {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-serif-display text-lg font-bold text-white leading-none">
-                    Prarthana
+                    Prathana
                   </span>
                   <span className="text-[9px] uppercase tracking-widest text-brand-gold font-semibold mt-0.5">
-                    Foundation Solapur
+                    Solapur
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-white/70 leading-relaxed max-w-xs">
-                A grassroots humanitarian collective providing nutrition,
-                education, and medical aid to families in Solapur, Maharashtra.
+              <p className="text-sm text-white/70 leading-relaxed max-w-xs font-light">
+                {lang === 'mr'
+                  ? 'सोलापूर, महाराष्ट्र येथे कार्यरत असलेली तळागाळातील संघटना जी गरीब कुटुंबांना पोषण, शिक्षण आणि आरोग्य सेवा पुरवते.'
+                  : 'A grassroots humanitarian collective providing nutrition, education, and medical aid to families in Solapur, Maharashtra.'}
               </p>
             </motion.div>
 
@@ -81,15 +96,17 @@ export default function Footer({ onDonateClick }: FooterProps) {
               className="space-y-5"
             >
               <span className="text-[10px] uppercase tracking-widest font-bold text-white block">
-                Quick Links
+                {lang === 'mr' ? 'महत्वाच्या लिंक्स' : 'Quick Links'}
               </span>
-              <nav className="flex flex-col gap-3">
+              <nav className="flex flex-col gap-3 font-light">
                 {[
-                  { name: 'Our Story', href: '#about' },
-                  { name: 'Campaigns', href: '#campaigns' },
-                  { name: 'Impact', href: '#impact' },
-                  { name: 'Transparency', href: '#transparency' },
-                  { name: 'Contact', href: '#contact' },
+                  { name: t.nav.story, href: `/${lang}/about` },
+                  { name: t.nav.vision, href: `/${lang}/vision-mission` },
+                  { name: t.nav.activities, href: `/${lang}/activities` },
+                  { name: t.nav.projects, href: `/${lang}/projects` },
+                  { name: t.nav.events, href: `/${lang}/events` },
+                  { name: t.nav.gallery, href: `/${lang}/gallery` },
+                  { name: t.nav.volunteer, href: `/${lang}/volunteer` },
                 ].map((link) => (
                   <a
                     key={link.name}
@@ -111,24 +128,22 @@ export default function Footer({ onDonateClick }: FooterProps) {
               className="space-y-5"
             >
               <span className="text-[10px] uppercase tracking-widest font-bold text-white block">
-                Contact
+                {lang === 'mr' ? 'संपर्क' : 'Contact'}
               </span>
-              <div className="space-y-4">
+              <div className="space-y-4 font-light">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-brand-saffron mt-0.5 shrink-0" />
                   <p className="text-sm text-white/70 leading-relaxed">
-                    Prarthana Foundation,
-                    <br />
-                    Solapur, Maharashtra 413001
+                    {lang === 'mr' ? 'प्रार्थना फाउंडेशन, सोलापूर, महाराष्ट्र ४१३००१' : 'Prathana Foundation, Solapur, Maharashtra 413001'}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-brand-saffron shrink-0" />
                   <a
-                    href="mailto:contact@prarthanafoundation.org"
+                    href="mailto:contact@prathanafoundation.org"
                     className="text-sm text-white/70 hover:text-white transition-colors"
                   >
-                    contact@prarthanafoundation.org
+                    contact@prathanafoundation.org
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
@@ -149,17 +164,17 @@ export default function Footer({ onDonateClick }: FooterProps) {
               className="space-y-5"
             >
               <span className="text-[10px] uppercase tracking-widest font-bold text-white block">
-                Tax Benefits
+                {lang === 'mr' ? 'कर सवलती' : 'Tax Benefits'}
               </span>
-              <p className="text-sm text-white/70 leading-relaxed">
-                All donations are 50% tax exempt under Section 80G of the Income
-                Tax Act. A verified digital receipt and 80G certificate is issued
-                upon every contribution.
+              <p className="text-sm text-white/70 leading-relaxed font-light">
+                {lang === 'mr'
+                  ? 'आयकर कायद्याच्या कलम ८०जी अंतर्गत सर्व देणग्या ५०% कर वजावटीसाठी पात्र आहेत. प्रत्येक मदतीसाठी देणगी पावती आणि ८०जी प्रमाणपत्र दिले जाईल.'
+                  : 'All donations are 50% tax exempt under Section 80G of the Income Tax Act. A verified digital receipt and 80G certificate is issued upon every contribution.'}
               </p>
-              <p className="text-[11px] text-white/40 leading-relaxed">
-                Registered Public Charitable Trust
-                <br />
-                Govt. of Maharashtra &bull; 80G Certified
+              <p className="text-[10px] text-white/40 leading-relaxed font-light whitespace-pre-line">
+                {lang === 'mr' 
+                  ? 'नोंदणीकृत: संस्था नोंदणी अधिनियम १८६० व मुंबई सार्वजनिक विश्वस्त व्यवस्था अधिनियम १९५०\n८०जी प्रमाणित · भारत सरकार' 
+                  : 'Registered under Societies Registration Act 1860 & Mumbai Public Trust Act 1950\n80G Certified · Govt. of India'}
               </p>
             </motion.div>
           </div>
@@ -168,9 +183,8 @@ export default function Footer({ onDonateClick }: FooterProps) {
         {/* Bottom Bar — Compact */}
         <div className="border-t border-white/10">
           <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <span className="text-[11px] text-white/40 uppercase tracking-widest">
-              &copy; {new Date().getFullYear()} Prarthana Foundation Solapur.
-              All rights reserved.
+            <span className="text-[11px] text-white/40 uppercase tracking-widest font-light">
+              &copy; {new Date().getFullYear()} Prathana Foundation Solapur. All rights reserved.
             </span>
 
             <div className="flex items-center gap-6">
@@ -182,9 +196,9 @@ export default function Footer({ onDonateClick }: FooterProps) {
               </a>
               <button
                 onClick={scrollToTop}
-                className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-white/40 hover:text-white transition-colors font-light"
               >
-                Top
+                {lang === 'mr' ? 'वरती जा' : 'Top'}
                 <ArrowUp className="w-3.5 h-3.5" />
               </button>
             </div>

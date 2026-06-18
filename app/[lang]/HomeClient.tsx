@@ -17,22 +17,25 @@ import PaymentModal from '@/components/PaymentModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, X, ArrowRight } from 'lucide-react';
 
-export default function Home() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [donations, setDonations] = useState<Donation[]>([]);
-  const [stats, setStats] = useState({
-    totalRaised: 0,
-    totalGoal: 0,
-    totalDonors: 0,
-    donorsToday: 0,
-    mealsProvided: 0,
-    kidsEducated: 0,
-    medicalConsults: 0,
-  });
+interface HomeClientProps {
+  lang: string;
+  initialCampaigns: Campaign[];
+  initialDonations: Donation[];
+  initialStats: any;
+}
+
+export default function HomeClient({
+  lang,
+  initialCampaigns,
+  initialDonations,
+  initialStats,
+}: HomeClientProps) {
+  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [donations, setDonations] = useState<Donation[]>(initialDonations);
+  const [stats, setStats] = useState(initialStats);
 
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
 
   const [toast, setToast] = useState<{
     show: boolean;
@@ -55,14 +58,8 @@ export default function Home() {
       if (statsData.success) setStats(statsData.stats);
     } catch (err) {
       console.error('Error loading data:', err);
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleDonateOpen = (campaignId?: string) => {
     setSelectedCampaignId(campaignId);
@@ -77,10 +74,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-brand-paper">
-
-      <Header onDonateClick={() => handleDonateOpen()} />
+      <Header lang={lang} onDonateClick={() => handleDonateOpen()} />
 
       <Hero
+        lang={lang}
         onDonateClick={() => handleDonateOpen()}
         stats={{
           totalRaised: stats.totalRaised,
@@ -91,6 +88,7 @@ export default function Home() {
       />
 
       <LiveActivity
+        lang={lang}
         donations={donations}
         campaigns={campaigns}
         stats={{
@@ -99,9 +97,10 @@ export default function Home() {
         }}
       />
 
-      <About />
+      <About lang={lang} />
 
       <Impact
+        lang={lang}
         stats={{
           mealsProvided: stats.mealsProvided,
           kidsEducated: stats.kidsEducated,
@@ -109,17 +108,17 @@ export default function Home() {
         }}
       />
 
-      <Campaigns campaigns={campaigns} onDonateClick={handleDonateOpen} />
+      <Campaigns lang={lang} campaigns={campaigns} onDonateClick={handleDonateOpen} />
 
-      <Gallery />
+      <Gallery lang={lang} />
 
-      <Stories />
+      <Stories lang={lang} />
 
-      <Transparency />
+      <Transparency lang={lang} />
 
-      <Contact />
+      <Contact lang={lang} />
 
-      <Footer onDonateClick={() => handleDonateOpen()} />
+      <Footer lang={lang} onDonateClick={() => handleDonateOpen()} />
 
       <PaymentModal
         isOpen={paymentModalOpen}
@@ -147,7 +146,7 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
-                    Donation Verified
+                    {lang === 'mr' ? 'देणगीची पडताळणी झाली' : 'Donation Verified'}
                   </span>
                   <button
                     onClick={() => setToast(null)}
@@ -158,15 +157,17 @@ export default function Home() {
                 </div>
 
                 <p className="text-[13px] text-white/80 leading-relaxed">
-                  <span className="font-semibold text-white">{toast.donor}</span> contributed{' '}
+                  <span className="font-semibold text-white">{toast.donor}</span>{' '}
+                  {lang === 'mr' ? 'यांनी' : 'contributed'}{' '}
                   <span className="font-bold text-brand-gold">
                     ₹{toast.amount.toLocaleString('en-IN')}
-                  </span>
+                  </span>{' '}
+                  {lang === 'mr' ? 'ची मदत केली' : ''}
                 </p>
 
                 <div className="flex items-center gap-1.5 mt-2 text-[10px] text-white/30 font-mono">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-green" />
-                  Ledger updated
+                  {lang === 'mr' ? 'नोंद अपडेट केली' : 'Ledger updated'}
                   <ArrowRight className="w-3 h-3" />
                 </div>
               </div>

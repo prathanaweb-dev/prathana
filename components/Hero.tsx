@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { Heart, ArrowDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { translations } from '@/lib/translations';
 
 interface HeroProps {
+  lang: string;
   onDonateClick: () => void;
   stats: {
     totalRaised: number;
@@ -13,20 +16,12 @@ interface HeroProps {
   };
 }
 
-const headlineWords = [
-  { text: 'Every', className: '' },
-  { text: 'child', className: '' },
-  { text: 'deserves', className: '' },
-  { text: 'a', className: '' },
-  { text: 'full', className: 'italic text-brand-saffron' },
-  { text: 'stomach', className: 'italic text-brand-saffron' },
-  { text: '&', className: '' },
-  { text: 'an', className: '' },
-  { text: 'open', className: '' },
-  { text: 'book.', className: '' },
-];
+export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
+  const router = useRouter();
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  
+  const headlineWords = t.hero.title.split(' ');
 
-export default function Hero({ onDonateClick, stats }: HeroProps) {
   return (
     <section className="relative min-h-[100vh] bg-brand-paper overflow-hidden">
       {/* Center-aligned content column */}
@@ -38,26 +33,33 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-center"
         >
-          <span className="section-label">Prarthana Foundation · Solapur</span>
+          <span className="section-label">{t.hero.tagline}</span>
         </motion.div>
 
         {/* Massive Centered Headline — Word-by-word stagger */}
-        <h1 className="font-serif-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[0.95] text-brand-charcoal text-center max-w-4xl mx-auto mt-8">
-          {headlineWords.map((word, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: 0.2 + i * 0.06,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-              className={`inline-block mr-[0.28em] ${word.className}`}
-            >
-              {word.text}
-            </motion.span>
-          ))}
+        <h1 className="font-serif-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.05] text-brand-charcoal text-center max-w-5xl mx-auto mt-8">
+          {headlineWords.map((word, i) => {
+            // Apply saffron highlight to certain words for visual polish
+            const isHighlighted = 
+              (lang === 'mr' && (word.includes('पोटभर') || word.includes('जेवण') || word.includes('शिक्षणाची'))) ||
+              (lang !== 'mr' && (word.toLowerCase() === 'full' || word.toLowerCase() === 'stomach' || word.toLowerCase().includes('book')));
+            
+            return (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.2 + i * 0.06,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                className={`inline-block mr-[0.28em] ${isHighlighted ? 'italic text-brand-saffron font-medium' : ''}`}
+              >
+                {word}
+              </motion.span>
+            );
+          })}
         </h1>
 
         {/* Centered Subtext */}
@@ -65,11 +67,9 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.9 }}
-          className="text-lg text-brand-muted font-light max-w-xl mx-auto leading-relaxed text-center mt-8"
+          className="text-base sm:text-lg text-brand-muted font-light max-w-2xl mx-auto leading-relaxed text-center mt-8"
         >
-          A grassroots humanitarian collective in Solapur — providing nutrition,
-          education kits, and medical aid to orphaned and low-income families.
-          Every rupee, fully transparent.
+          {t.hero.subtext}
         </motion.p>
 
         {/* Centered CTA Button Row */}
@@ -84,14 +84,14 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
             className="rounded-full bg-brand-saffron text-white px-8 py-3.5 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal transition-all duration-300 flex items-center gap-2"
           >
             <Heart className="w-4 h-4 fill-current" />
-            Donate Securely
+            {t.hero.donateBtn}
           </button>
-          <a
-            href="#campaigns"
+          <button
+            onClick={() => router.push(`/${lang}/donation`)}
             className="rounded-full border-2 border-brand-charcoal text-brand-charcoal px-8 py-3 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white transition-all duration-300"
           >
-            View Campaigns
-          </a>
+            {t.hero.viewBtn}
+          </button>
         </motion.div>
 
         {/* Full-Width Editorial Image Band — 3 Overlapping Photos */}
@@ -105,7 +105,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
           >
             <img
               src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
-              alt="Prarthana outreach — feeding children in Solapur"
+              alt="Prathana outreach — feeding children in Solapur"
               className="w-full h-full object-cover editorial-img"
             />
             {/* Caption overlay */}
@@ -114,8 +114,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
                 On Ground &bull; Solapur
               </span>
               <p className="font-serif-display italic text-sm text-white/90 mt-1 max-w-xs">
-                &ldquo;A warm meal is the first step towards a child&rsquo;s
-                education.&rdquo;
+                &ldquo;{lang === 'mr' ? 'शाळेत टिकण्यासाठी मुलाचे पोट भरणे ही पहिली पायरी आहे.' : 'A warm meal is the first step towards a child\'s education.'}&rdquo;
               </p>
             </div>
           </motion.div>
@@ -143,7 +142,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
           >
             <img
               src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=400&auto=format&fit=crop"
-              alt="Community outreach and support"
+              alt="Central Community Kitchen"
               className="w-full h-full object-cover editorial-img"
             />
           </motion.div>
@@ -166,7 +165,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
                 {(stats.mealsProvided || 4625).toLocaleString()}
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                Meals Served
+                {t.hero.meals}
               </span>
             </div>
 
@@ -176,7 +175,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
                 {(stats.kidsEducated || 380).toLocaleString()}+
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                Children Helped
+                {t.hero.children}
               </span>
             </div>
 
@@ -186,7 +185,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
                 100%
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                Audited Funds
+                {t.hero.audited}
               </span>
             </div>
           </div>
@@ -201,7 +200,7 @@ export default function Hero({ onDonateClick, stats }: HeroProps) {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
       >
         <span className="text-[9px] uppercase tracking-widest text-brand-muted font-bold">
-          Scroll
+          {lang === 'mr' ? 'खाली स्क्रोल करा' : 'Scroll'}
         </span>
         <motion.div
           animate={{ y: [0, 6, 0] }}

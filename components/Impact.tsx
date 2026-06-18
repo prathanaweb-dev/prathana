@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { translations } from '@/lib/translations';
 
 interface ImpactProps {
+  lang: string;
   stats: {
     mealsProvided: number;
     kidsEducated: number;
@@ -76,28 +78,38 @@ function MetricCard({
   );
 }
 
-export default function Impact({ stats }: ImpactProps) {
+export default function Impact({ lang, stats }: ImpactProps) {
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
   const metrics = [
     {
       value: stats.mealsProvided || 4625,
-      label: 'Meals Served',
-      description: 'Hot nutritious meals to orphans & low-income children in Solapur',
+      label: lang === 'mr' ? 'वितरित जेवण' : 'Meals Served',
+      description: lang === 'mr'
+        ? 'सोलापूरच्या झोपडपट्टी भागातील गरीब आणि अनाथ मुलांना दिलेले सकस अन्न'
+        : 'Hot nutritious meals to orphans & low-income children in Solapur',
     },
     {
       value: stats.kidsEducated || 380,
-      label: 'Children Educated',
-      description: 'Sponsored with school kits, fees, and uniforms',
+      label: lang === 'mr' ? 'शिक्षण घेतलेली मुले' : 'Children Educated',
+      description: lang === 'mr'
+        ? 'शालेय साहित्य संच, फी आणि गणवेशाद्वारे मदत मिळालेले विद्यार्थी'
+        : 'Sponsored with school kits, fees, and uniforms',
     },
     {
       value: stats.medicalConsults || 1240,
-      label: 'Medical Consults',
-      description: 'Free health checkups & prescription medicines provided',
+      label: lang === 'mr' ? 'वैद्यकीय तपासण्या' : 'Medical Consults',
+      description: lang === 'mr'
+        ? 'मोफत प्राथमिक आरोग्य तपासणी शिबिरे आणि आवश्यक औषधांचे वाटप'
+        : 'Free health checkups & prescription medicines provided',
     },
     {
       value: 88,
       suffix: '%',
-      label: 'Direct Utilization',
-      description: 'Funds spent directly on relief, verified by audits',
+      label: lang === 'mr' ? 'निधीचा थेट वापर' : 'Direct Utilization',
+      description: lang === 'mr'
+        ? 'थेट मदत आणि सेवा कार्यावर खर्च झालेली रक्कम, लेखापरीक्षणाद्वारे प्रमाणित'
+        : 'Funds spent directly on relief, verified by audits',
     },
   ];
 
@@ -116,10 +128,12 @@ export default function Impact({ stats }: ImpactProps) {
           transition={{ duration: 0.7 }}
         >
           <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold">
-            Measuring Our Work
+            {lang === 'mr' ? 'कामाचे मोजमाप' : 'Measuring Our Work'}
           </span>
           <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-white">
-            Every Contribution<br />Leaves a Lasting Imprint.
+            {t.vision.label === 'Purpose & Drive' 
+              ? <>Every Contribution<br />Leaves a Lasting Imprint.</>
+              : <>प्रत्येक लहान मदत<br />नवा बदल घडवून आणते.</>}
           </h2>
           <div className="w-12 h-[2px] bg-brand-gold mt-2" />
         </motion.div>
@@ -147,11 +161,12 @@ export default function Impact({ stats }: ImpactProps) {
           transition={{ duration: 0.7, delay: 0.3 }}
         >
           <p className="font-serif-display italic text-lg md:text-xl text-brand-clay/80 leading-relaxed">
-            &ldquo;We don&rsquo;t count success in rupees collected. We count success in kids who no longer
-            sleep hungry, and families who receive medicines without going into debt.&rdquo;
+            &ldquo;{lang === 'mr' 
+              ? 'आम्ही यश पैशांमध्ये मोजत नाही. आमचे यश त्या मुलांमध्ये आहे जे रात्री उपाशी झोपत नाहीत आणि त्या कुटुंबांमध्ये आहे ज्यांना मोफत औषधे मिळतात.' 
+              : 'We don\'t count success in rupees collected. We count success in kids who no longer sleep hungry, and families who receive medicines without going into debt.'}&rdquo;
           </p>
           <span className="block text-[10px] uppercase tracking-widest text-brand-gold font-bold mt-4">
-            Verified Audited Impact &bull; Prarthana Solapur
+            {lang === 'mr' ? 'प्रमाणित प्रत्यक्ष परिणाम · प्रार्थना सोलापूर' : 'Verified Audited Impact · Prathana Solapur'}
           </span>
         </motion.div>
       </div>

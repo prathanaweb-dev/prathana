@@ -2,11 +2,18 @@
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
+import { translations } from '@/lib/translations';
 
-export default function Contact() {
+interface ContactProps {
+  lang: string;
+}
+
+export default function Contact({ lang }: ContactProps) {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,14 +33,16 @@ export default function Contact() {
         {/* Section Header */}
         <div className="max-w-3xl mb-16 space-y-4">
           <span className="section-label">
-            Get In Touch
+            {lang === 'mr' ? 'संपर्क साधा' : 'Get In Touch'}
           </span>
           <h2 className="font-serif-display text-3xl sm:text-4xl md:text-5xl font-bold text-brand-charcoal leading-tight">
-            Connect With Us.
+            {lang === 'mr' ? 'आमच्याशी जोडून घ्या.' : 'Connect With Us.'}
           </h2>
           <div className="accent-line" />
           <p className="text-brand-muted text-sm md:text-base font-light max-w-xl leading-relaxed">
-            Have questions about fund utilization, wish to coordinate field volunteering, or want to sponsor a child offline? Send us a message.
+            {lang === 'mr'
+              ? 'निधीचा वापर, स्वयंसेवा किंवा इतर माहितीसाठी आम्हाला थेट संदेश पाठवू शकता. आमची टीम २४ तासांच्या आत उत्तर देईल.'
+              : 'Have questions about fund utilization, wish to coordinate field volunteering, or want to sponsor a child offline? Send us a message.'}
           </p>
         </div>
 
@@ -42,23 +51,25 @@ export default function Contact() {
           {/* Contact Form — LEFT */}
           <div className="lg:col-span-7 bg-white border border-brand-clay rounded-2xl p-6 md:p-8">
             <h4 className="font-serif-display text-xl font-bold text-brand-charcoal mb-6">
-              Write a Message
+              {lang === 'mr' ? 'संदेश पाठवा' : 'Write a Message'}
             </h4>
 
             {submitted ? (
               <div className="p-6 bg-brand-sand/50 border border-brand-clay rounded-xl text-center space-y-3">
                 <span className="block text-xl">🙏</span>
                 <h5 className="font-serif-display font-bold text-brand-charcoal">
-                  Message Logged Successfully
+                  {lang === 'mr' ? 'संदेश यशस्वीरित्या प्राप्त झाला' : 'Message Logged Successfully'}
                 </h5>
-                <p className="text-xs text-brand-muted max-w-xs mx-auto">
-                  Thank you for writing to Prarthana Foundation. Our local Solapur desk coordinator will revert back to you within 24 hours.
+                <p className="text-xs text-brand-muted max-w-xs mx-auto font-light leading-relaxed">
+                  {lang === 'mr'
+                    ? 'प्रार्थना फाउंडेशनशी संपर्क साधल्याबद्दल धन्यवाद. आमचे सोलापूरचे समन्वयक २४ तासांच्या आत तुमच्याशी संपर्क साधतील.'
+                    : 'Thank you for writing to Prathana Foundation. Our local Solapur desk coordinator will revert back to you within 24 hours.'}
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="text-xs font-semibold text-brand-saffron hover:underline"
                 >
-                  Send another message
+                  {lang === 'mr' ? 'आणखी एक संदेश पाठवा' : 'Send another message'}
                 </button>
               </div>
             ) : (
@@ -66,27 +77,27 @@ export default function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
-                      Your Name
+                      {t.volunteer.fields.name}
                     </label>
                     <input
                       type="text"
                       required
                       value={formState.name}
                       onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                      placeholder="e.g. Ramesh Pujari"
+                      placeholder={lang === 'mr' ? 'उदा. रमेश पुजारी' : 'e.g. Ramesh Pujari'}
                       className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
                     />
                   </div>
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
-                      Your Email
+                      {t.volunteer.fields.email}
                     </label>
                     <input
                       type="email"
                       required
                       value={formState.email}
                       onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                      placeholder="e.g. ramesh@gmail.com"
+                      placeholder={lang === 'mr' ? 'उदा. ramesh@gmail.com' : 'e.g. ramesh@gmail.com'}
                       className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
                     />
                   </div>
@@ -94,14 +105,16 @@ export default function Contact() {
 
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
-                    Your Message
+                    {lang === 'mr' ? 'तुमचा संदेश' : 'Your Message'}
                   </label>
                   <textarea
                     required
                     rows={5}
                     value={formState.message}
                     onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                    placeholder="How can we help? Tell us if you are enquiring about sponsorship, tax receipts, or volunteering..."
+                    placeholder={lang === 'mr' 
+                      ? 'आम्ही तुमची काय मदत करू शकतो? स्वयंसेवा, देणगी पावती किंवा प्रायोजकत्वाविषयी माहिती येथे लिहा...' 
+                      : 'How can we help? Tell us if you are enquiring about sponsorship, tax receipts, or volunteering...'}
                     className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
                   />
                 </div>
@@ -112,11 +125,11 @@ export default function Contact() {
                   className="w-full py-3.5 bg-brand-saffron hover:bg-brand-charcoal text-white rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
                 >
                   {loading ? (
-                    'Transmitting Message...'
+                    lang === 'mr' ? 'संदेश पाठवला जात आहे...' : 'Transmitting Message...'
                   ) : (
                     <>
                       <Send className="w-3.5 h-3.5" />
-                      Transmit Message
+                      {lang === 'mr' ? 'संदेश पाठवा' : 'Transmit Message'}
                     </>
                   )}
                 </button>
@@ -135,11 +148,12 @@ export default function Contact() {
                 </div>
                 <div>
                   <span className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold">
-                    Office Address
+                    {lang === 'mr' ? 'कार्यालय पत्ता' : 'Office Address'}
                   </span>
                   <p className="text-xs md:text-sm text-brand-charcoal leading-relaxed font-light mt-0.5">
-                    102, Shanti Nilayam, Gold Finch Peth, <br />
-                    Solapur, Maharashtra - 413007
+                    {lang === 'mr'
+                      ? '१०२, शांती निलयम, गोल्ड फिंच पेठ, सोलापूर, महाराष्ट्र - ४१३००७'
+                      : '102, Shanti Nilayam, Gold Finch Peth, Solapur, Maharashtra - 413007'}
                   </p>
                 </div>
               </div>
@@ -150,13 +164,13 @@ export default function Contact() {
                 </div>
                 <div>
                   <span className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold">
-                    Email Queries
+                    {lang === 'mr' ? 'ईमेल चौकशी' : 'Email Queries'}
                   </span>
                   <a
-                    href="mailto:contact@prarthanafoundation.org"
+                    href="mailto:contact@prathanafoundation.org"
                     className="text-xs md:text-sm text-brand-charcoal hover:underline mt-0.5 block"
                   >
-                    contact@prarthanafoundation.org
+                    contact@prathanafoundation.org
                   </a>
                 </div>
               </div>
@@ -167,10 +181,10 @@ export default function Contact() {
                 </div>
                 <div>
                   <span className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold">
-                    WhatsApp Coordinator
+                    {lang === 'mr' ? 'व्हाट्सएप समन्वयक' : 'WhatsApp Coordinator'}
                   </span>
                   <a
-                    href="https://wa.me/919876543210?text=Hello%20Prarthana%20Foundation%20Solapur"
+                    href="https://wa.me/919876543210?text=Hello%20Prathana%20Foundation%20Solapur"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs md:text-sm text-brand-charcoal hover:underline mt-0.5 flex items-center gap-1.5 font-medium"
@@ -185,18 +199,18 @@ export default function Contact() {
             {/* Volunteer CTA */}
             <div className="p-5 bg-brand-sand/35 border border-brand-clay/70 rounded-2xl space-y-3">
               <h4 className="font-serif-display font-bold text-brand-charcoal">
-                Join Field Operations
+                {lang === 'mr' ? 'थेट कामात सहभागी व्हा' : 'Join Field Operations'}
               </h4>
               <p className="text-xs text-brand-muted leading-relaxed font-light">
-                We organize weekend meals preparation, school kit packaging, and community medicine drives in Solapur slums.
+                {lang === 'mr'
+                  ? 'आम्ही दर शनिवारी-रविवारी अन्न शिजवणे, पॅकिंग आणि सोलापूरच्या वस्त्यांमध्ये वाटप करण्याचे उपक्रम राबवतो.'
+                  : 'We organize weekend meals preparation, school kit packaging, and community medicine drives in Solapur slums.'}
               </p>
               <a
-                href="https://wa.me/919876543210?text=I%20want%20to%20volunteer%20with%20Prarthana%20Foundation"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/${lang}/volunteer`}
                 className="inline-block px-5 py-2 bg-brand-charcoal hover:bg-brand-saffron text-white text-[10px] font-bold uppercase tracking-wider rounded-full transition-all duration-300"
               >
-                Apply as Volunteer
+                {lang === 'mr' ? 'स्वयंसेवक म्हणून अर्ज करा' : 'Apply as Volunteer'}
               </a>
             </div>
 
@@ -207,10 +221,10 @@ export default function Contact() {
               <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center">
                 <MapPin className="w-7 h-7 text-brand-saffron animate-bounce mb-2" />
                 <span className="block text-xs font-bold text-brand-charcoal uppercase">
-                  Gold Finch Peth, Solapur
+                  {lang === 'mr' ? 'गोल्ड फिंच पेठ, सोलापूर' : 'Gold Finch Peth, Solapur'}
                 </span>
                 <span className="block text-[10px] text-brand-muted font-light mt-0.5">
-                  Click to open in Google Maps
+                  {lang === 'mr' ? 'गुगल मॅपवर पाहण्यासाठी क्लिक करा' : 'Click to open in Google Maps'}
                 </span>
               </div>
               <a

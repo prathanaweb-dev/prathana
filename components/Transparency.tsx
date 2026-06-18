@@ -3,51 +3,63 @@
 import { motion } from 'framer-motion';
 import { CheckCircle, FileText, Award } from 'lucide-react';
 
-export default function Transparency() {
+interface TransparencyProps {
+  lang: string;
+}
+
+export default function Transparency({ lang }: TransparencyProps) {
   const certifications = [
     {
-      title: 'Maharashtra Trust Registration',
-      code: 'Reg No. MH/SOL/10294/2021',
-      desc: 'Registered under the Maharashtra Public Trusts Act, 1950, governing public charitable institutions.',
+      title: lang === 'mr' ? 'संस्था व ट्रस्ट नोंदणी' : 'Society & Trust Registration',
+      code: 'Est. 2018 · Societies Reg Act 1860',
+      desc: lang === 'mr' 
+        ? 'संस्था नोंदणी अधिनियम, १८६० आणि मुंबई सार्वजनिक विश्वस्त व्यवस्था अधिनियम, १९५० अंतर्गत २०१८ मध्ये नोंदणीकृत.'
+        : 'Registered in 2018 under the Societies Registration Act, 1860 and the Mumbai Public Trusts Act, 1950.',
     },
     {
-      title: 'Section 80G Tax Exemption',
+      title: lang === 'mr' ? 'कल ८०जी कर सवलत' : 'Section 80G Tax Exemption',
       code: 'PAN/80G Approval Active',
-      desc: 'All contributions are eligible for a 50% income tax deduction under section 80G of the Income Tax Act.',
+      desc: lang === 'mr'
+        ? 'सर्व देणग्या आयकर कायद्याच्या कलम ८०जी अंतर्गत ५०% कर वजावटीसाठी पात्र आहेत.'
+        : 'All contributions are eligible for a 50% income tax deduction under section 80G of the Income Tax Act.',
     },
     {
-      title: '12A Registration',
+      title: lang === 'mr' ? '१२ए नोंदणी' : '12A Registration',
       code: 'Granted by Income Tax Dept',
-      desc: 'Establishes our non-profit status, exempting the foundation from income tax to maximize ground funding.',
+      desc: lang === 'mr'
+        ? 'संस्थेला कर सवलत देणारी नोंदणी, ज्यामुळे गोळा झालेला सर्व निधी थेट प्रत्यक्ष मदतकार्यात वापरता येतो.'
+        : 'Establishes our non-profit status, exempting the foundation from income tax to maximize ground funding.',
     },
     {
-      title: 'External Financial Audits',
+      title: lang === 'mr' ? 'बाह्य वित्तीय लेखापरीक्षण' : 'External Financial Audits',
       code: 'Audited by K.R. Shinde & Co.',
-      desc: 'Annual statements are prepared by independent certified accountants and submitted to the Trust Registrar.',
+      desc: lang === 'mr'
+        ? 'वार्षिक हिशेब स्वतंत्र सनदी लेखापालाकडून तपासले जातात आणि धर्मादाय आयुक्तांकडे सादर केले जातात.'
+        : 'Annual statements are prepared by independent certified accountants and submitted to the Trust Registrar.',
     },
   ];
 
   const fundBars = [
     {
-      label: 'Direct Program Relief',
+      label: lang === 'mr' ? 'थेट सेवा कार्य' : 'Direct Program Relief',
       pct: 88,
       color: 'bg-brand-green',
       textColor: 'text-brand-green',
-      detail: 'Meals, school supplies, diagnostics clinics, and critical health support.',
+      detail: lang === 'mr' ? 'जेवण, शालेय साहित्य संच, प्राथमिक तपासणी आणि वैद्यकीय मदत.' : 'Meals, school supplies, diagnostics clinics, and critical health support.',
     },
     {
-      label: 'Field & Logistics Operations',
+      label: lang === 'mr' ? 'क्षेत्रीय आणि वाहतूक खर्च' : 'Field & Logistics Operations',
       pct: 7,
       color: 'bg-brand-saffron',
       textColor: 'text-brand-saffron',
-      detail: 'Kitchen operations staff, transportation to remote slums, local hubs.',
+      detail: lang === 'mr' ? 'स्वयंपाकघर कर्मचारी, वस्त्यांमध्ये वाहतूक आणि स्थानिक साठा केंद्र.' : 'Kitchen operations staff, transportation to remote slums, local hubs.',
     },
     {
-      label: 'Admin & Transaction Fees',
+      label: lang === 'mr' ? 'प्रशासकीय व ट्रान्झॅक्शन फी' : 'Admin & Transaction Fees',
       pct: 5,
       color: 'bg-brand-muted',
       textColor: 'text-brand-muted',
-      detail: 'Payment gateway fees, server hosting, regulatory reporting paperwork.',
+      detail: lang === 'mr' ? 'पेमेंट गेटवे शुल्क, सर्व्हर खर्च आणि शासकीय कागदपत्रांचे रिपोर्टिंग.' : 'Payment gateway fees, server hosting, regulatory reporting paperwork.',
     },
   ];
 
@@ -63,17 +75,15 @@ export default function Transparency() {
           transition={{ duration: 0.7 }}
           className="max-w-3xl mb-20 space-y-5"
         >
-          <span className="section-label">Financial Integrity</span>
+          <span className="section-label">{lang === 'mr' ? 'वित्तीय पारदर्शकता' : 'Financial Integrity'}</span>
           <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-            Our Promise of
-            <br />
-            Absolute Clarity.
+            {lang === 'mr' ? <>प्रत्येक रुपयाची<br />पूर्ण पारदर्शकता.</> : <>Our Promise of<br />Absolute Clarity.</>}
           </h2>
           <div className="accent-line" />
-          <p className="text-brand-muted text-sm md:text-base max-w-xl leading-relaxed">
-            We operate with the awareness that every single rupee you contribute
-            is a trust placed in us. We verify every transaction, compile public
-            sheets, and report directly on audits.
+          <p className="text-brand-muted text-sm md:text-base max-w-xl leading-relaxed font-light">
+            {lang === 'mr'
+              ? 'आम्हाला जाणीव आहे की तुमचा प्रत्येक रुपया हा आमच्यावर टाकलेला विश्वास आहे. आम्ही प्रत्येक खर्चाची नोंद ठेवतो, ताळेबंद जाहीर करतो आणि लेखापरीक्षण अहवाल सादर करतो.'
+              : 'We operate with the awareness that every single rupee you contribute is a trust placed in us. We verify every transaction, compile public sheets, and report directly on audits.'}
           </p>
         </motion.div>
 
@@ -91,10 +101,10 @@ export default function Transparency() {
             <div className="space-y-7">
               <div>
                 <h4 className="font-serif-display text-xl font-bold text-brand-charcoal mb-1">
-                  Where Your Donation Goes
+                  {lang === 'mr' ? 'तुमची मदत कुठे वापरली जाते' : 'Where Your Donation Goes'}
                 </h4>
                 <span className="text-[10px] uppercase tracking-widest text-brand-muted font-semibold">
-                  Allocation of Fiduciary Funds
+                  {lang === 'mr' ? 'निधी वाटपाची आकडेवारी' : 'Allocation of Fiduciary Funds'}
                 </span>
               </div>
 
@@ -118,7 +128,7 @@ export default function Transparency() {
                         className={`h-full rounded-full ${bar.color}`}
                       />
                     </div>
-                    <span className="block text-[11px] text-brand-muted leading-relaxed">
+                    <span className="block text-[11px] text-brand-muted leading-relaxed font-light">
                       {bar.detail}
                     </span>
                   </div>
@@ -130,11 +140,12 @@ export default function Transparency() {
                 <Award className="w-9 h-9 text-brand-saffron flex-shrink-0" />
                 <div>
                   <span className="block text-xs font-bold text-brand-charcoal uppercase tracking-wide">
-                    Zero Commission Platform
+                    {lang === 'mr' ? 'शून्य कमिशन व्यासपीठ' : 'Zero Commission Platform'}
                   </span>
-                  <p className="text-[11px] text-brand-muted leading-relaxed mt-0.5">
-                    Our directors do not draw salaries. 100% of executive operations
-                    are financed voluntarily.
+                  <p className="text-[11px] text-brand-muted leading-relaxed mt-0.5 font-light">
+                    {lang === 'mr'
+                      ? 'आमचे संचालक कोणतेही मानधन घेत नाहीत. सर्व प्रशासकीय व्यवस्थापन पूर्णपणे स्वयंसेवी पद्धतीने केले जाते.'
+                      : 'Our directors do not draw salaries. 100% of executive operations are financed voluntarily.'}
                   </p>
                 </div>
               </div>
@@ -164,7 +175,7 @@ export default function Transparency() {
                     {cert.code}
                   </span>
 
-                  <p className="text-xs text-brand-muted leading-relaxed">
+                  <p className="text-xs text-brand-muted leading-relaxed font-light">
                     {cert.desc}
                   </p>
                 </motion.div>
@@ -187,10 +198,10 @@ export default function Transparency() {
             </div>
             <div>
               <span className="block text-sm font-semibold text-brand-charcoal">
-                Annual Audit Statements
+                {lang === 'mr' ? 'वार्षिक लेखापरीक्षण दस्तऐवज' : 'Annual Audit Statements'}
               </span>
-              <span className="block text-[11px] text-brand-muted">
-                Registration approvals, tax filings & balance sheets (PDF)
+              <span className="block text-[11px] text-brand-muted font-light">
+                {lang === 'mr' ? 'नोंदणी प्रमाणपत्रे, कर परतावे आणि ताळेबंद (PDF)' : 'Registration approvals, tax filings & balance sheets (PDF)'}
               </span>
             </div>
           </div>
@@ -198,11 +209,11 @@ export default function Transparency() {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              alert('This is a mockup. In production, this links to official tax filings and balance sheets.');
+              alert(lang === 'mr' ? 'हे एक मॉकअप आहे. अधिकृत टॅक्स रिटर्न डाऊनलोड करण्यासाठी हे प्रोडक्शनमध्ये लिंक केले जाईल.' : 'This is a mockup. In production, this links to official tax filings and balance sheets.');
             }}
             className="px-6 py-2.5 bg-brand-charcoal hover:bg-brand-saffron text-white font-semibold tracking-wide uppercase text-[13px] rounded-full transition-all duration-300"
           >
-            Download Documents
+            {lang === 'mr' ? 'दस्तऐवज डाऊनलोड करा' : 'Download Documents'}
           </a>
         </motion.div>
       </div>

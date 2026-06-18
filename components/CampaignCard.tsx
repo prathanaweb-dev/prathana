@@ -3,18 +3,25 @@
 import { Campaign } from '@/lib/db';
 import { Heart, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { translations } from '@/lib/translations';
 
 interface CampaignCardProps {
+  lang: string;
   campaign: Campaign;
   onDonateClick: (campaignId: string) => void;
 }
 
-export default function CampaignCard({ campaign, onDonateClick }: CampaignCardProps) {
+export default function CampaignCard({ lang, campaign, onDonateClick }: CampaignCardProps) {
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
   const goal = Number(campaign.goal_amount);
   const raised = Number(campaign.amount_raised);
   const remaining = Math.max(0, goal - raised);
   const progressPercent = Math.min(100, Math.round((raised / goal) * 100));
-  const isCompleted = campaign.is_completed;
+  const isCompleted = campaign.is_completed || campaign.status === 'completed';
+
+  const title = (lang === 'mr' && campaign.title_mr) ? campaign.title_mr : campaign.title;
+  const description = (lang === 'mr' && campaign.description_mr) ? campaign.description_mr : campaign.description;
 
   return (
     <motion.div
@@ -30,7 +37,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
       <div className="h-52 md:h-auto md:w-72 relative overflow-hidden bg-brand-sand flex-shrink-0">
         <img
           src={campaign.image}
-          alt={campaign.title}
+          alt={title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 editorial-img"
           loading="lazy"
         />
@@ -41,7 +48,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
         {isCompleted && (
           <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-brand-green text-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full">
             <CheckCircle className="w-3 h-3" />
-            Goal Achieved
+            {lang === 'mr' ? 'ध्येय साध्य' : 'Goal Achieved'}
           </div>
         )}
 
@@ -52,7 +59,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
               {progressPercent}%
             </span>
             <span className="block text-[9px] uppercase tracking-widest text-white/70 font-semibold mt-0.5">
-              funded
+              {t.donation.funded}
             </span>
           </div>
         )}
@@ -62,13 +69,13 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
       <div className="p-7 flex-1 flex flex-col">
         <div className="space-y-3 flex-1">
           <span className="section-label">
-            {isCompleted ? 'Completed' : 'Active Campaign'}
+            {isCompleted ? (lang === 'mr' ? 'पूर्ण मोहीम' : 'Completed') : (lang === 'mr' ? 'सक्रिय मोहीम' : 'Active Campaign')}
           </span>
           <h4 className="font-serif-display text-xl md:text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-saffron transition-colors duration-300">
-            {campaign.title}
+            {title}
           </h4>
-          <p className="text-brand-muted text-sm leading-relaxed line-clamp-3">
-            {campaign.description}
+          <p className="text-brand-muted text-sm leading-relaxed line-clamp-3 font-light">
+            {description}
           </p>
         </div>
 
@@ -91,7 +98,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
           <div className="grid grid-cols-3 gap-3 pt-4 border-t border-brand-clay/40">
             <div>
               <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                Goal
+                {t.donation.goal}
               </span>
               <span className="font-mono text-sm font-bold text-brand-charcoal">
                 ₹{goal.toLocaleString('en-IN')}
@@ -99,7 +106,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
             </div>
             <div className="text-center">
               <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                Raised
+                {t.donation.raised}
               </span>
               <span className="font-mono text-sm font-bold text-brand-green">
                 ₹{raised.toLocaleString('en-IN')}
@@ -107,7 +114,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
             </div>
             <div className="text-right">
               <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                Remaining
+                {t.donation.remaining}
               </span>
               <span className="font-mono text-sm font-bold text-brand-saffron">
                 ₹{remaining.toLocaleString('en-IN')}
@@ -126,7 +133,7 @@ export default function CampaignCard({ campaign, onDonateClick }: CampaignCardPr
             }`}
           >
             <Heart className={`w-3.5 h-3.5 ${isCompleted ? '' : 'fill-current'}`} />
-            {isCompleted ? 'Goal Achieved' : 'Donate to This Campaign'}
+            {isCompleted ? (lang === 'mr' ? 'उद्दिष्ट पूर्ण' : 'Goal Achieved') : t.donation.donateBtn}
           </button>
         </div>
       </div>

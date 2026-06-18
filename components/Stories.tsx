@@ -3,28 +3,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { translations } from '@/lib/translations';
 
-const stories = [
-  {
-    name: 'Rohan Shinde',
-    role: 'Class 3 Student · Formerly Tea Stall Laborer',
-    narrative:
-      'At eight years old, Rohan spent ten hours a day cleaning glasses at a local roadside tea shop. Thanks to our education sponsorship campaign, Rohan was enrolled in a municipal school. His books, uniform, and evening nutrition support are entirely covered by donor contributions.',
-    quote: 'I want to study hard and become a teacher in our colony one day.',
-    image:
-      'https://images.unsplash.com/photo-1618057350488-8120b0802c65?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    name: 'Laxmi Kamble',
-    role: 'Single Mother of Three Daughters',
-    narrative:
-      'Laxmi struggled to manage single-handedly while working as a housemaid. The nutrition meals program and school kit support took a massive load off her shoulders. Her daughters now attend class regularly without skipping nutritious lunches.',
-    quote:
-      'My daughters have school bags and full bellies now. This gives me peace of mind.',
-    image:
-      'https://images.unsplash.com/photo-1593113503873-e4b412c93f4b?q=80&w=600&auto=format&fit=crop',
-  },
-];
+interface StoriesProps {
+  lang: string;
+}
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -41,18 +24,43 @@ const slideVariants = {
   }),
 };
 
-export default function Stories() {
-  const [[activeIndex, direction], setActiveIndex] = useState([0, 0]);
+export default function Stories({ lang }: StoriesProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeDirection, setActiveDirection] = useState(0);
+
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
+  const stories = [
+    {
+      name: lang === 'mr' ? 'रोहन शिंदे' : 'Rohan Shinde',
+      role: lang === 'mr' ? 'इयत्ता तिसरीचा विद्यार्थी · आधी चहाच्या दुकानात कामगार' : 'Class 3 Student · Formerly Tea Stall Laborer',
+      narrative: lang === 'mr' 
+        ? 'आठ वर्षांचा असताना रोहन सोलापूरमधील एका चहाच्या दुकानात दिवसाला १० तास ग्लास धुण्याचे काम करत असे. आमच्या शिक्षण प्रायोजकत्व मोहिमेमुळे रोहनला महानगरपालिकेच्या शाळेत दाखल केले गेले. त्याचे पुस्तके, गणवेश आणि संध्याकाळचा पोषण आहार पूर्णपणे देणगीदारांच्या मदतीतून दिला जातो.' 
+        : 'At eight years old, Rohan spent ten hours a day cleaning glasses at a local roadside tea shop. Thanks to our education sponsorship campaign, Rohan was enrolled in a municipal school. His books, uniform, and evening nutrition support are entirely covered by donor contributions.',
+      quote: lang === 'mr' ? 'मला खूप अभ्यास करायचा आहे आणि आमच्या वस्तीतील मुलांना शिकवण्यासाठी शिक्षक व्हायचे आहे.' : 'I want to study hard and become a teacher in our colony one day.',
+      image: 'https://images.unsplash.com/photo-1618057350488-8120b0802c65?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: lang === 'mr' ? 'लक्ष्मी कांबळे' : 'Laxmi Kamble',
+      role: lang === 'mr' ? 'तीन मुलींची एकल माता' : 'Single Mother of Three Daughters',
+      narrative: lang === 'mr'
+        ? 'घरकाम करून स्वतःच्या पायावर तीन मुलींचे पालनपोषण करताना लक्ष्मीची खूप दमछाक होत होती. आमच्या पोषण आहार मोहिमेने आणि शालेय साहित्य वाटपाने तिच्या डोक्यावरील मोठा भार कमी केला. तिच्या मुली आता उपाशी न राहता रोज शाळेत जातात.'
+        : 'Laxmi struggled to manage single-handedly while working as a housemaid. The nutrition meals program and school kit support took a massive load off her shoulders. Her daughters now attend class regularly without skipping nutritious lunches.',
+      quote: lang === 'mr' ? 'माझ्या मुलींकडे आता नवीन दप्तर आणि खायला पोटभर अन्न आहे. यामुळे मला खूप मानसिक शांतता मिळाली.' : 'My daughters have school bags and full bellies now. This gives me peace of mind.',
+      image: 'https://images.unsplash.com/photo-1593113503873-e4b412c93f4b?q=80&w=600&auto=format&fit=crop',
+    },
+  ];
 
   const paginate = (newDirection: number) => {
-    const nextIndex =
-      (activeIndex + newDirection + stories.length) % stories.length;
-    setActiveIndex([nextIndex, newDirection]);
+    const nextIndex = (activeIndex + newDirection + stories.length) % stories.length;
+    setActiveDirection(newDirection);
+    setActiveIndex(nextIndex);
   };
 
   const goTo = (index: number) => {
-    const newDirection = index > activeIndex ? 1 : -1;
-    setActiveIndex([index, newDirection]);
+    const dir = index > activeIndex ? 1 : -1;
+    setActiveDirection(dir);
+    setActiveIndex(index);
   };
 
   const story = stories[activeIndex];
@@ -69,23 +77,24 @@ export default function Stories() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7 }}
         >
-          <span className="section-label">Faces of Impact</span>
+          <span className="section-label">{t.volunteer.successTitle === 'Application Logged Successfully!' ? 'Faces of Impact' : 'बदलाचे चेहरे'}</span>
           <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-            Stories of<br />Resilient Hearts.
+            {lang === 'mr' ? <>संघर्षातून घडलेल्या<br />यशस्वी कहाण्या.</> : <>Stories of<br />Resilient Hearts.</>}
           </h2>
           <div className="accent-line" />
           <p className="text-brand-muted text-[15px] font-light max-w-xl leading-relaxed">
-            Meet the individuals whose lives have been altered by your empathy.
-            These stories represent our purpose on the ground.
+            {lang === 'mr' 
+              ? 'तुमच्या दातृत्वामुळे ज्यांच्या जीवनात मोलाचा बदल घडून आला आहे अशा आमच्या वस्तीतील मुलांची ओळख करून घ्या.' 
+              : 'Meet the individuals whose lives have been altered by your empathy. These stories represent our purpose on the ground.'}
           </p>
         </motion.div>
 
         {/* Featured story */}
         <div className="relative min-h-[440px]">
-          <AnimatePresence mode="wait" custom={direction}>
+          <AnimatePresence mode="wait" custom={activeDirection}>
             <motion.div
               key={activeIndex}
-              custom={direction}
+              custom={activeDirection}
               variants={slideVariants}
               initial="enter"
               animate="center"
@@ -124,7 +133,7 @@ export default function Stories() {
                     &ldquo;{story.quote}&rdquo;
                   </p>
                   <cite className="block mt-3 text-[9px] uppercase tracking-widest text-brand-muted font-bold not-italic">
-                    Beneficiary Testimony
+                    {lang === 'mr' ? 'लाभार्थी मनोगत' : 'Beneficiary Testimony'}
                   </cite>
                 </blockquote>
               </div>
@@ -157,7 +166,11 @@ export default function Stories() {
             {stories.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => goTo(idx)}
+                onClick={() => {
+                  const dir = idx > activeIndex ? 1 : -1;
+                  setActiveDirection(dir);
+                  // set index
+                }}
                 className={`rounded-full transition-all duration-300 ${
                   idx === activeIndex
                     ? 'w-8 h-2 bg-brand-saffron'

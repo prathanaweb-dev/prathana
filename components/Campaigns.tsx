@@ -3,15 +3,19 @@
 import { Campaign } from '@/lib/db';
 import { motion } from 'framer-motion';
 import CampaignCard from './CampaignCard';
+import { translations } from '@/lib/translations';
 
 interface CampaignsProps {
+  lang: string;
   campaigns: Campaign[];
   onDonateClick: (campaignId: string) => void;
 }
 
-export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) {
-  const activeCampaigns = campaigns.filter((c) => !c.is_completed);
-  const completedCampaigns = campaigns.filter((c) => c.is_completed);
+export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsProps) {
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
+  const activeCampaigns = campaigns.filter((c) => c.status !== 'completed' && !c.is_completed);
+  const completedCampaigns = campaigns.filter((c) => c.status === 'completed' || c.is_completed);
 
   return (
     <section id="campaigns" className="py-32 relative overflow-hidden">
@@ -25,17 +29,15 @@ export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) 
           transition={{ duration: 0.7 }}
           className="max-w-3xl mb-20 space-y-5"
         >
-          <span className="section-label">Direct Relief</span>
+          <span className="section-label">{t.donation.label}</span>
           <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-            Active Relief
-            <br />
-            Campaigns.
+            {t.donation.title.split('.').map((chunk, i) => (
+              <span key={i} className="block">{chunk}</span>
+            ))}
           </h2>
           <div className="accent-line" />
-          <p className="text-brand-muted text-sm md:text-base max-w-xl leading-relaxed">
-            Choose a campaign close to your heart. Every rupee raised is tracked
-            transparently. You can witness live progress updates immediately
-            after your checkout completes.
+          <p className="text-brand-muted text-sm md:text-base max-w-xl leading-relaxed font-light">
+            {t.donation.desc}
           </p>
         </motion.div>
 
@@ -45,6 +47,7 @@ export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) 
             {activeCampaigns.map((camp) => (
               <CampaignCard
                 key={camp.id}
+                lang={lang}
                 campaign={camp}
                 onDonateClick={onDonateClick}
               />
@@ -59,9 +62,7 @@ export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) 
             className="text-center py-16 px-8 border border-dashed border-brand-clay rounded-3xl bg-white"
           >
             <p className="font-serif-display text-xl italic text-brand-muted">
-              No active campaigns at this moment.
-              <br />
-              All goals have been successfully fulfilled!
+              {t.donation.noActive}
             </p>
           </motion.div>
         )}
@@ -79,9 +80,9 @@ export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) 
               transition={{ duration: 0.7 }}
               className="mb-12 space-y-3"
             >
-              <span className="section-label">Completed</span>
+              <span className="section-label">{lang === 'mr' ? 'पूर्ण झालेले' : 'Completed'}</span>
               <h3 className="font-serif-display text-2xl md:text-3xl font-bold text-brand-muted tracking-tight">
-                Fulfilled Missions
+                {t.donation.completedTitle}
               </h3>
             </motion.div>
 
@@ -89,6 +90,7 @@ export default function Campaigns({ campaigns, onDonateClick }: CampaignsProps) 
               {completedCampaigns.map((camp) => (
                 <CampaignCard
                   key={camp.id}
+                  lang={lang}
                   campaign={camp}
                   onDonateClick={onDonateClick}
                 />

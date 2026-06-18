@@ -1,32 +1,42 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { translations } from '@/lib/translations';
 
-const timelineEvents = [
-  {
-    year: '2021',
-    title: 'The Seed of Food',
-    description:
-      'Began distributing cooked meals to 50 orphan and homeless children daily during peak economic hardships in Solapur.',
-    color: 'bg-brand-saffron',
-  },
-  {
-    year: '2023',
-    title: 'Educational Wings',
-    description:
-      'Launched the Education Support project — school kits and sponsorship funds keeping 200+ slum children enrolled.',
-    color: 'bg-brand-green',
-  },
-  {
-    year: '2025',
-    title: 'Transparency Portal',
-    description:
-      'Public database logs and automated donation verification ensure every rupee is fully auditable.',
-    color: 'bg-brand-charcoal',
-  },
-];
+interface AboutProps {
+  lang: string;
+}
 
-export default function About() {
+export default function About({ lang }: AboutProps) {
+  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+
+  const timelineEvents = [
+    {
+      year: '2018',
+      title: lang === 'mr' ? 'वंचितांची शाळा' : 'Vanchitanchi Shala',
+      description: lang === 'mr' 
+        ? 'प्रसाद आणि अनू मोहिते यांनी सोलापूरच्या रस्त्यावरील मुलांच्या शिक्षणासाठी वंचितांची शाळा उपक्रम सुरू केला.' 
+        : 'Prasad and Anu Mohite started "Vanchitanchi Shala" in Solapur to rescue street and begging children.',
+      color: 'bg-brand-saffron',
+    },
+    {
+      year: 'Balgram',
+      title: lang === 'mr' ? 'हक्काचे घर' : 'A Permanent Home',
+      description: lang === 'mr'
+        ? 'प्रसाद यांनी आपली वडिलोपार्जित जमीन विकून बालग्रामच्या हक्काच्या जागेसाठी मोरवंची येथे जमीन खरेदी केली.'
+        : 'Prasad sold his family land to purchase land in Morvanchi village, establishing Prathana Balgram.',
+      color: 'bg-brand-green',
+    },
+    {
+      year: 'Today',
+      title: lang === 'mr' ? 'विस्तारित सेवा' : 'Expanding Care',
+      description: lang === 'mr'
+        ? 'सध्या बालग्राममध्ये ४५ बालके, वृद्धाश्रमात २५ वृद्ध आणि नैसर्गिक शेती प्रकल्प सुरू आहेत.'
+        : 'Now supporting 45 children, 25 abandoned elderly, and promoting self-reliance via natural farming.',
+      color: 'bg-brand-charcoal',
+    },
+  ];
+
   return (
     <section id="about" className="py-32 bg-brand-paper relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -51,7 +61,9 @@ export default function About() {
             {/* Caption strip */}
             <div className="flex items-center justify-between px-1">
               <span className="text-[10px] text-brand-muted font-light">
-                Outreach coordinator hosting an evening tuition circle at a transit shelter.
+                {lang === 'mr' 
+                  ? 'सोलापूरमधील एका तात्पुरत्या निवारा केंद्रात संध्याकाळचे अभ्यास वर्ग घेताना outreach समन्वयक.' 
+                  : 'Outreach coordinator hosting an evening tuition circle at a transit shelter.'}
               </span>
               <span className="text-[9px] font-mono text-brand-muted/60 uppercase">
                 Solapur, MH
@@ -68,25 +80,16 @@ export default function About() {
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             <div className="space-y-4">
-              <span className="section-label">Our Origins</span>
+              <span className="section-label">{t.about.label}</span>
               <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-                Grounded in<br />Compassion.
+                {t.about.title}
               </h2>
               <div className="accent-line" />
             </div>
 
             <div className="space-y-5 text-brand-muted text-[15px] leading-relaxed font-light">
-              <p>
-                Founded in Solapur, Maharashtra, <strong className="font-medium text-brand-charcoal">Prarthana Foundation</strong> began
-                as a voluntary response to hunger. We noticed that hunger was not just a lack of food — it was the
-                single greatest barrier keeping children from attending primary school, studying, and escaping the
-                cycle of extreme poverty.
-              </p>
-              <p>
-                By setting up makeshift community kitchens, we first guaranteed daily nutrition. Once children had
-                full stomachs, their parents were willing to send them to schools. We then stepped in to cover costs
-                for books, uniforms, and primary registration.
-              </p>
+              <p>{t.about.p1}</p>
+              <p>{t.about.p2}</p>
             </div>
 
             {/* Pull-quote */}
@@ -98,20 +101,17 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <p className="font-serif-display italic text-xl text-brand-charcoal leading-relaxed">
-                &ldquo;We did not start Prarthana in a boardroom. We started it on the streets of Solapur
-                when we saw children collecting waste instead of holding books.&rdquo;
+                &ldquo;{t.about.quote}&rdquo;
               </p>
               <cite className="block mt-3 text-[10px] uppercase tracking-widest text-brand-saffron font-bold not-italic">
-                Founding Team &bull; Solapur, 2021
+                {t.about.quoteAuthor}
               </cite>
             </motion.blockquote>
 
             {/* Trust commitment */}
             <div className="pt-4">
               <p className="text-brand-muted text-[13px] leading-relaxed font-light">
-                We believe trust is earned through absolute clarity. As a registered NGO in Maharashtra, our
-                financial books, audit reports, and direct utilization statistics are public. When you donate,
-                you receive immediate digital updates on campaign progress.
+                {t.about.trustDesc}
               </p>
             </div>
           </motion.div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Heart, Shield, CheckCircle, IndianRupee, Loader2 } from 'lucide-react';
-import { isSupabaseConfigured, Campaign } from '@/lib/db';
+import { isFirebaseConfigured, Campaign } from '@/lib/db';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -123,7 +123,7 @@ export default function PaymentModal({
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency,
-          name: 'Prarthana Foundation',
+          name: 'Prathana Foundation',
           description: `Donation: ${currentCampaign?.title || 'NGO campaign'}`,
           image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=120&auto=format&fit=crop',
           order_id: orderData.orderId,
@@ -375,13 +375,13 @@ export default function PaymentModal({
                   Razorpay Checkout Gateway Simulation
                 </h4>
                 <p className="text-brand-muted text-xs mt-1.5 leading-relaxed max-w-sm mx-auto">
-                  Prarthana Foundation is running in verification offline simulation. Use this step to test the full live stats update and receipting engine.
+                  Prathana Foundation is running in verification offline simulation. Use this step to test the full live stats update and receipting engine.
                 </p>
               </div>
 
               <div className="border border-brand-clay rounded-2xl overflow-hidden bg-white">
                 <div className="px-4 py-3 bg-brand-charcoal text-white text-xs font-semibold tracking-wider uppercase flex justify-between">
-                  <span>Merchant: Prarthana Foundation</span>
+                  <span>Merchant: Prathana Foundation</span>
                   <span className="text-brand-gold">₹{mockPaymentDetails.amount.toLocaleString('en-IN')}.00</span>
                 </div>
                 
@@ -451,7 +451,7 @@ export default function PaymentModal({
                   &ldquo;Every light of hope begins with a single act of kindness. By feeding a child, equipping a student, or aiding a clinic, you have extended a healing hand to Solapur.&rdquo;
                 </p>
                 <div className="mt-4 border-t border-brand-clay/40 pt-3 flex justify-between items-center text-[10px] uppercase tracking-wider text-brand-muted font-semibold">
-                  <span>Prarthana Governing Body</span>
+                  <span>Prathana Governing Body</span>
                   <span>Solapur Office</span>
                 </div>
               </div>

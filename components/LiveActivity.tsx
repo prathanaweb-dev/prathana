@@ -5,6 +5,7 @@ import { Donation, Campaign } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LiveActivityProps {
+  lang: string;
   donations: Donation[];
   campaigns: Campaign[];
   stats: {
@@ -13,7 +14,7 @@ interface LiveActivityProps {
   };
 }
 
-export default function LiveActivity({ donations, campaigns, stats }: LiveActivityProps) {
+export default function LiveActivity({ lang, donations, campaigns, stats }: LiveActivityProps) {
   const [visibleIndex, setVisibleIndex] = useState(0);
   const recentDonations = donations.slice(0, 6);
 
@@ -26,21 +27,23 @@ export default function LiveActivity({ donations, campaigns, stats }: LiveActivi
     return () => clearInterval(interval);
   }, [recentDonations.length]);
 
-  const getCampaignName = (id: string) => {
-    const campaign = campaigns.find((c) => c.id === id);
-    return campaign ? campaign.title : 'General Relief';
-  };
-
   const getRelativeTime = (isoString: string) => {
     const date = new Date(isoString);
     const diffMs = Date.now() - date.getTime();
     const diffMins = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    if (lang === 'mr') {
+      if (diffMins < 1) return 'आत्ताच';
+      if (diffMins < 60) return `${diffMins} मि. पूर्वी`;
+      if (diffHours < 24) return `${diffHours} ता. पूर्वी`;
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    } else {
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    }
   };
 
   /* Show 3 donations at a time for the ticker row */
@@ -69,7 +72,7 @@ export default function LiveActivity({ donations, campaigns, stats }: LiveActivi
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-green" />
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-brand-green">
-                  Live Activity
+                  {lang === 'mr' ? 'थेट क्रियाकलाप' : 'Live Activity'}
                 </span>
               </div>
 
@@ -80,7 +83,7 @@ export default function LiveActivity({ donations, campaigns, stats }: LiveActivi
                     {stats.donorsToday}
                   </span>
                   <span className="text-[9px] uppercase tracking-widest text-brand-muted font-semibold">
-                    today
+                    {lang === 'mr' ? 'आज' : 'today'}
                   </span>
                 </div>
 
@@ -89,7 +92,7 @@ export default function LiveActivity({ donations, campaigns, stats }: LiveActivi
                     {stats.totalDonors}
                   </span>
                   <span className="text-[9px] uppercase tracking-widest text-brand-muted font-semibold">
-                    total
+                    {lang === 'mr' ? 'एकूण' : 'total'}
                   </span>
                 </div>
               </div>
@@ -137,7 +140,7 @@ export default function LiveActivity({ donations, campaigns, stats }: LiveActivi
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
               </svg>
               <span className="text-[9px] uppercase tracking-widest text-brand-green font-bold">
-                Verified
+                {lang === 'mr' ? 'पडताळणी झाली' : 'Verified'}
               </span>
             </div>
 
