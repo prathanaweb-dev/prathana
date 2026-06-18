@@ -43,9 +43,11 @@ export default function AdminLogin() {
         
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-brand-saffron/10 text-brand-saffron flex items-center justify-center mx-auto border border-brand-saffron/20">
-            <Heart className="w-6 h-6 fill-current" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="Prathana Foundation Logo"
+            className="w-16 h-16 object-contain mx-auto mb-2"
+          />
           <h2 className="font-serif-display text-2xl font-bold tracking-tight text-white">
             Administrative Gateway
           </h2>

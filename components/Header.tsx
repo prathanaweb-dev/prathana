@@ -81,9 +81,11 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo — Magazine Masthead */}
         <a href={`/${lang}`} className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-brand-saffron flex items-center justify-center text-white transition-transform duration-500 group-hover:rotate-12">
-            <Heart className="w-5 h-5 fill-current" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="Prathana Foundation Logo"
+            className="w-10 h-10 object-contain transition-transform duration-500 group-hover:rotate-12"
+          />
           <div className="flex flex-col">
             <span className="font-serif-display text-xl md:text-2xl font-bold tracking-tight text-brand-charcoal leading-none">
               Prathana

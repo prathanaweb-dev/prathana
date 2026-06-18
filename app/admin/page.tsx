@@ -478,7 +478,11 @@ export default function AdminDashboard() {
       {/* Admin Navbar */}
       <header className="border-b border-stone-850 bg-stone-900/50 py-4 px-6 md:px-12 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-brand-saffron fill-brand-saffron/20" />
+          <img
+            src="/logo.png"
+            alt="Prathana Foundation Logo"
+            className="w-6 h-6 object-contain"
+          />
           <div>
             <span className="font-serif-display text-lg font-bold text-white">
               Prathana Control Panel
