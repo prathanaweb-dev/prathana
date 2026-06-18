@@ -467,20 +467,20 @@ export default function AdminDashboard() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen bg-stone-950 text-stone-300 flex items-center justify-center">
+      <div className="min-h-screen bg-brand-paper text-brand-muted flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-brand-saffron" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col relative bg-grid-pattern overflow-hidden">
+    <div className="min-h-screen bg-brand-paper text-brand-charcoal flex flex-col relative bg-grid-pattern overflow-hidden">
       {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/5 rounded-full blur-[120px] pointer-events-none animate-drift" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/6 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
 
       {/* Admin Navbar */}
-      <header className="border-b border-stone-850 bg-stone-900/50 py-4 px-6 md:px-12 flex justify-between items-center z-10">
+      <header className="border-b border-brand-clay/60 bg-white/70 backdrop-blur-md py-4 px-6 md:px-12 flex justify-between items-center z-10">
         <div className="flex items-center gap-2">
           <img
             src="/logo.png"
@@ -488,7 +488,7 @@ export default function AdminDashboard() {
             className="w-6 h-6 object-contain"
           />
           <div>
-            <span className="font-serif-display text-lg font-bold text-white">
+            <span className="font-serif-display text-lg font-bold text-brand-charcoal">
               Prathana Control Panel
             </span>
             <span className="block text-[8px] uppercase tracking-widest text-brand-saffron -mt-1 font-semibold">
@@ -500,14 +500,14 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-4">
           <button
             onClick={fetchAdminData}
-            className="p-2 border border-stone-800 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-white transition-colors"
+            className="p-2 border border-brand-clay/80 rounded-lg hover:bg-brand-sand text-brand-muted hover:text-brand-charcoal transition-colors"
             title="Refresh Database Logs"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-4 py-2 border border-stone-800 rounded-lg text-xs font-semibold hover:bg-red-950/20 hover:border-red-900 hover:text-red-400 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 border border-brand-clay/80 rounded-lg text-xs font-semibold hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all text-brand-muted"
           >
             <LogOut className="w-3.5 h-3.5" />
             Logout
@@ -533,28 +533,28 @@ export default function AdminDashboard() {
                 <div className="space-y-8 animate-in fade-in duration-200">
                   <div className="space-y-1">
                     <span className="section-label">Summary Overview</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-white">System Metrics</h2>
+                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">System Metrics</h2>
                   </div>
 
                   {/* 4-col metric cards grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="p-5 bg-stone-900 border border-stone-800 rounded-xl space-y-2">
-                      <span className="block text-[9px] uppercase tracking-widest text-stone-500 font-bold">Total Donations</span>
+                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
+                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Total Donations</span>
                       <span className="block font-mono text-2xl font-bold text-brand-green">₹{stats.totalRaised.toLocaleString('en-IN')}</span>
                     </div>
 
-                    <div className="p-5 bg-stone-900 border border-stone-800 rounded-xl space-y-2">
-                      <span className="block text-[9px] uppercase tracking-widest text-stone-500 font-bold">Campaigns Target</span>
-                      <span className="block font-mono text-2xl font-bold text-stone-200">₹{stats.totalGoal.toLocaleString('en-IN')}</span>
+                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
+                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Campaigns Target</span>
+                      <span className="block font-mono text-2xl font-bold text-brand-charcoal">₹{stats.totalGoal.toLocaleString('en-IN')}</span>
                     </div>
 
-                    <div className="p-5 bg-stone-900 border border-stone-800 rounded-xl space-y-2">
-                      <span className="block text-[9px] uppercase tracking-widest text-stone-500 font-bold">Active Campaigns</span>
+                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
+                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Active Campaigns</span>
                       <span className="block font-mono text-2xl font-bold text-brand-saffron">{stats.activeCampaigns}</span>
                     </div>
 
-                    <div className="p-5 bg-stone-900 border border-stone-800 rounded-xl space-y-2">
-                      <span className="block text-[9px] uppercase tracking-widest text-stone-500 font-bold">Approved Volunteers</span>
+                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
+                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Approved Volunteers</span>
                       <span className="block font-mono text-2xl font-bold text-brand-gold">{stats.volunteerCount}</span>
                     </div>
                   </div>
@@ -562,37 +562,37 @@ export default function AdminDashboard() {
                   {/* Recent Activity Mini-Grids */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Recent Applications */}
-                    <div className="bg-stone-900 border border-stone-800 rounded-xl p-5 space-y-4">
-                      <h4 className="font-serif-display font-bold text-white pb-3 border-b border-stone-800 flex justify-between items-center text-sm">
+                    <div className="bg-white border border-brand-clay/65 rounded-xl p-5 space-y-4 shadow-sm">
+                      <h4 className="font-serif-display font-bold text-brand-charcoal pb-3 border-b border-brand-clay/50 flex justify-between items-center text-sm">
                         <span>Pending Volunteer Applications</span>
-                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 text-[8px] uppercase tracking-wider font-bold">
+                        <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[8px] uppercase tracking-wider font-bold">
                           {volunteers.filter(v => v.status === 'pending').length} Queue
                         </span>
                       </h4>
                       <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
                         {volunteers.filter(v => v.status === 'pending').slice(0, 4).map(v => (
-                          <div key={v.id} className="flex justify-between items-center bg-stone-950/40 p-3 rounded-lg border border-stone-850 text-xs">
+                          <div key={v.id} className="flex justify-between items-center bg-brand-sand/40 p-3 rounded-lg border border-brand-clay/50 text-xs">
                             <div>
-                              <span className="block font-semibold text-white">{v.name}</span>
-                              <span className="block text-[9px] text-stone-500">{v.email} &bull; {v.phone}</span>
+                              <span className="block font-semibold text-brand-charcoal">{v.name}</span>
+                              <span className="block text-[9px] text-brand-muted">{v.email} &bull; {v.phone}</span>
                             </div>
                             <button
                               onClick={() => setTab('volunteers')}
-                              className="px-3 py-1 bg-stone-800 hover:bg-brand-saffron text-stone-300 hover:text-white rounded text-[10px] font-semibold transition-colors"
+                              className="px-3 py-1 bg-brand-charcoal hover:bg-brand-saffron text-white rounded text-[10px] font-semibold transition-colors"
                             >
                               Review
                             </button>
                           </div>
                         ))}
                         {volunteers.filter(v => v.status === 'pending').length === 0 && (
-                          <p className="text-stone-500 text-xs text-center py-6 font-light">All applications reviewed.</p>
+                          <p className="text-brand-muted text-xs text-center py-6 font-light">All applications reviewed.</p>
                         )}
                       </div>
                     </div>
 
                     {/* Recent Donors */}
-                    <div className="bg-stone-900 border border-stone-800 rounded-xl p-5 space-y-4">
-                      <h4 className="font-serif-display font-bold text-white pb-3 border-b border-stone-800 flex justify-between items-center text-sm">
+                    <div className="bg-white border border-brand-clay/65 rounded-xl p-5 space-y-4 shadow-sm">
+                      <h4 className="font-serif-display font-bold text-brand-charcoal pb-3 border-b border-brand-clay/50 flex justify-between items-center text-sm">
                         <span>Recent Contribution Audits</span>
                         <span className="px-2 py-0.5 rounded bg-brand-green/10 text-brand-green text-[8px] uppercase tracking-wider font-bold">
                           {donations.filter(d => d.payment_status === 'success').length} verified
@@ -600,18 +600,18 @@ export default function AdminDashboard() {
                       </h4>
                       <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
                         {donations.slice(0, 4).map(d => (
-                          <div key={d.id} className="flex justify-between items-center bg-stone-950/40 p-3 rounded-lg border border-stone-850 text-xs">
+                          <div key={d.id} className="flex justify-between items-center bg-brand-sand/40 p-3 rounded-lg border border-brand-clay/50 text-xs">
                             <div>
-                              <span className="block font-semibold text-white">{d.donor_name}</span>
-                              <span className="block text-[9px] text-stone-500">{new Date(d.created_at).toLocaleDateString()}</span>
+                              <span className="block font-semibold text-brand-charcoal">{d.donor_name}</span>
+                              <span className="block text-[9px] text-brand-muted">{new Date(d.created_at).toLocaleDateString()}</span>
                             </div>
-                            <span className="font-serif-display font-bold text-brand-green">
+                            <span className="font-serif-display font-bold text-brand-green text-sm">
                               ₹{Number(d.amount).toLocaleString('en-IN')}
                             </span>
                           </div>
                         ))}
                         {donations.length === 0 && (
-                          <p className="text-stone-500 text-xs text-center py-6 font-light">No ledger inputs registered.</p>
+                          <p className="text-brand-muted text-xs text-center py-6 font-light">No ledger inputs registered.</p>
                         )}
                       </div>
                     </div>
@@ -627,11 +627,11 @@ export default function AdminDashboard() {
                   <div className="flex justify-between items-center">
                     <div className="space-y-1">
                       <span className="section-label">Fiduciary Targets</span>
-                      <h2 className="font-serif-display text-2xl font-bold text-white">Campaigns Manager</h2>
+                      <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Campaigns Manager</h2>
                     </div>
                     <button
                       onClick={() => openCampaignForm()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-brand-saffron hover:bg-white hover:text-stone-950 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 btn-premium rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
                     >
                       <Plus className="w-4 h-4" />
                       Add Campaign
@@ -640,9 +640,9 @@ export default function AdminDashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {campaigns.map(camp => (
-                      <div key={camp.id} className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden flex flex-col justify-between">
-                        <div className="h-32 relative bg-stone-950">
-                          <img src={camp.image} alt={camp.title} className="w-full h-full object-cover opacity-70" />
+                      <div key={camp.id} className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden flex flex-col justify-between shadow-sm">
+                        <div className="h-32 relative bg-brand-sand">
+                          <img src={camp.image} alt={camp.title} className="w-full h-full object-cover opacity-90" />
                           <span className={`absolute top-3 right-3 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full text-white ${
                             camp.status === 'completed' || camp.is_completed ? 'bg-brand-green' : 'bg-brand-saffron'
                           }`}>
@@ -651,22 +651,22 @@ export default function AdminDashboard() {
                         </div>
                         <div className="p-5 space-y-4">
                           <div className="space-y-1">
-                            <span className="block font-mono text-[9px] text-stone-500">{camp.id}</span>
-                            <h4 className="font-serif-display text-base font-bold text-white line-clamp-1">{camp.title}</h4>
-                            <p className="text-xs text-stone-400 font-light line-clamp-2">{camp.description}</p>
+                            <span className="block font-mono text-[9px] text-brand-muted">{camp.id}</span>
+                            <h4 className="font-serif-display text-base font-bold text-brand-charcoal line-clamp-1">{camp.title}</h4>
+                            <p className="text-xs text-brand-muted font-light line-clamp-2">{camp.description}</p>
                           </div>
                           
-                          <div className="flex gap-2 pt-3 border-t border-stone-850">
+                          <div className="flex gap-2 pt-3 border-t border-brand-clay/40">
                             <button
                               onClick={() => openCampaignForm(camp)}
-                              className="flex-1 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg flex items-center justify-center gap-1 transition-colors"
+                              className="flex-1 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg flex items-center justify-center gap-1 transition-colors border border-brand-clay/60"
                             >
-                              <Edit2 className="w-3.5 h-3.5" />
+                              <Edit2 className="w-3.5 h-3.5 text-brand-saffron" />
                               Edit
                             </button>
                             <button
                               onClick={() => handleDeleteItem('campaigns', camp.id)}
-                              className="p-2 border border-stone-800 text-stone-500 hover:text-red-400 hover:border-red-900/40 rounded-lg hover:bg-red-950/20 transition-colors"
+                              className="p-2 border border-brand-clay/60 text-brand-muted hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-lg transition-colors"
                               title="Delete Campaign"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -676,8 +676,8 @@ export default function AdminDashboard() {
                       </div>
                     ))}
                     {campaigns.length === 0 && (
-                      <div className="col-span-full text-center py-20 border border-dashed border-stone-800 rounded-xl">
-                        <p className="text-stone-500 text-xs font-light">No campaigns registered. Click Add Campaign to start.</p>
+                      <div className="col-span-full text-center py-20 border border-dashed border-brand-clay rounded-xl bg-white/50">
+                        <p className="text-brand-muted text-xs font-light">No campaigns registered. Click Add Campaign to start.</p>
                       </div>
                     )}
                   </div>
@@ -691,14 +691,14 @@ export default function AdminDashboard() {
                 <div className="space-y-6 animate-in fade-in duration-200">
                   <div className="space-y-1">
                     <span className="section-label">Field Force Manager</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-white">Volunteer Applications</h2>
+                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Volunteer Applications</h2>
                   </div>
 
-                  <div className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden">
+                  <div className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="bg-stone-950 text-stone-400 border-b border-stone-800 text-[10px] uppercase tracking-widest font-bold">
+                          <tr className="bg-brand-sand/60 text-brand-charcoal border-b border-brand-clay/70 text-[10px] uppercase tracking-widest font-bold">
                             <th className="p-4">Applicant</th>
                             <th className="p-4">Location & Job</th>
                             <th className="p-4">Interests</th>
@@ -707,20 +707,20 @@ export default function AdminDashboard() {
                             <th className="p-4 text-right">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-stone-800 text-xs font-light">
+                        <tbody className="divide-y divide-brand-clay/50 text-xs font-light">
                           {volunteers.map(vol => (
-                            <tr key={vol.id} className="hover:bg-stone-850/30 transition-colors">
+                            <tr key={vol.id} className="hover:bg-brand-sand/20 transition-colors">
                               <td className="p-4 space-y-0.5">
-                                <span className="block font-semibold text-white">{vol.name}</span>
-                                <span className="block text-[10px] text-stone-500">{vol.email}</span>
-                                <span className="block text-[10px] text-stone-500">{vol.phone}</span>
+                                <span className="block font-semibold text-brand-charcoal">{vol.name}</span>
+                                <span className="block text-[10px] text-brand-muted">{vol.email}</span>
+                                <span className="block text-[10px] text-brand-muted">{vol.phone}</span>
                               </td>
                               <td className="p-4 space-y-0.5">
-                                <span className="block text-stone-300">{vol.city}</span>
-                                <span className="block text-[10px] text-stone-500">{vol.occupation}</span>
+                                <span className="block text-brand-charcoal">{vol.city}</span>
+                                <span className="block text-[10px] text-brand-muted">{vol.occupation}</span>
                               </td>
                               <td className="p-4">
-                                <span className="text-[10px] bg-stone-950/60 px-2.5 py-1 rounded text-stone-400 border border-stone-850 font-mono">
+                                <span className="text-[10px] bg-brand-sand px-2.5 py-1 rounded text-brand-muted border border-brand-clay/60 font-mono">
                                   {vol.interests}
                                 </span>
                               </td>
@@ -743,7 +743,7 @@ export default function AdminDashboard() {
                                   <select
                                     value={vol.assigned_activity || ''}
                                     onChange={(e) => handleAssignActivity(vol.id, e.target.value)}
-                                    className="px-2.5 py-1.5 bg-stone-950 border border-stone-800 text-stone-300 rounded text-xs outline-none focus:border-brand-saffron transition-all"
+                                    className="px-2.5 py-1.5 bg-white border border-brand-clay text-brand-charcoal rounded text-xs outline-none focus:border-brand-saffron transition-all"
                                   >
                                     <option value="">-- Unassigned --</option>
                                     {activities.map(act => (
@@ -753,7 +753,7 @@ export default function AdminDashboard() {
                                     ))}
                                   </select>
                                 ) : (
-                                  <span className="text-stone-600 italic text-[11px]">Requires Approval</span>
+                                  <span className="text-brand-muted/70 italic text-[11px]">Requires Approval</span>
                                 )}
                               </td>
                               <td className="p-4 text-right">
@@ -768,7 +768,7 @@ export default function AdminDashboard() {
                                     </button>
                                     <button
                                       onClick={() => handleVolunteerStatus(vol.id, 'rejected')}
-                                      className="p-1.5 bg-red-950/20 text-red-400 hover:bg-red-600 hover:text-white rounded border border-red-900/40 transition-all"
+                                      className="p-1.5 bg-red-50 text-red-500 hover:bg-red-600 hover:text-white rounded border border-red-200 transition-all"
                                       title="Reject Applicant"
                                     >
                                       <X className="w-3.5 h-3.5" />
@@ -777,7 +777,7 @@ export default function AdminDashboard() {
                                 ) : (
                                   <button
                                     onClick={() => handleVolunteerStatus(vol.id, 'pending')}
-                                    className="px-2 py-1 border border-stone-800 hover:bg-stone-850 hover:text-white text-stone-500 rounded text-[10px] font-semibold transition-colors"
+                                    className="px-2 py-1 border border-brand-clay hover:bg-brand-sand hover:text-brand-charcoal text-brand-muted rounded text-[10px] font-semibold transition-colors"
                                   >
                                     Reset to Pending
                                   </button>
@@ -787,7 +787,7 @@ export default function AdminDashboard() {
                           ))}
                           {volunteers.length === 0 && (
                             <tr>
-                              <td colSpan={6} className="text-center py-12 text-stone-500">
+                              <td colSpan={6} className="text-center py-12 text-brand-muted">
                                 No volunteer registrations found in the log.
                               </td>
                             </tr>
@@ -806,11 +806,11 @@ export default function AdminDashboard() {
                 <div className="space-y-6 animate-in fade-in duration-200">
                   <div className="space-y-1">
                     <span className="section-label">Website Content Management</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-white">Content Hub</h2>
+                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Content Hub</h2>
                   </div>
 
                   {/* Sub-tabs row */}
-                  <div className="flex border-b border-stone-850 pb-3 gap-2">
+                  <div className="flex border-b border-brand-clay pb-3 gap-2">
                     {[
                       { id: 'activities', label: 'Activities' },
                       { id: 'projects', label: 'Projects' },
@@ -819,10 +819,10 @@ export default function AdminDashboard() {
                       <button
                         key={sub.id}
                         onClick={() => setContentTab(sub.id as any)}
-                        className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors ${
+                        className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors border ${
                           contentTab === sub.id
-                            ? 'bg-stone-800 text-white border border-stone-700'
-                            : 'text-stone-400 hover:text-white hover:bg-stone-900/40'
+                            ? 'bg-brand-charcoal text-white border-brand-charcoal shadow-sm'
+                            : 'text-brand-muted border-transparent hover:text-brand-charcoal hover:bg-brand-sand/50'
                         }`}
                       >
                         {sub.label}
@@ -834,10 +834,10 @@ export default function AdminDashboard() {
                   {contentTab === 'activities' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-stone-400 font-mono">{activities.length} Activities Found</span>
+                        <span className="text-xs text-brand-muted font-mono">{activities.length} Activities Found</span>
                         <button
                           onClick={() => openActivityForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-white hover:text-stone-950 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-brand-saffron/90 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           Add Activity
@@ -846,32 +846,32 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {activities.map(act => (
-                          <div key={act.id} className="p-4 bg-stone-900 border border-stone-800 rounded-xl flex gap-4 items-start justify-between">
+                          <div key={act.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
                             <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-950 shrink-0">
+                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
                                 <img src={act.image} alt={act.title} className="w-full h-full object-cover" />
                               </div>
                               <div className="space-y-1">
-                                <span className="px-2 py-0.5 rounded-full bg-stone-950 text-[9px] font-mono text-brand-saffron border border-stone-850">
+                                <span className="px-2 py-0.5 rounded-full bg-brand-sand text-[9px] font-mono text-brand-saffron border border-brand-clay/60">
                                   {act.category}
                                 </span>
-                                <h4 className="font-serif-display font-bold text-white text-sm pt-1">{act.title}</h4>
-                                <p className="text-[11px] text-stone-500 font-light line-clamp-1">{act.description}</p>
+                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{act.title}</h4>
+                                <p className="text-[11px] text-brand-muted font-light line-clamp-1">{act.description}</p>
                               </div>
                             </div>
 
                             <div className="flex gap-1">
                               <button
                                 onClick={() => openActivityForm(act)}
-                                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Edit2 className="w-3 h-3" />
+                                <Edit2 className="w-3 h-3 text-brand-saffron" />
                               </button>
                               <button
                                 onClick={() => handleDeleteItem('activities', act.id)}
-                                className="p-1.5 bg-stone-800 hover:bg-red-950 hover:text-red-400 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
                               </button>
                             </div>
                           </div>
@@ -884,10 +884,10 @@ export default function AdminDashboard() {
                   {contentTab === 'projects' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-stone-400 font-mono">{projects.length} Projects Found</span>
+                        <span className="text-xs text-brand-muted font-mono">{projects.length} Projects Found</span>
                         <button
                           onClick={() => openProjectForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-white hover:text-stone-950 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-brand-saffron/90 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           Add Project
@@ -896,19 +896,19 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {projects.map(proj => (
-                          <div key={proj.id} className="p-4 bg-stone-900 border border-stone-800 rounded-xl flex gap-4 items-start justify-between">
+                          <div key={proj.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
                             <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-950 shrink-0">
+                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
                                 <img src={proj.image} alt={proj.title} className="w-full h-full object-cover" />
                               </div>
                               <div className="space-y-1">
                                 <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest ${
-                                  proj.status === 'completed' ? 'bg-brand-green/20 text-brand-green' : proj.status === 'active' ? 'bg-brand-saffron/20 text-brand-saffron' : 'bg-stone-800 text-stone-400'
+                                  proj.status === 'completed' ? 'bg-brand-green/10 text-brand-green' : proj.status === 'active' ? 'bg-brand-saffron/10 text-brand-saffron' : 'bg-brand-sand text-brand-muted border border-brand-clay/40'
                                 }`}>
                                   {proj.status}
                                 </span>
-                                <h4 className="font-serif-display font-bold text-white text-sm pt-1">{proj.title}</h4>
-                                <p className="text-[10px] text-stone-500 font-mono font-light">
+                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{proj.title}</h4>
+                                <p className="text-[10px] text-brand-muted font-mono font-light">
                                   {proj.start_date} &ndash; {proj.end_date}
                                 </p>
                               </div>
@@ -917,15 +917,15 @@ export default function AdminDashboard() {
                             <div className="flex gap-1">
                               <button
                                 onClick={() => openProjectForm(proj)}
-                                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Edit2 className="w-3 h-3" />
+                                <Edit2 className="w-3 h-3 text-brand-saffron" />
                               </button>
                               <button
                                 onClick={() => handleDeleteItem('projects', proj.id)}
-                                className="p-1.5 bg-stone-800 hover:bg-red-950 hover:text-red-400 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
                               </button>
                             </div>
                           </div>
@@ -938,10 +938,10 @@ export default function AdminDashboard() {
                   {contentTab === 'events' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-stone-400 font-mono">{events.length} Events/Blogs Found</span>
+                        <span className="text-xs text-brand-muted font-mono">{events.length} Events/Blogs Found</span>
                         <button
                           onClick={() => openEventForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-white hover:text-stone-950 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-saffron hover:bg-brand-saffron/90 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           Add Event
@@ -950,33 +950,33 @@ export default function AdminDashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {events.map(evt => (
-                          <div key={evt.id} className="p-4 bg-stone-900 border border-stone-800 rounded-xl flex gap-4 items-start justify-between">
+                          <div key={evt.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
                             <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-stone-950 shrink-0">
+                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
                                 <img src={evt.featured_image} alt={evt.title} className="w-full h-full object-cover" />
                               </div>
                               <div className="space-y-1">
-                                <span className="text-[9px] font-mono text-stone-500 uppercase font-bold tracking-widest flex items-center gap-1">
+                                <span className="text-[9px] font-mono text-brand-muted uppercase font-bold tracking-widest flex items-center gap-1">
                                   <Calendar className="w-3 h-3 text-brand-saffron" />
                                   {evt.published_date}
                                 </span>
-                                <h4 className="font-serif-display font-bold text-white text-sm pt-1">{evt.title}</h4>
-                                <p className="text-[11px] text-stone-500 font-light line-clamp-1">{evt.content}</p>
+                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{evt.title}</h4>
+                                <p className="text-[11px] text-brand-muted font-light line-clamp-1">{evt.content}</p>
                               </div>
                             </div>
 
                             <div className="flex gap-1">
                               <button
                                 onClick={() => openEventForm(evt)}
-                                className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Edit2 className="w-3 h-3" />
+                                <Edit2 className="w-3 h-3 text-brand-saffron" />
                               </button>
                               <button
                                 onClick={() => handleDeleteItem('events', evt.id)}
-                                className="p-1.5 bg-stone-800 hover:bg-red-950 hover:text-red-400 rounded"
+                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
                               </button>
                             </div>
                           </div>
@@ -994,14 +994,14 @@ export default function AdminDashboard() {
                 <div className="space-y-6 animate-in fade-in duration-200">
                   <div className="space-y-1">
                     <span className="section-label">Audit Log</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-white">Donations Ledger</h2>
+                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Donations Ledger</h2>
                   </div>
 
-                  <div className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden">
+                  <div className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="bg-stone-950 text-stone-400 border-b border-stone-800 text-[10px] uppercase tracking-widest font-bold">
+                          <tr className="bg-brand-sand/60 text-brand-charcoal border-b border-brand-clay/70 text-[10px] uppercase tracking-widest font-bold">
                             <th className="p-4">Donor Details</th>
                             <th className="p-4">Campaign ID</th>
                             <th className="p-4">Amount</th>
@@ -1010,20 +1010,20 @@ export default function AdminDashboard() {
                             <th className="p-4 text-right">Date</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-stone-800 text-xs font-light">
+                        <tbody className="divide-y divide-brand-clay/50 text-xs font-light">
                           {donations.map((don) => (
-                            <tr key={don.id} className="hover:bg-stone-850/35 transition-colors">
+                            <tr key={don.id} className="hover:bg-brand-sand/20 transition-colors">
                               <td className="p-4 space-y-0.5">
-                                <span className="block font-semibold text-white">{don.donor_name}</span>
-                                <span className="block text-[10px] text-stone-500">{don.donor_email}</span>
+                                <span className="block font-semibold text-brand-charcoal">{don.donor_name}</span>
+                                <span className="block text-[10px] text-brand-muted">{don.donor_email}</span>
                               </td>
-                              <td className="p-4 font-mono text-stone-400">
+                              <td className="p-4 font-mono text-brand-muted">
                                 {don.campaign_id}
                               </td>
-                              <td className="p-4 font-serif-display font-bold text-white text-sm">
+                              <td className="p-4 font-serif-display font-bold text-brand-charcoal text-sm">
                                 ₹{Number(don.amount).toLocaleString('en-IN')}
                               </td>
-                              <td className="p-4 font-mono text-[10px] text-stone-400">
+                              <td className="p-4 font-mono text-[10px] text-brand-muted">
                                 {don.payment_id}
                               </td>
                               <td className="p-4">
@@ -1040,7 +1040,7 @@ export default function AdminDashboard() {
                                   {don.payment_status}
                                 </span>
                               </td>
-                              <td className="p-4 text-right text-stone-500 font-mono text-[10px]">
+                              <td className="p-4 text-right text-brand-muted font-mono text-[10px]">
                                 {new Date(don.created_at).toLocaleString('en-IN', {
                                   day: 'numeric',
                                   month: 'short',
@@ -1052,7 +1052,7 @@ export default function AdminDashboard() {
                           ))}
                           {donations.length === 0 && (
                             <tr>
-                              <td colSpan={6} className="text-center py-12 text-stone-500">
+                              <td colSpan={6} className="text-center py-12 text-brand-muted">
                                 No donations registered in the ledger.
                               </td>
                             </tr>
@@ -1075,70 +1075,70 @@ export default function AdminDashboard() {
       {/* 1. Campaign Creator Modal */}
       {isCampaignFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/85" onClick={() => setIsCampaignFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-stone-950 border-b border-stone-800 flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-white">
+          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsCampaignFormOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
+              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
                 {editingCampaign ? 'Edit Campaign Details' : 'Register New Campaign'}
               </h3>
-              <button onClick={() => setIsCampaignFormOpen(false)} className="p-1 hover:bg-stone-800 text-stone-400 hover:text-white rounded-full">
+              <button onClick={() => setIsCampaignFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCampaignSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {formError && (
-                <div className="p-3 bg-red-950/40 border border-red-900 text-red-400 text-xs rounded-lg font-medium flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   <span>{formError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Campaign Title (English)</label>
-                <input type="text" required value={campTitle} onChange={(e) => setCampTitle(e.target.value)} placeholder="e.g. Sponsor Nutrition Lunch Boxes" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Title (English)</label>
+                <input type="text" required value={campTitle} onChange={(e) => setCampTitle(e.target.value)} placeholder="e.g. Sponsor Nutrition Lunch Boxes" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Campaign Title (Marathi)</label>
-                <input type="text" value={campTitleMr} onChange={(e) => setCampTitleMr(e.target.value)} placeholder="उदा. पोषण भोजन पेटी प्रायोजक व्हा" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Title (Marathi)</label>
+                <input type="text" value={campTitleMr} onChange={(e) => setCampTitleMr(e.target.value)} placeholder="उदा. पोषण भोजन पेटी प्रायोजक व्हा" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Goal Amount (INR)</label>
-                <input type="number" required value={campGoal} onChange={(e) => setCampGoal(e.target.value)} placeholder="e.g. 350000" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Goal Amount (INR)</label>
+                <input type="number" required value={campGoal} onChange={(e) => setCampGoal(e.target.value)} placeholder="e.g. 350000" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={campDesc} onChange={(e) => setCampDesc(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
+                <textarea required rows={3} value={campDesc} onChange={(e) => setCampDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={campDescMr} onChange={(e) => setCampDescMr(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
+                <textarea rows={3} value={campDescMr} onChange={(e) => setCampDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Campaign Image</label>
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Image</label>
                 <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setCampImage)} className="hidden" id="camp-file" />
-                <label htmlFor="camp-file" className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block">Upload Photo</label>
-                {campImage && <img src={campImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-stone-800" />}
+                <label htmlFor="camp-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
+                {campImage && <img src={campImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
               </div>
 
               {editingCampaign && (
                 <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Campaign Status</label>
-                  <select value={campStatus} onChange={(e) => setCampStatus(e.target.value as any)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron">
+                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Status</label>
+                  <select value={campStatus} onChange={(e) => setCampStatus(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron">
                     <option value="active">Active</option>
                     <option value="completed">Completed</option>
                   </select>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-stone-800">
-                <button type="button" onClick={() => setIsCampaignFormOpen(false)} className="flex-1 py-2 border border-stone-850 hover:bg-stone-800 text-stone-300 text-xs font-semibold rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-saffron text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
+              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
+                <button type="button" onClick={() => setIsCampaignFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
+                <button type="submit" disabled={formLoading} className="flex-1 py-2 btn-premium text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
                   {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Campaign'}
                 </button>
               </div>
@@ -1150,38 +1150,38 @@ export default function AdminDashboard() {
       {/* 2. Activity Creator Modal */}
       {isActivityFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/85" onClick={() => setIsActivityFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-stone-950 border-b border-stone-800 flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-white">
+          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsActivityFormOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
+              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
                 {editingActivity ? 'Edit Activity Details' : 'Register New Activity'}
               </h3>
-              <button onClick={() => setIsActivityFormOpen(false)} className="p-1 hover:bg-stone-800 text-stone-400 hover:text-white rounded-full">
+              <button onClick={() => setIsActivityFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleActivitySubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {formError && (
-                <div className="p-3 bg-red-950/40 border border-red-900 text-red-400 text-xs rounded-lg font-medium flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   <span>{formError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Activity Title (English)</label>
-                <input type="text" required value={actTitle} onChange={(e) => setActTitle(e.target.value)} placeholder="e.g. Solapur Evening Tuition" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Activity Title (English)</label>
+                <input type="text" required value={actTitle} onChange={(e) => setActTitle(e.target.value)} placeholder="e.g. Solapur Evening Tuition" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Activity Title (Marathi)</label>
-                <input type="text" value={actTitleMr} onChange={(e) => setActTitleMr(e.target.value)} placeholder="उदा. सोलापूर संध्याकाळचे अभ्यास वर्ग" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Activity Title (Marathi)</label>
+                <input type="text" value={actTitleMr} onChange={(e) => setActTitleMr(e.target.value)} placeholder="उदा. सोलापूर संध्याकाळचे अभ्यास वर्ग" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Category</label>
-                <select value={actCategory} onChange={(e) => setActCategory(e.target.value as any)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron">
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Category</label>
+                <select value={actCategory} onChange={(e) => setActCategory(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron">
                   <option value="nutrition">Meals & Nutrition</option>
                   <option value="education">Education Support</option>
                   <option value="healthcare">Mobile Clinics</option>
@@ -1190,25 +1190,25 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={actDesc} onChange={(e) => setActDesc(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
+                <textarea required rows={3} value={actDesc} onChange={(e) => setActDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={actDescMr} onChange={(e) => setActDescMr(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
+                <textarea rows={3} value={actDescMr} onChange={(e) => setActDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Banner Photo</label>
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Banner Photo</label>
                 <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setActImage)} className="hidden" id="act-file" />
-                <label htmlFor="act-file" className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block">Upload Photo</label>
-                {actImage && <img src={actImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-stone-800" />}
+                <label htmlFor="act-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
+                {actImage && <img src={actImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-stone-800">
-                <button type="button" onClick={() => setIsActivityFormOpen(false)} className="flex-1 py-2 border border-stone-850 hover:bg-stone-800 text-stone-300 text-xs font-semibold rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-saffron text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
+              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
+                <button type="button" onClick={() => setIsActivityFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
+                <button type="submit" disabled={formLoading} className="flex-1 py-2 btn-premium text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
                   {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Activity'}
                 </button>
               </div>
@@ -1220,49 +1220,49 @@ export default function AdminDashboard() {
       {/* 3. Project Creator Modal */}
       {isProjectFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/85" onClick={() => setIsProjectFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-stone-950 border-b border-stone-800 flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-white">
+          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsProjectFormOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
+              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
                 {editingProject ? 'Edit Project Details' : 'Register New Project'}
               </h3>
-              <button onClick={() => setIsProjectFormOpen(false)} className="p-1 hover:bg-stone-800 text-stone-400 hover:text-white rounded-full">
+              <button onClick={() => setIsProjectFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleProjectSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {formError && (
-                <div className="p-3 bg-red-950/40 border border-red-900 text-red-400 text-xs rounded-lg font-medium flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   <span>{formError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Project Title (English)</label>
-                <input type="text" required value={projTitle} onChange={(e) => setProjTitle(e.target.value)} placeholder="e.g. central community kitchen build" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Title (English)</label>
+                <input type="text" required value={projTitle} onChange={(e) => setProjTitle(e.target.value)} placeholder="e.g. central community kitchen build" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Project Title (Marathi)</label>
-                <input type="text" value={projTitleMr} onChange={(e) => setProjTitleMr(e.target.value)} placeholder="उदा. मध्यवर्ती समुदाय स्वयंपाकघर उभारणी प्रकल्प" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Title (Marathi)</label>
+                <input type="text" value={projTitleMr} onChange={(e) => setProjTitleMr(e.target.value)} placeholder="उदा. मध्यवर्ती समुदाय स्वयंपाकघर उभारणी प्रकल्प" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Start Date</label>
-                  <input type="date" required value={projStart} onChange={(e) => setProjStart(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-white" />
+                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Start Date</label>
+                  <input type="date" required value={projStart} onChange={(e) => setProjStart(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-brand-charcoal" />
                 </div>
                 <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">End Date</label>
-                  <input type="date" required value={projEnd} onChange={(e) => setProjEnd(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-white" />
+                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">End Date</label>
+                  <input type="date" required value={projEnd} onChange={(e) => setProjEnd(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-brand-charcoal" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Status</label>
-                <select value={projStatus} onChange={(e) => setProjStatus(e.target.value as any)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron">
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Status</label>
+                <select value={projStatus} onChange={(e) => setProjStatus(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron">
                   <option value="planned">Planned</option>
                   <option value="active">Active</option>
                   <option value="completed">Completed</option>
@@ -1270,25 +1270,25 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={projDesc} onChange={(e) => setProjDesc(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
+                <textarea required rows={3} value={projDesc} onChange={(e) => setProjDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={projDescMr} onChange={(e) => setProjDescMr(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
+                <textarea rows={3} value={projDescMr} onChange={(e) => setProjDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Project Cover Image</label>
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Cover Image</label>
                 <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setProjImage)} className="hidden" id="proj-file" />
-                <label htmlFor="proj-file" className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block">Upload Photo</label>
-                {projImage && <img src={projImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-stone-800" />}
+                <label htmlFor="proj-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
+                {projImage && <img src={projImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-stone-800">
-                <button type="button" onClick={() => setIsProjectFormOpen(false)} className="flex-1 py-2 border border-stone-850 hover:bg-stone-800 text-stone-300 text-xs font-semibold rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-saffron text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
+              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
+                <button type="button" onClick={() => setIsProjectFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
+                <button type="submit" disabled={formLoading} className="flex-1 py-2 btn-premium text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
                   {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Project'}
                 </button>
               </div>
@@ -1300,60 +1300,60 @@ export default function AdminDashboard() {
       {/* 4. Event Creator Modal */}
       {isEventFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/85" onClick={() => setIsEventFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-stone-900 border border-stone-800 rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-stone-950 border-b border-stone-800 flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-white">
+          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsEventFormOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
+              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
                 {editingEvent ? 'Edit News Event' : 'Add News / Event Post'}
               </h3>
-              <button onClick={() => setIsEventFormOpen(false)} className="p-1 hover:bg-stone-800 text-stone-400 hover:text-white rounded-full">
+              <button onClick={() => setIsEventFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleEventSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               {formError && (
-                <div className="p-3 bg-red-950/40 border border-red-900 text-red-400 text-xs rounded-lg font-medium flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   <span>{formError}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Event Title (English)</label>
-                <input type="text" required value={evtTitle} onChange={(e) => setEvtTitle(e.target.value)} placeholder="e.g. Solapur Kit Drive Reaches 400 Kids" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Event Title (English)</label>
+                <input type="text" required value={evtTitle} onChange={(e) => setEvtTitle(e.target.value)} placeholder="e.g. Solapur Kit Drive Reaches 400 Kids" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Event Title (Marathi)</label>
-                <input type="text" value={evtTitleMr} onChange={(e) => setEvtTitleMr(e.target.value)} placeholder="उदा. शालेय साहित्य वाटप मोहीम ४०० मुलांपर्यंत पोहोचली" className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Event Title (Marathi)</label>
+                <input type="text" value={evtTitleMr} onChange={(e) => setEvtTitleMr(e.target.value)} placeholder="उदा. शालेय साहित्य वाटप मोहीम ४०० मुलांपर्यंत पोहोचली" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Publication Date</label>
-                <input type="date" required value={evtDate} onChange={(e) => setEvtDate(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-white" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Publication Date</label>
+                <input type="date" required value={evtDate} onChange={(e) => setEvtDate(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-saffron transition-all text-brand-charcoal" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Content (English)</label>
-                <textarea required rows={5} value={evtContent} onChange={(e) => setEvtContent(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Content (English)</label>
+                <textarea required rows={5} value={evtContent} onChange={(e) => setEvtContent(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Content (Marathi)</label>
-                <textarea rows={5} value={evtContentMr} onChange={(e) => setEvtContentMr(e.target.value)} className="w-full px-4 py-2 bg-stone-950 border border-stone-800 rounded-lg text-sm outline-none focus:border-brand-saffron transition-all" />
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Content (Marathi)</label>
+                <textarea rows={5} value={evtContentMr} onChange={(e) => setEvtContentMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all" />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-stone-400 font-bold mb-1.5">Featured Image</label>
+                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Featured Image</label>
                 <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setEvtImage)} className="hidden" id="evt-file" />
-                <label htmlFor="evt-file" className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block">Upload Photo</label>
-                {evtImage && <img src={evtImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-stone-800" />}
+                <label htmlFor="evt-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
+                {evtImage && <img src={evtImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-stone-800">
-                <button type="button" onClick={() => setIsEventFormOpen(false)} className="flex-1 py-2 border border-stone-850 hover:bg-stone-800 text-stone-300 text-xs font-semibold rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-saffron text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
+              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
+                <button type="button" onClick={() => setIsEventFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
+                <button type="submit" disabled={formLoading} className="flex-1 py-2 btn-premium text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
                   {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Post'}
                 </button>
               </div>
@@ -1363,7 +1363,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Floating Bottom Nav Dock */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0c1017]/85 backdrop-blur-xl border border-white/10 px-4 py-2.5 rounded-full shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex items-center gap-1.5 sm:gap-3 max-w-[95vw] sm:max-w-max overflow-x-auto">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-xl border border-brand-clay px-4 py-2.5 rounded-full shadow-[0_15px_45px_-10px_rgba(21,34,27,0.15)] flex items-center gap-1.5 sm:gap-3 max-w-[95vw] sm:max-w-max overflow-x-auto">
         {[
           { id: 'dashboard', label: 'Dashboard', icon: ClipboardList },
           { id: 'campaigns', label: 'Campaigns', icon: Heart },
@@ -1380,7 +1380,7 @@ export default function AdminDashboard() {
               className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
                 isActive
                   ? 'bg-brand-saffron text-white shadow-lg shadow-brand-saffron/25 scale-105'
-                  : 'text-stone-400 hover:text-white hover:bg-white/5'
+                  : 'text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/60'
               }`}
             >
               <Icon className="w-4 h-4" />

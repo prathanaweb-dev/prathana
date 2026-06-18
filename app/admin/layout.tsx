@@ -23,7 +23,7 @@ export default function AdminLayout({
       lang="en"
       className={`${plusJakarta.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col bg-[#070a0e] text-[#e2e8f0] font-sans antialiased">
+      <body className="min-h-full flex flex-col bg-[#FAF9F5] text-[#15221B] font-sans antialiased">
         {children}
       </body>
     </html>
