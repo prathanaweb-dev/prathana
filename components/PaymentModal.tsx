@@ -226,14 +226,14 @@ export default function PaymentModal({
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-brand-clay/40 bg-brand-sand/50">
           <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-brand-saffron fill-brand-saffron/20" />
+            <Heart className="w-5 h-5 text-brand-yellow fill-brand-yellow/20" />
             <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
               Make a Direct Donation
             </h3>
           </div>
           <button
             onClick={handleClose}
-            className="p-1 text-brand-muted hover:text-brand-saffron transition-colors rounded-full hover:bg-brand-sand/50"
+            className="p-1 text-brand-muted hover:text-brand-forest transition-colors rounded-full hover:bg-brand-sand/50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -257,7 +257,7 @@ export default function PaymentModal({
                 <select
                   value={campaignId}
                   onChange={(e) => setCampaignId(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm text-brand-charcoal focus:ring-2 focus:ring-brand-saffron/10 focus:border-brand-saffron outline-none transition-all"
+                  className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm text-brand-charcoal focus:ring-2 focus:ring-brand-yellow/10 focus:border-brand-yellow outline-none transition-all"
                 >
                   {campaigns.map((camp) => (
                     <option key={camp.id} value={camp.id}>
@@ -278,9 +278,9 @@ export default function PaymentModal({
                       key={amt}
                       type="button"
                       onClick={() => handlePresetSelect(amt)}
-                      className={`py-2.5 px-3 border rounded-xl text-sm font-medium tracking-wide transition-all ${
+                      className={`py-2.5 px-3 border rounded-xl text-sm font-bold tracking-wide transition-all ${
                         amount === amt
-                          ? 'bg-brand-saffron border-brand-saffron text-white shadow-sm'
+                          ? 'bg-brand-yellow border-brand-yellow text-brand-charcoal shadow-sm'
                           : 'border-brand-clay text-brand-charcoal hover:bg-brand-sand/50'
                       }`}
                     >
@@ -302,7 +302,7 @@ export default function PaymentModal({
                     placeholder="Enter custom donation amount"
                     className={`w-full pl-9 pr-4 py-2.5 bg-white border rounded-xl text-sm outline-none transition-all ${
                       amount === 'custom'
-                        ? 'border-brand-saffron ring-1 ring-brand-saffron'
+                        ? 'border-brand-yellow ring-2 ring-brand-yellow/20'
                         : 'border-brand-clay'
                     }`}
                   />
@@ -321,7 +321,7 @@ export default function PaymentModal({
                     value={donorName}
                     onChange={(e) => setDonorName(e.target.value)}
                     placeholder="e.g. Anand Kulkarni"
-                    className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
                   />
                 </div>
                 <div>
@@ -334,7 +334,7 @@ export default function PaymentModal({
                     value={donorEmail}
                     onChange={(e) => setDonorEmail(e.target.value)}
                     placeholder="e.g. anand@outlook.com"
-                    className="w-full px-4 py-2.5 bg-brand-paper border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-saffron transition-all"
+                    className="w-full px-4 py-2.5 bg-brand-paper border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
                   />
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function PaymentModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-brand-saffron text-white rounded-full text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 shadow-md"
               >
                 {loading ? (
                   <>
@@ -367,8 +367,8 @@ export default function PaymentModal({
 
           {step === 'simulating' && mockPaymentDetails && (
             <div className="space-y-5 py-2">
-              <div className="p-5 bg-brand-sand/50 border border-brand-saffron/30 rounded-2xl text-center">
-                <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-brand-saffron/15 text-brand-saffron rounded-full mb-2">
+              <div className="p-5 bg-brand-sand/50 border border-brand-yellow/30 rounded-2xl text-center">
+                <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-brand-yellow/15 text-brand-forest rounded-full mb-2">
                   Simulation Sandbox Mode
                 </span>
                 <h4 className="font-serif-display text-base font-semibold text-brand-charcoal">
@@ -438,7 +438,7 @@ export default function PaymentModal({
                 Thank You, {donorName.split(' ')[0]}!
               </h3>
               <p className="text-brand-muted text-sm leading-relaxed max-w-sm mx-auto">
-                Your donation of <span className="font-semibold text-brand-saffron">₹{Number(finalAmount).toLocaleString('en-IN')}</span> has been successfully processed. 
+                Your donation of <span className="font-semibold text-brand-forest">₹{Number(finalAmount).toLocaleString('en-IN')}</span> has been successfully processed. 
                 A verification receipt has been logged. 
               </p>
               
@@ -458,7 +458,7 @@ export default function PaymentModal({
 
               <button
                 onClick={handleClose}
-                className="px-8 py-2.5 bg-brand-charcoal text-white hover:bg-brand-saffron transition-all rounded-full text-xs font-semibold tracking-wider uppercase mt-4"
+                className="px-8 py-2.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold transition-all rounded-full text-xs tracking-wider uppercase mt-4 shadow-md hover:-translate-y-0.5"
               >
                 Close & View Progress
               </button>

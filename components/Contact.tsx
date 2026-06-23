@@ -89,7 +89,7 @@ export default function Contact({ lang }: ContactProps) {
                       value={formState.name}
                       onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                       placeholder={lang === 'mr' ? 'उदा. रमेश पुजारी' : 'e.g. Ramesh Pujari'}
-                      className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all duration-300"
                     />
                   </div>
                   <div>
@@ -102,7 +102,7 @@ export default function Contact({ lang }: ContactProps) {
                       value={formState.email}
                       onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                       placeholder={lang === 'mr' ? 'उदा. ramesh@gmail.com' : 'e.g. ramesh@gmail.com'}
-                      className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all duration-300"
                     />
                   </div>
                 </div>
@@ -119,14 +119,14 @@ export default function Contact({ lang }: ContactProps) {
                     placeholder={lang === 'mr' 
                       ? 'आम्ही तुमची काय मदत करू शकतो? स्वयंसेवा, देणगी पावती किंवा प्रायोजकत्वाविषयी माहिती येथे लिहा...' 
                       : 'How can we help? Tell us if you are enquiring about sponsorship, tax receipts, or volunteering...'}
-                    className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/50 border border-brand-clay/70 rounded-xl text-sm outline-none focus:bg-white focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all duration-300"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 btn-premium rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                  className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 shadow-md"
                 >
                   {loading ? (
                     lang === 'mr' ? 'संदेश पाठवला जात आहे...' : 'Transmitting Message...'
@@ -212,7 +212,7 @@ export default function Contact({ lang }: ContactProps) {
               </p>
               <a
                 href={`/${lang}/volunteer`}
-                className="inline-block px-5 py-2.5 bg-brand-charcoal hover:bg-brand-saffron text-white text-[10px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 shadow-sm"
+                className="inline-block px-5 py-2.5 bg-brand-charcoal hover:bg-brand-yellow hover:text-brand-charcoal text-white text-[10px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 shadow-sm"
               >
                 {lang === 'mr' ? 'स्वयंसेवक म्हणून अर्ज करा' : 'Apply as Volunteer'}
               </a>

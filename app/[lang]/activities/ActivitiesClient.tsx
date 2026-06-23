@@ -50,7 +50,7 @@ export default function ActivitiesClient({
             onClick={() => setActiveTab(cat.id)}
             className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-300 ${
               activeTab === cat.id
-                ? 'bg-brand-charcoal text-white border-brand-charcoal shadow-sm'
+                ? 'bg-brand-forest text-white border-brand-forest shadow-sm'
                 : 'bg-transparent text-brand-muted border-brand-clay hover:bg-brand-sand/35 hover:text-brand-charcoal'
             }`}
           >
@@ -91,7 +91,7 @@ export default function ActivitiesClient({
 
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <h3 className="font-serif-display text-lg font-bold text-brand-charcoal leading-snug group-hover:text-brand-saffron transition-colors">
+                      <h3 className="font-serif-display text-lg font-bold text-brand-charcoal leading-snug group-hover:text-brand-forest transition-colors">
                         {title}
                       </h3>
                       <p className="text-brand-muted text-xs leading-relaxed font-light">

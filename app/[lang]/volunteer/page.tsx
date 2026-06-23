@@ -111,7 +111,7 @@ export default function VolunteerRegistrationPage() {
               </p>
               <button
                 onClick={() => router.push(`/${lang}/volunteer/dashboard`)}
-                className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-brand-saffron hover:text-brand-charcoal transition-colors font-mono"
+                className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-brand-forest hover:text-brand-yellow transition-colors font-mono"
               >
                 <span>{lang === 'mr' ? 'स्वयंसेवक लॉगिन' : 'Volunteer Login'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -138,7 +138,7 @@ export default function VolunteerRegistrationPage() {
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-2.5 bg-brand-charcoal hover:bg-brand-saffron text-white rounded-full text-xs font-bold uppercase tracking-widest transition-colors mt-6"
+                  className="px-6 py-2.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal rounded-full text-xs font-bold uppercase tracking-widest transition-all mt-6 shadow-md hover:-translate-y-0.5"
                 >
                   {t.volunteer.anotherBtn}
                 </button>
@@ -167,7 +167,7 @@ export default function VolunteerRegistrationPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Ramesh Pujari"
-                      className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                     />
                   </div>
                   <div>
@@ -180,7 +180,7 @@ export default function VolunteerRegistrationPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                     />
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function VolunteerRegistrationPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="ramesh@gmail.com"
-                      className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                     />
                   </div>
                   <div>
@@ -209,7 +209,7 @@ export default function VolunteerRegistrationPage() {
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="Solapur"
-                      className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                     />
                   </div>
                 </div>
@@ -224,7 +224,7 @@ export default function VolunteerRegistrationPage() {
                     value={occupation}
                     onChange={(e) => setOccupation(e.target.value)}
                     placeholder="Student / Teacher / Professional"
-                    className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                    className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                   />
                 </div>
 
@@ -242,15 +242,15 @@ export default function VolunteerRegistrationPage() {
                           onClick={() => handleInterestToggle(opt.id)}
                           className={`flex items-center justify-between px-4 py-3 border rounded-xl text-xs font-semibold text-left transition-colors ${
                             isSelected
-                              ? 'bg-brand-saffron/10 border-brand-saffron text-brand-saffron'
+                              ? 'bg-brand-yellow/15 border-brand-yellow text-brand-charcoal'
                               : 'bg-transparent border-brand-clay hover:bg-brand-sand/20 text-brand-charcoal'
                           }`}
                         >
                           <span>{opt.label}</span>
                           <span className={`w-3.5 h-3.5 rounded-full border border-brand-clay flex items-center justify-center shrink-0 ${
-                            isSelected ? 'bg-brand-saffron border-brand-saffron' : 'bg-transparent'
+                            isSelected ? 'bg-brand-yellow border-brand-yellow' : 'bg-transparent'
                           }`}>
-                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-brand-charcoal" />}
                           </span>
                         </button>
                       );
@@ -268,14 +268,14 @@ export default function VolunteerRegistrationPage() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell us about yourself and how you would like to help..."
-                    className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron focus:ring-2 focus:ring-brand-saffron/10 transition-all text-brand-charcoal"
+                    className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-brand-saffron hover:bg-brand-charcoal text-white rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                  className="w-full py-4 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
                 >
                   {loading ? (
                     t.volunteer.submitting

@@ -86,9 +86,9 @@ export default async function AboutPage({ params }: AboutPageProps) {
               <p>{t.about.p2}</p>
               <p>{t.about.trustDesc}</p>
               
-              <blockquote className="border-l-2 border-brand-saffron pl-5 italic text-brand-charcoal font-serif-display text-lg py-1 mt-4">
+              <blockquote className="border-l-2 border-brand-yellow pl-5 italic text-brand-charcoal font-serif-display text-lg py-1 mt-4">
                 &ldquo;{t.about.quote}&rdquo;
-                <cite className="block text-[9px] uppercase tracking-widest text-brand-saffron font-bold not-italic mt-2">
+                <cite className="block text-[9px] uppercase tracking-widest text-brand-forest font-bold not-italic mt-2">
                   {t.about.quoteAuthor}
                 </cite>
               </blockquote>
@@ -141,7 +141,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
                       <h4 className="font-serif-display text-base font-bold text-brand-charcoal">
                         {leader.name}
                       </h4>
-                      <span className="block text-[10px] font-mono text-brand-saffron uppercase font-bold">
+                      <span className="block text-[10px] font-mono text-brand-forest uppercase font-bold">
                         {leader.role}
                       </span>
                     </div>

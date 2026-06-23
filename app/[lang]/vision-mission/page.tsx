@@ -32,7 +32,7 @@ export default async function VisionMissionPage({ params }: VisionMissionPagePro
             {/* Vision Card */}
             <div className="p-8 bg-white border border-brand-clay/60 rounded-3xl space-y-6 flex flex-col justify-between">
               <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-brand-sand flex items-center justify-center text-brand-saffron">
+                <div className="w-12 h-12 rounded-2xl bg-brand-sand flex items-center justify-center text-brand-yellow">
                   <Compass className="w-6 h-6" />
                 </div>
                 <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal">
@@ -62,7 +62,7 @@ export default async function VisionMissionPage({ params }: VisionMissionPagePro
 
           {/* Strategic Goals List */}
           <div className="p-8 md:p-10 bg-brand-charcoal text-white rounded-3xl relative overflow-hidden space-y-8">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-saffron/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
             
             <div className="space-y-3">
               <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold">

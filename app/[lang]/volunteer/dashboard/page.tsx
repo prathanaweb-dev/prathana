@@ -94,7 +94,7 @@ export default function VolunteerDashboard() {
           
           {pageLoading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-saffron" />
+              <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
             </div>
           ) : !volunteer ? (
             
@@ -127,7 +127,7 @@ export default function VolunteerDashboard() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="e.g. volunteer@gmail.com"
-                    className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron transition-all text-brand-charcoal"
+                    className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                   />
                 </div>
                 <div>
@@ -140,14 +140,14 @@ export default function VolunteerDashboard() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="e.g. +91 98765 43210"
-                    className="w-full px-4 py-3 bg-brand-paper border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-saffron transition-all text-brand-charcoal"
+                    className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-brand-saffron hover:bg-brand-charcoal text-white rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                  className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
                 >
                   {loading ? (
                     t.volunteerDashboard.loggingIn
@@ -205,15 +205,15 @@ export default function VolunteerDashboard() {
                     </h3>
                     <div className="space-y-3.5 text-xs text-brand-muted font-light leading-relaxed">
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-brand-saffron shrink-0" />
+                        <User className="w-4 h-4 text-brand-green shrink-0" />
                         <span className="font-semibold text-brand-charcoal">{volunteer.name}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-brand-saffron shrink-0" />
+                        <Mail className="w-4 h-4 text-brand-green shrink-0" />
                         <span>{volunteer.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-brand-saffron shrink-0" />
+                        <Phone className="w-4 h-4 text-brand-green shrink-0" />
                         <span>{volunteer.phone}</span>
                       </div>
                       <div className="pt-2 border-t border-brand-clay/30 text-[10px]">
@@ -235,7 +235,7 @@ export default function VolunteerDashboard() {
                         <CheckCircle className="w-5 h-5" />
                       </div>
                       <div className="space-y-1">
-                        <span className="block text-[9px] uppercase tracking-widest text-brand-saffron font-bold">Assigned Drive</span>
+                        <span className="block text-[9px] uppercase tracking-widest text-brand-forest font-bold">Assigned Drive</span>
                         <h4 className="font-serif-display text-lg font-bold text-brand-charcoal">
                           {volunteer.assigned_activity}
                         </h4>

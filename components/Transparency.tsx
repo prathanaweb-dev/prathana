@@ -215,7 +215,7 @@ export default function Transparency({ lang }: TransparencyProps) {
               e.preventDefault();
               alert(lang === 'mr' ? 'हे एक मॉकअप आहे. अधिकृत टॅक्स रिटर्न डाऊनलोड करण्यासाठी हे प्रोडक्शनमध्ये लिंक केले जाईल.' : 'This is a mockup. In production, this links to official tax filings and balance sheets.');
             }}
-            className="px-6 py-2.5 btn-premium font-semibold tracking-wide uppercase text-[11px] rounded-full text-center"
+            className="px-6 py-2.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold tracking-wide uppercase text-[11px] rounded-full text-center shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
             {lang === 'mr' ? 'दस्तऐवज डाऊनलोड करा' : 'Download Documents'}
           </a>

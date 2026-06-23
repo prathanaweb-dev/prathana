@@ -39,7 +39,7 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-brand-paper text-brand-charcoal flex flex-col items-center justify-center p-6 bg-grid-pattern relative overflow-hidden">
       {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-yellow/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/6 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
 
       {/* Login Card */}
@@ -82,7 +82,7 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@prathana.org"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all"
               />
             </div>
           </div>
@@ -101,21 +101,21 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-saffron focus:ring-4 focus:ring-brand-saffron/5 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all"
               />
             </div>
           </div>
 
           <div className="p-3 bg-brand-sand/50 border border-brand-clay/60 rounded-lg text-[10px] text-brand-muted leading-normal">
             <strong>Mock Credentials for Verification:</strong> <br />
-            Email: <code className="text-brand-saffron">admin@prathana.org</code> <br />
-            Password: <code className="text-brand-saffron">prathana2026</code>
+            Email: <code className="text-brand-forest font-bold">admin@prathana.org</code> <br />
+            Password: <code className="text-brand-forest font-bold">prathana2026</code>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 btn-premium rounded-lg text-xs font-semibold tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-3 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-lg text-xs tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-1.5"
           >
             {loading ? (
               <>

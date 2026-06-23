@@ -57,10 +57,10 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
       {/* Content Area */}
       <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
         <div className="space-y-3">
-          <span className="text-[10px] uppercase tracking-widest text-brand-saffron font-bold">
+          <span className="text-[10px] uppercase tracking-widest text-brand-forest font-bold">
             {isCompleted ? (lang === 'mr' ? 'पूर्ण मोहीम' : 'Completed') : (lang === 'mr' ? 'सक्रिय मोहीम' : 'Active')}
           </span>
-          <h4 className="font-serif-display text-xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-saffron transition-colors duration-300 line-clamp-1">
+          <h4 className="font-serif-display text-xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-forest transition-colors duration-300 line-clamp-1">
             {title}
           </h4>
           <p className="text-brand-muted text-xs leading-relaxed line-clamp-3 font-light">

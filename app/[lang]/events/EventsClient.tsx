@@ -63,7 +63,7 @@ export default function EventsClient({
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-4 text-xs text-brand-muted font-mono">
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-brand-saffron" />
+                  <Calendar className="w-3.5 h-3.5 text-brand-yellow" />
                   <span>{t.events.published} {formatDate(selectedEvent.published_date)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -139,11 +139,11 @@ export default function EventsClient({
                       {/* Content details */}
                       <div className="md:col-span-8 space-y-3">
                         <div className="flex items-center gap-1.5 text-[10px] text-brand-muted font-mono uppercase font-bold tracking-widest">
-                          <Calendar className="w-3.5 h-3.5 text-brand-saffron" />
+                          <Calendar className="w-3.5 h-3.5 text-brand-yellow" />
                           <span>{formatDate(evt.published_date)}</span>
                         </div>
 
-                        <h3 className="font-serif-display text-xl sm:text-2xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-saffron transition-colors">
+                        <h3 className="font-serif-display text-xl sm:text-2xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-forest transition-colors">
                           {title}
                         </h3>
 
@@ -151,7 +151,7 @@ export default function EventsClient({
                           {content}
                         </p>
 
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-brand-saffron hover:text-brand-charcoal transition-colors pt-2">
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-brand-forest hover:text-brand-yellow transition-colors pt-2">
                           <span>{t.events.readMore}</span>
                           <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                         </div>

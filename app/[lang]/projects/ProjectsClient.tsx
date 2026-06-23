@@ -34,7 +34,7 @@ export default function ProjectsClient({
       case 'completed':
         return 'bg-brand-green/10 text-brand-green border-brand-green/20';
       case 'active':
-        return 'bg-brand-saffron/10 text-brand-saffron border-brand-saffron/20';
+        return 'bg-brand-yellow/15 text-brand-forest border-brand-yellow/30';
       case 'planned':
       default:
         return 'bg-brand-muted/10 text-brand-muted border-brand-clay/40';
@@ -123,7 +123,7 @@ export default function ProjectsClient({
                         </div>
                       </div>
 
-                      <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-saffron transition-colors">
+                      <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-forest transition-colors">
                         {title}
                       </h3>
                       
@@ -133,7 +133,7 @@ export default function ProjectsClient({
                     </div>
 
                     <div className="pt-4 border-t border-brand-clay/30 flex items-center gap-2 text-[10px] text-brand-muted uppercase font-bold tracking-widest font-mono">
-                      <Briefcase className="w-3.5 h-3.5 text-brand-saffron" />
+                      <Briefcase className="w-3.5 h-3.5 text-brand-yellow" />
                       <span>{t.projects.timeline}: {currentStatus}</span>
                     </div>
                   </div>
