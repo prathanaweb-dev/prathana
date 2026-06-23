@@ -13,6 +13,8 @@
   --color-brand-sand: #F3EFEB;       /* Pale sand panel fallback */
   --color-brand-gold: #E69F3C;       /* Rich warm amber */
   --color-brand-muted: #5A6B61;      /* Warm muted olive-charcoal for body copy */
+  --color-brand-forest: #0d352b;     /* Mockup forest green */
+  --color-brand-yellow: #f7c324;     /* Mockup yellow */
 }
 
 html {
@@ -153,3 +155,32 @@ body {
 .editorial-img:hover {
   filter: saturate(1.05) contrast(1);
 }
+
+/* ── Leaf Shaped Card Borders (Mockup) ── */
+.leaf-card-green {
+  border-radius: 40px 10px 40px 10px;
+  border: 2px solid var(--color-brand-green);
+}
+.leaf-card-red {
+  border-radius: 10px 40px 10px 40px;
+  border: 2px solid #e75c3c;
+}
+.leaf-card-yellow {
+  border-radius: 40px 10px 40px 10px;
+  border: 2px solid var(--color-brand-yellow);
+}
+
+/* ── Organic SVG Paint Strokes ── */
+.highlight-stroke {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'><path d='M0,8 Q30,1 60,8 T100,2' stroke='%23f7c324' stroke-width='4' fill='none' stroke-linecap='round'/></svg>");
+  background-size: 100% 8px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  padding-bottom: 4px;
+}
+.paint-stroke-bg {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'><path d='M5,20 Q40,5 90,30 T180,10 T200,20' stroke='%23f7c324' stroke-width='12' fill='none' stroke-linecap='round' opacity='0.85'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+

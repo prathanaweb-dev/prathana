@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, ArrowDown } from 'lucide-react';
+import { Heart, ArrowRight, Users, Zap, HeartHandshake, Activity, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { translations } from '@/lib/translations';
 
@@ -19,204 +19,165 @@ interface HeroProps {
 export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
   const router = useRouter();
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
-  
-  const headlineWords = t.hero.title.split(' ');
+
+  const badgeItems = [
+    {
+      icon: Users,
+      title: lang === 'mr' ? 'स्वयंसेवक व्हा' : 'Become a Volunteer',
+      desc: lang === 'mr' ? 'उपेक्षित घटकांना मदत करा' : 'Help marginalized people',
+      color: 'text-brand-green bg-brand-green/10',
+    },
+    {
+      icon: Zap,
+      title: lang === 'mr' ? 'झटपट मदत' : 'Quick Fundraising',
+      desc: lang === 'mr' ? 'गरजूंपर्यंत थेट मदत' : 'Direct emergency aid',
+      color: 'text-[#e75c3c] bg-[#e75c3c]/10',
+    },
+    {
+      icon: HeartHandshake,
+      title: lang === 'mr' ? 'देणगी द्या' : 'Give Donation',
+      desc: lang === 'mr' ? 'प्रत्येक रुपया महत्त्वाचा' : 'Every rupee counts',
+      color: 'text-brand-yellow bg-brand-yellow/10',
+    },
+    {
+      icon: Activity,
+      title: lang === 'mr' ? 'आरोग्य व मदत' : 'Help & Support',
+      desc: lang === 'mr' ? 'वैद्यकीय सेवा पुरवा' : 'Medical care aid',
+      color: 'text-blue-600 bg-blue-50',
+    },
+    {
+      icon: Award,
+      title: lang === 'mr' ? 'बालकांचे संगोपन' : 'Sponsor a Child',
+      desc: lang === 'mr' ? 'शिक्षणाला हातभार लावा' : 'Fund education kits',
+      color: 'text-purple-600 bg-purple-50',
+    },
+  ];
 
   return (
-    <section className="relative min-h-[100vh] bg-brand-paper bg-grid-pattern overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-saffron/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-brand-green/6 rounded-full blur-[140px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+    <section className="relative bg-brand-forest overflow-hidden pt-36 pb-20 text-white">
+      {/* Background organic paint stroke shape on the left */}
+      <div className="absolute top-1/4 left-0 w-32 h-64 bg-brand-yellow opacity-25 rounded-r-full blur-3xl pointer-events-none" />
+      
+      {/* Top glowing ambient blobs */}
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-yellow/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-green/10 rounded-full blur-[140px] pointer-events-none" />
 
-      {/* Center-aligned content column */}
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-32 pb-20">
-        {/* Top: Section Label */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-center"
-        >
-          <span className="section-label">{t.hero.tagline}</span>
-        </motion.div>
-
-        {/* Massive Centered Headline — Word-by-word stagger */}
-        <h1 className="font-serif-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.05] text-brand-charcoal text-center max-w-5xl mx-auto mt-8">
-          {headlineWords.map((word, i) => {
-            // Apply saffron highlight to certain words for visual polish
-            const isHighlighted = 
-              (lang === 'mr' && (word.includes('पोटभर') || word.includes('जेवण') || word.includes('शिक्षणाची'))) ||
-              (lang !== 'mr' && (word.toLowerCase() === 'full' || word.toLowerCase() === 'stomach' || word.toLowerCase().includes('book')));
-            
-            return (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.2 + i * 0.06,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                className={`inline-block mr-[0.28em] ${
-                  isHighlighted 
-                    ? 'italic text-brand-saffron font-serif font-semibold border-b-2 border-brand-saffron/20 pb-0.5' 
-                    : ''
-                }`}
-              >
-                {word}
-              </motion.span>
-            );
-          })}
-        </h1>
-
-        {/* Centered Subtext */}
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-          className="text-base sm:text-lg text-brand-muted font-light max-w-2xl mx-auto leading-relaxed text-center mt-8"
-        >
-          {t.hero.subtext}
-        </motion.p>
-
-        {/* Centered CTA Button Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.05 }}
-          className="flex flex-wrap items-center justify-center gap-4 mt-10"
-        >
-          <button
-            onClick={onDonateClick}
-            className="rounded-full btn-premium px-8 py-3.5 text-[13px] font-semibold tracking-wide flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            <Heart className="w-4 h-4 fill-current" />
-            {t.hero.donateBtn}
-          </button>
-          <button
-            onClick={() => router.push(`/${lang}/donation`)}
-            className="rounded-full border-2 border-brand-charcoal text-brand-charcoal px-8 py-3 text-[13px] font-semibold tracking-wide hover:bg-brand-charcoal hover:text-white hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
-          >
-            {t.hero.viewBtn}
-          </button>
-        </motion.div>
-
-        {/* Full-Width Editorial Image Band — 3 Overlapping Photos */}
-        <div className="relative mt-16 md:mt-20">
-          {/* Main Center Image */}
+      <div className="relative max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        {/* Left Column - Content */}
+        <div className="lg:col-span-7 space-y-8 text-left z-10">
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative w-full max-w-3xl h-[350px] md:h-[420px] mx-auto rounded-3xl overflow-hidden border border-brand-clay/60 bg-brand-sand z-10 shadow-xl hover:shadow-2xl transition-all duration-500"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 bg-brand-yellow/10 border border-brand-yellow/30 px-4 py-1.5 rounded-full"
           >
-            <img
-              src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
-              alt="Prathana outreach — feeding children in Solapur"
-              className="w-full h-full object-cover editorial-img"
-            />
-            {/* Caption overlay */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-charcoal/70 via-brand-charcoal/30 to-transparent p-6 pt-16">
-              <span className="text-[9px] uppercase tracking-widest font-bold text-brand-gold">
-                On Ground &bull; Solapur
-              </span>
-              <p className="font-serif-display italic text-sm text-white/90 mt-1 max-w-xs">
-                &ldquo;{lang === 'mr' ? 'शाळेत टिकण्यासाठी मुलाचे पोट भरणे ही पहिली पायरी आहे.' : 'A warm meal is the first step towards a child\'s education.'}&rdquo;
-              </p>
-            </div>
+            <span className="w-2 h-2 rounded-full bg-brand-yellow animate-pulse" />
+            <span className="text-[11px] uppercase tracking-widest text-brand-yellow font-bold">
+              {lang === 'mr' ? 'प्रार्थना सोलापूर · तळागाळातील मदत' : 'Prathana Solapur · Grassroots Outreach'}
+            </span>
           </motion.div>
 
-          {/* Left Flanking Image */}
-          <motion.div
-            initial={{ opacity: 0, x: -40, rotate: -6 }}
-            animate={{ opacity: 1, x: 0, rotate: -3 }}
-            transition={{ duration: 0.8, delay: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute top-8 left-0 lg:left-8 w-44 sm:w-52 md:w-60 h-[200px] md:h-[260px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block hover:rotate-0 hover:scale-[1.03] transition-all duration-500"
+          <motion.h1
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-serif-display text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1]"
           >
-            <img
-              src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop"
-              alt="Child studying with an education kit"
-              className="w-full h-full object-cover editorial-img"
-            />
-          </motion.div>
+            {lang === 'mr' ? (
+              <>
+                गरजू आणि निराधार <br />
+                <span className="text-brand-yellow highlight-stroke font-serif italic">लोकांना मदत</span> करूया
+              </>
+            ) : (
+              <>
+                Giving Help <br />
+                To Those <span className="text-brand-yellow highlight-stroke font-serif italic font-semibold">Peoples</span>
+              </>
+            )}
+          </motion.h1>
 
-          {/* Right Flanking Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 40, rotate: 6 }}
-            animate={{ opacity: 1, x: 0, rotate: 2 }}
-            transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute top-12 right-0 lg:right-8 w-40 sm:w-48 md:w-56 h-[180px] md:h-[240px] rounded-2xl overflow-hidden border-4 border-brand-paper shadow-2xl z-20 hidden sm:block hover:rotate-0 hover:scale-[1.03] transition-all duration-500"
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-white/80 font-light max-w-xl leading-relaxed"
           >
-            <img
-              src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=400&auto=format&fit=crop"
-              alt="Central Community Kitchen"
-              className="w-full h-full object-cover editorial-img"
-            />
-          </motion.div>
+            {t.hero.subtext}
+          </motion.p>
 
-          {/* Decorative frame behind center image */}
-          <div className="absolute inset-0 mx-auto max-w-3xl h-[350px] md:h-[420px] rounded-3xl border border-brand-saffron/15 translate-x-3 translate-y-3 -z-0 pointer-events-none" />
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap items-center gap-4"
+          >
+            <button
+              onClick={onDonateClick}
+              className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-extrabold px-8 py-4 text-[13px] tracking-wide flex items-center gap-2 shadow-[0_4px_20px_rgba(247,195,36,0.3)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <Heart className="w-4 h-4 fill-current" />
+              {t.hero.donateBtn}
+            </button>
+            <button
+              onClick={() => router.push(`/${lang}/about`)}
+              className="rounded-full border-2 border-white/40 text-white hover:border-white hover:bg-white/10 px-8 py-3.5 text-[13px] font-bold tracking-wide transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              {lang === 'mr' ? 'अधिक माहिती' : 'Learn More'}
+            </button>
+          </motion.div>
         </div>
 
-        {/* Stats Card — Centered, 3-col grid */}
+        {/* Right Column - Child Photo */}
+        <div className="lg:col-span-5 relative flex justify-center z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative w-full max-w-[400px] aspect-[4/5] rounded-[40px_10px_40px_10px] overflow-hidden border-8 border-brand-yellow/20 bg-brand-charcoal shadow-2xl"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1594708767771-a7502209ff51?q=80&w=800&auto=format&fit=crop"
+              alt="Happy smiling child supported by Prathana Foundation"
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+            {/* Visual bottom gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-forest/60 via-transparent to-transparent" />
+          </motion.div>
+
+          {/* Golden abstract circle highlight decoration */}
+          <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full border-4 border-dashed border-brand-yellow/30 animate-spin" style={{ animationDuration: '30s' }} />
+          <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full border-2 border-brand-green/30" />
+        </div>
+
+      </div>
+
+      {/* Badges Panel directly below Hero */}
+      <div className="relative max-w-7xl mx-auto px-6 md:px-12 mt-16 md:mt-24">
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.3 }}
-          className="max-w-2xl mx-auto mt-12 md:mt-16 premium-card rounded-2xl border border-brand-clay/60"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="bg-white rounded-3xl p-6 md:p-8 shadow-xl grid grid-cols-2 md:grid-cols-5 gap-6 text-brand-charcoal border border-brand-clay/30"
         >
-          <div className="grid grid-cols-3 divide-x divide-brand-clay/60">
-            {/* Stat 1 */}
-            <div className="py-6 px-4 text-center">
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-brand-charcoal leading-none">
-                {(stats.mealsProvided || 4625).toLocaleString()}
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                {t.hero.meals}
-              </span>
-            </div>
-
-            {/* Stat 2 */}
-            <div className="py-6 px-4 text-center">
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-brand-charcoal leading-none">
-                {(stats.kidsEducated || 380).toLocaleString()}+
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                {t.hero.children}
-              </span>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="py-6 px-4 text-center">
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-brand-charcoal leading-none">
-                100%
-              </span>
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-brand-muted mt-2 block">
-                {t.hero.audited}
-              </span>
-            </div>
-          </div>
+          {badgeItems.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div key={idx} className="flex flex-col items-center text-center space-y-3 group hover:-translate-y-1 transition-all duration-300">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="font-bold text-[13px] tracking-tight text-brand-charcoal">{item.title}</h4>
+                  <p className="text-[10px] text-brand-muted font-light">{item.desc}</p>
+                </div>
+              </div>
+            );
+          })}
         </motion.div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
-      >
-        <span className="text-[9px] uppercase tracking-widest text-brand-muted font-bold">
-          {lang === 'mr' ? 'खाली स्क्रोल करा' : 'Scroll'}
-        </span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-        >
-          <ArrowDown className="w-4 h-4 text-brand-saffron" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }

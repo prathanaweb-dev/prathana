@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Heart, Menu, X, Globe, ChevronDown, Phone, Search } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { translations } from '@/lib/translations';
 
@@ -96,23 +96,95 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           </div>
         </a>
 
-        {/* Desktop Navigation — Minimal Editorial */}
-        <nav className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-[13px] font-medium text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
-            >
-              {link.name}
-            </a>
-          ))}
+        {/* Desktop Navigation — Restructured to prevent overlap & match mockup */}
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+          {/* Home */}
+          <a
+            href={`/${lang}`}
+            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+          >
+            {lang === 'mr' ? 'मुख्य पान' : 'Home'}
+          </a>
 
-          {/* Language Switcher Dropdown */}
+          {/* About Us */}
+          <a
+            href={`/${lang}/about`}
+            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide whitespace-nowrap"
+          >
+            {t.nav.story}
+          </a>
+
+          {/* Campaigns */}
+          <a
+            href={`/${lang}/donation`}
+            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+          >
+            {lang === 'mr' ? 'मोहिमा' : 'Campaigns'}
+          </a>
+
+          {/* Pages Dropdown (Hover-based group) */}
+          <div className="relative group py-2">
+            <button className="flex items-center gap-1 text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide cursor-pointer">
+              <span>{lang === 'mr' ? 'विभाग' : 'Pages'}</span>
+              <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-300" />
+            </button>
+            
+            {/* Dropdown Menu Box */}
+            <div className="absolute left-0 mt-1 w-44 bg-white border border-brand-clay rounded-2xl shadow-xl overflow-hidden hidden group-hover:block z-30">
+              <a
+                href={`/${lang}/vision-mission`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
+              >
+                {t.nav.vision}
+              </a>
+              <a
+                href={`/${lang}/activities`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
+              >
+                {t.nav.activities}
+              </a>
+              <a
+                href={`/${lang}/projects`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
+              >
+                {t.nav.projects}
+              </a>
+              <a
+                href={`/${lang}/gallery`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
+              >
+                {t.nav.gallery}
+              </a>
+              <a
+                href={`/${lang}/volunteer`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors"
+              >
+                {t.nav.volunteer}
+              </a>
+            </div>
+          </div>
+
+          {/* Blog (Events) */}
+          <a
+            href={`/${lang}/events`}
+            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+          >
+            {lang === 'mr' ? 'बातम्या' : 'Blog'}
+          </a>
+
+          {/* Contact (Footer) */}
+          <a
+            href="#footer"
+            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+          >
+            {lang === 'mr' ? 'संपर्क' : 'Contact'}
+          </a>
+
+          {/* Language Switcher */}
           <div className="relative">
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-brand-clay hover:bg-brand-sand/55 text-[12px] font-semibold text-brand-charcoal transition-colors duration-300"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-brand-clay hover:bg-brand-sand/55 text-[12px] font-bold text-brand-charcoal transition-colors duration-300"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>{t.nav.langCode}</span>
@@ -151,9 +223,25 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             </AnimatePresence>
           </div>
 
+          {/* Call & Search Block — Responsive */}
+          <div className="hidden xl:flex items-center gap-4 border-l border-brand-clay/60 pl-4 h-8 shrink-0">
+            <button className="text-brand-charcoal hover:text-brand-saffron transition-colors" aria-label="Search">
+              <Search className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center text-brand-charcoal shadow-sm">
+                <Phone className="w-3.5 h-3.5 fill-current" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[9px] uppercase tracking-widest text-brand-muted font-bold leading-none">Call Us</span>
+                <span className="text-[11px] font-bold text-brand-charcoal mt-0.5 leading-none">+91 98765 43210</span>
+              </div>
+            </div>
+          </div>
+
           <button
             onClick={handleDonateTrigger}
-            className="rounded-full btn-premium px-6 py-2.5 text-[13px] font-semibold tracking-wide"
+            className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-5 py-2.5 text-[13px] tracking-wide shadow-[0_4px_12px_rgba(247,195,36,0.2)] transition-all duration-300 hover:-translate-y-0.5 shrink-0"
           >
             {t.nav.donate}
           </button>
@@ -173,7 +261,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
 
           <button
             onClick={handleDonateTrigger}
-            className="rounded-full btn-premium px-4 py-2 text-[12px] font-semibold tracking-wide"
+            className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-4 py-2 text-[12px] tracking-wide shadow-[0_4px_10px_rgba(247,195,36,0.2)] transition-all duration-300"
           >
             {lang === 'mr' ? 'मदत करा' : 'Donate'}
           </button>
@@ -225,7 +313,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                     setMobileMenuOpen(false);
                     handleDonateTrigger();
                   }}
-                  className="w-full py-3.5 rounded-full btn-premium text-center font-semibold tracking-wide text-[14px]"
+                  className="w-full py-3.5 rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold text-center tracking-wide text-[14px] shadow-[0_4px_12px_rgba(247,195,36,0.2)] transition-all duration-300"
                 >
                   {t.nav.donate}
                 </button>

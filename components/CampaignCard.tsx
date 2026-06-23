@@ -28,111 +28,90 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7 }}
-      className={`flex flex-col md:flex-row premium-card rounded-2xl overflow-hidden group ${
-        isCompleted ? 'opacity-70 saturate-[0.6]' : ''
+      transition={{ duration: 0.6 }}
+      className={`flex flex-col bg-white border border-brand-clay/35 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group ${
+        isCompleted ? 'opacity-75 saturate-[0.7]' : ''
       }`}
     >
-      {/* Image Section */}
-      <div className="h-52 md:h-auto md:w-72 relative overflow-hidden bg-brand-sand flex-shrink-0">
+      {/* Cover Image */}
+      <div className="h-56 relative overflow-hidden bg-brand-sand">
         <img
           src={campaign.image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 editorial-img"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
-        {/* Bottom gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-charcoal/50 via-brand-charcoal/10 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-brand-charcoal/20" />
-
         {/* Status Badge */}
-        {isCompleted && (
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-brand-green text-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest rounded-full">
-            <CheckCircle className="w-3 h-3" />
-            {lang === 'mr' ? 'ध्येय साध्य' : 'Goal Achieved'}
+        {isCompleted ? (
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-brand-green text-white px-3.5 py-1.5 text-[9px] font-bold uppercase tracking-widest rounded-full shadow-md">
+            <CheckCircle className="w-3.5 h-3.5" />
+            {lang === 'mr' ? 'यशस्वी' : 'Goal Achieved'}
           </div>
-        )}
-
-        {/* Progress percentage on image */}
-        {!isCompleted && (
-          <div className="absolute bottom-4 left-5">
-            <span className="font-mono text-[28px] font-bold text-white leading-none tracking-tight">
-              {progressPercent}%
-            </span>
-            <span className="block text-[9px] uppercase tracking-widest text-white/70 font-semibold mt-0.5">
-              {t.donation.funded}
-            </span>
+        ) : (
+          <div className="absolute bottom-4 left-4 bg-brand-yellow text-brand-charcoal px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-md">
+            {progressPercent}% {lang === 'mr' ? 'पूर्ण' : 'funded'}
           </div>
         )}
       </div>
 
       {/* Content Area */}
-      <div className="p-7 flex-1 flex flex-col">
-        <div className="space-y-3 flex-1">
-          <span className="section-label">
-            {isCompleted ? (lang === 'mr' ? 'पूर्ण मोहीम' : 'Completed') : (lang === 'mr' ? 'सक्रिय मोहीम' : 'Active Campaign')}
+      <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
+        <div className="space-y-3">
+          <span className="text-[10px] uppercase tracking-widest text-brand-saffron font-bold">
+            {isCompleted ? (lang === 'mr' ? 'पूर्ण मोहीम' : 'Completed') : (lang === 'mr' ? 'सक्रिय मोहीम' : 'Active')}
           </span>
-          <h4 className="font-serif-display text-xl md:text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-saffron transition-colors duration-300">
+          <h4 className="font-serif-display text-xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-saffron transition-colors duration-300 line-clamp-1">
             {title}
           </h4>
-          <p className="text-brand-muted text-sm leading-relaxed line-clamp-3 font-light">
+          <p className="text-brand-muted text-xs leading-relaxed line-clamp-3 font-light">
             {description}
           </p>
         </div>
 
-        {/* Financial Metrics Section */}
-        <div className="mt-7 space-y-5">
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="w-full h-1.5 bg-brand-clay/30 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${progressPercent}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-                className={`h-full rounded-full ${isCompleted ? 'bg-brand-green' : 'bg-brand-saffron'}`}
-              />
-            </div>
+        {/* Progress & Stats Info */}
+        <div className="space-y-4 pt-4 border-t border-brand-clay/35">
+          {/* Yellow Progress Bar */}
+          <div className="w-full h-2 bg-brand-clay/20 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: `${progressPercent}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              className={`h-full rounded-full ${isCompleted ? 'bg-brand-green' : 'bg-brand-yellow'}`}
+            />
           </div>
 
-          {/* 3-Column Metric Row */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-brand-clay/40">
-            <div>
-              <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                {t.donation.goal}
+          {/* Goal vs Raised Details */}
+          <div className="flex items-center justify-between text-xs font-semibold">
+            <div className="text-left">
+              <span className="block text-[9px] uppercase tracking-wider text-brand-muted font-bold mb-0.5">
+                {lang === 'mr' ? 'उद्दिष्ट' : 'Goal'}
               </span>
-              <span className="font-mono text-sm font-bold text-brand-charcoal">
+              <span className="font-mono text-brand-charcoal">
                 ₹{goal.toLocaleString('en-IN')}
               </span>
             </div>
-            <div className="text-center">
-              <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                {t.donation.raised}
-              </span>
-              <span className="font-mono text-sm font-bold text-brand-green">
-                ₹{raised.toLocaleString('en-IN')}
-              </span>
-            </div>
             <div className="text-right">
-              <span className="block text-[10px] uppercase tracking-widest text-brand-muted font-semibold mb-1">
-                {t.donation.remaining}
+              <span className="block text-[9px] uppercase tracking-wider text-brand-muted font-bold mb-0.5">
+                {lang === 'mr' ? 'जमा निधी' : 'Raised'}
               </span>
-              <span className="font-mono text-sm font-bold text-brand-saffron">
-                ₹{remaining.toLocaleString('en-IN')}
+              <span className="font-mono text-brand-green">
+                ₹{raised.toLocaleString('en-IN')}
               </span>
             </div>
           </div>
 
-          {/* Donate CTA */}
+          {/* Solid Forest Green Action Button */}
           <button
             onClick={() => onDonateClick(campaign.id)}
             disabled={isCompleted}
-            className={`w-full py-3.5 rounded-full font-semibold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={`w-full py-3.5 rounded-full font-bold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
               isCompleted
-                ? 'bg-brand-sand border border-brand-clay/60 text-brand-muted cursor-not-allowed'
-                : 'btn-premium hover:-translate-y-0.5'
+                ? 'bg-brand-sand border border-brand-clay/50 text-brand-muted cursor-not-allowed'
+                : 'bg-brand-forest text-white hover:bg-brand-forest/90 shadow-md hover:-translate-y-0.5'
             }`}
           >
-            <Heart className={`w-3.5 h-3.5 ${isCompleted ? '' : 'fill-current'}`} />
+            <Heart className={`w-3.5 h-3.5 ${isCompleted ? '' : 'fill-current text-brand-yellow'}`} />
             {isCompleted ? (lang === 'mr' ? 'उद्दिष्ट पूर्ण' : 'Goal Achieved') : t.donation.donateBtn}
           </button>
         </div>

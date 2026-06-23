@@ -1,192 +1,153 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { motion } from 'framer-motion';
+import { MessageSquare, ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface StoriesProps {
   lang: string;
 }
 
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 80 : -80,
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction > 0 ? -80 : 80,
-    opacity: 0,
-  }),
-};
-
 export default function Stories({ lang }: StoriesProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [activeDirection, setActiveDirection] = useState(0);
+  const router = useRouter();
 
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const isMarathi = lang === 'mr';
 
-  const stories = [
+  const tLocal = {
+    title: isMarathi ? 'आमचे नवीन लेख आणि बातम्या' : 'Our Latest News & Articles You Like',
+    viewAll: isMarathi ? 'सर्व लेख पहा' : 'View All Articles',
+    readMore: isMarathi ? 'अधिक वाचा' : 'Read More',
+    byAdmin: isMarathi ? 'प्रशासक' : 'Admin',
+    comments: isMarathi ? 'टिप्पण्या' : 'Comments',
+  };
+
+  const articles = [
     {
-      name: lang === 'mr' ? 'रोहन शिंदे' : 'Rohan Shinde',
-      role: lang === 'mr' ? 'इयत्ता तिसरीचा विद्यार्थी · आधी चहाच्या दुकानात कामगार' : 'Class 3 Student · Formerly Tea Stall Laborer',
-      narrative: lang === 'mr' 
-        ? 'आठ वर्षांचा असताना रोहन सोलापूरमधील एका चहाच्या दुकानात दिवसाला १० तास ग्लास धुण्याचे काम करत असे. आमच्या शिक्षण प्रायोजकत्व मोहिमेमुळे रोहनला महानगरपालिकेच्या शाळेत दाखल केले गेले. त्याचे पुस्तके, गणवेश आणि संध्याकाळचा पोषण आहार पूर्णपणे देणगीदारांच्या मदतीतून दिला जातो.' 
-        : 'At eight years old, Rohan spent ten hours a day cleaning glasses at a local roadside tea shop. Thanks to our education sponsorship campaign, Rohan was enrolled in a municipal school. His books, uniform, and evening nutrition support are entirely covered by donor contributions.',
-      quote: lang === 'mr' ? 'मला खूप अभ्यास करायचा आहे आणि आमच्या वस्तीतील मुलांना शिकवण्यासाठी शिक्षक व्हायचे आहे.' : 'I want to study hard and become a teacher in our colony one day.',
-      image: 'https://images.unsplash.com/photo-1618057350488-8120b0802c65?q=80&w=600&auto=format&fit=crop',
+      date: isMarathi ? '२० जून २०२६' : '20 June 2026',
+      commentsCount: 2,
+      title: isMarathi 
+        ? 'शिक्षण टिकवून ठेवण्यासाठी पोटभर आहार ही पहिली पायरी आहे' 
+        : 'Nutrition and meals are the first step to child education.',
+      desc: isMarathi
+        ? 'सोलापूरमधील वस्ती भागातील बालकांमध्ये कुपोषण दूर करण्यासाठी आमच्या स्वयंपाकघराने राबविलेले उपक्रम.'
+        : 'How our community kitchen feeds street and begging children daily to support their school retention.',
+      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=400&auto=format&fit=crop',
     },
     {
-      name: lang === 'mr' ? 'लक्ष्मी कांबळे' : 'Laxmi Kamble',
-      role: lang === 'mr' ? 'तीन मुलींची एकल माता' : 'Single Mother of Three Daughters',
-      narrative: lang === 'mr'
-        ? 'घरकाम करून स्वतःच्या पायावर तीन मुलींचे पालनपोषण करताना लक्ष्मीची खूप दमछाक होत होती. आमच्या पोषण आहार मोहिमेने आणि शालेय साहित्य वाटपाने तिच्या डोक्यावरील मोठा भार कमी केला. तिच्या मुली आता उपाशी न राहता रोज शाळेत जातात.'
-        : 'Laxmi struggled to manage single-handedly while working as a housemaid. The nutrition meals program and school kit support took a massive load off her shoulders. Her daughters now attend class regularly without skipping nutritious lunches.',
-      quote: lang === 'mr' ? 'माझ्या मुलींकडे आता नवीन दप्तर आणि खायला पोटभर अन्न आहे. यामुळे मला खूप मानसिक शांतता मिळाली.' : 'My daughters have school bags and full bellies now. This gives me peace of mind.',
-      image: 'https://images.unsplash.com/photo-1593113503873-e4b412c93f4b?q=80&w=600&auto=format&fit=crop',
+      date: isMarathi ? '१८ जून २०२६' : '18 June 2026',
+      commentsCount: 0,
+      title: isMarathi
+        ? 'मोरवंची गावातील बालग्राममध्ये शैक्षणिक साहित्य वाटप मोहीम'
+        : 'A warm kit for the school distribution drive in Morvanchi.',
+      desc: isMarathi
+        ? 'ग्रामीण भागातील गरजू विद्यार्थ्यांना वह्या, पुस्तके, दप्तर आणि इतर शैक्षणिक साहित्याचे वाटप.'
+        : 'Distributing education bags, writing books, and uniforms to orphaned children at Balgram.',
+      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop',
+    },
+    {
+      date: isMarathi ? '१५ जून २०२६' : '15 June 2026',
+      commentsCount: 5,
+      title: isMarathi
+        ? 'रस्त्यावरील बालकांना मुख्य प्रवाहात आणण्यासाठी वंचितांची शाळा'
+        : 'Educating street children helps secure a hopeful society.',
+      desc: isMarathi
+        ? 'भीक मागणाऱ्या बालकांना शिक्षणाची गोडी लावून त्यांना शाळेत दाखल करण्याचे आमचे प्रयत्न.'
+        : 'Enrolling children rescued from begging into public schools and tracking their long-term growth.',
+      image: 'https://images.unsplash.com/photo-1594708767771-a7502209ff51?q=80&w=400&auto=format&fit=crop',
     },
   ];
 
-  const paginate = (newDirection: number) => {
-    const nextIndex = (activeIndex + newDirection + stories.length) % stories.length;
-    setActiveDirection(newDirection);
-    setActiveIndex(nextIndex);
-  };
-
-  const goTo = (index: number) => {
-    const dir = index > activeIndex ? 1 : -1;
-    setActiveDirection(dir);
-    setActiveIndex(index);
-  };
-
-  const story = stories[activeIndex];
-
   return (
-    <section id="stories" className="py-32 bg-brand-paper bg-grid-pattern relative overflow-hidden">
+    <section id="stories" className="py-24 bg-brand-paper relative overflow-hidden">
       {/* Ambient background glows */}
-      <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" style={{ animationDelay: '-1.5s' }} />
+      <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 space-y-16 text-center">
 
-        {/* Section header */}
-        <motion.div
-          className="max-w-3xl mb-20 space-y-4"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7 }}
-        >
-          <span className="section-label">{t.volunteer.successTitle === 'Application Logged Successfully!' ? 'Faces of Impact' : 'बदलाचे चेहरे'}</span>
-          <h2 className="font-serif-display text-4xl sm:text-5xl md:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-            {lang === 'mr' ? <>संघर्षातून घडलेल्या<br />यशस्वी कहाण्या.</> : <>Stories of<br />Resilient Hearts.</>}
+        {/* Section Header */}
+        <div className="space-y-3">
+          <span className="text-[11px] uppercase tracking-widest font-bold text-brand-saffron">
+            {isMarathi ? 'बातम्या आणि लेख' : 'News & Articles'}
+          </span>
+          <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal max-w-xl mx-auto leading-tight">
+            {tLocal.title}
           </h2>
-          <div className="accent-line" />
-          <p className="text-brand-muted text-[15px] font-light max-w-xl leading-relaxed">
-            {lang === 'mr' 
-              ? 'तुमच्या दातृत्वामुळे ज्यांच्या जीवनात मोलाचा बदल घडून आला आहे अशा आमच्या वस्तीतील मुलांची ओळख करून घ्या.' 
-              : 'Meet the individuals whose lives have been altered by your empathy. These stories represent our purpose on the ground.'}
-          </p>
-        </motion.div>
-
-        {/* Featured story */}
-        <div className="relative min-h-[440px]">
-          <AnimatePresence mode="wait" custom={activeDirection}>
-            <motion.div
-              key={activeIndex}
-              custom={activeDirection}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-0 items-center"
-            >
-              {/* Left: Image */}
-              <div className="lg:col-span-5">
-                <div className="rounded-3xl overflow-hidden border border-brand-clay/60 shadow-xl hover:shadow-2xl transition-all duration-500">
-                  <img
-                    src={story.image}
-                    alt={story.name}
-                    className="w-full h-[400px] object-cover editorial-img"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-
-              {/* Right: Content */}
-              <div className="lg:col-span-6 lg:col-start-7 space-y-6">
-                <div className="space-y-2">
-                  <span className="section-label">{story.role}</span>
-                  <h3 className="font-serif-display text-3xl sm:text-4xl font-bold text-brand-charcoal">
-                    {story.name}
-                  </h3>
-                </div>
-
-                <p className="text-brand-muted text-[15px] leading-relaxed font-light">
-                  {story.narrative}
-                </p>
-
-                {/* Pull-quote */}
-                <blockquote className="border-l-2 border-brand-saffron pl-6 py-2 mt-2">
-                  <p className="font-serif-display italic text-xl text-brand-charcoal/90 leading-relaxed">
-                    &ldquo;{story.quote}&rdquo;
-                  </p>
-                  <cite className="block mt-3 text-[9px] uppercase tracking-widest text-brand-muted font-bold not-italic">
-                    {lang === 'mr' ? 'लाभार्थी मनोगत' : 'Beneficiary Testimony'}
-                  </cite>
-                </blockquote>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+          <div className="w-16 h-[2px] bg-brand-yellow mx-auto mt-2" />
         </div>
 
-        {/* Navigation controls */}
-        <div className="mt-12 flex items-center justify-between">
-          {/* Arrows */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => paginate(-1)}
-              className="w-11 h-11 rounded-full border border-brand-clay/60 bg-white/60 text-brand-charcoal flex items-center justify-center hover:bg-brand-saffron hover:text-white hover:border-brand-saffron transition-all duration-300 shadow-sm"
-              aria-label="Previous story"
+        {/* 3-Column Articles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {articles.map((art, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.6, delay: idx * 0.15 }}
+              className="bg-white border border-brand-clay/35 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col text-left"
             >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => paginate(1)}
-              className="w-11 h-11 rounded-full border border-brand-clay/60 bg-white/60 text-brand-charcoal flex items-center justify-center hover:bg-brand-saffron hover:text-white hover:border-brand-saffron transition-all duration-300 shadow-sm"
-              aria-label="Next story"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+              {/* Photo Area with date badge in corner */}
+              <div className="h-52 relative overflow-hidden bg-brand-sand">
+                <img
+                  src={art.image}
+                  alt={art.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                
+                {/* Yellow Date Badge */}
+                <div className="absolute bottom-4 left-4 bg-brand-yellow text-brand-charcoal px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-md">
+                  {art.date}
+                </div>
+              </div>
 
-          {/* Dots */}
-          <div className="flex items-center gap-2.5">
-            {stories.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => goTo(idx)}
-                className={`rounded-full transition-all duration-300 ${
-                  idx === activeIndex
-                    ? 'w-8 h-2 bg-brand-saffron'
-                    : 'w-2 h-2 bg-brand-clay hover:bg-brand-muted'
-                }`}
-                aria-label={`Go to story ${idx + 1}`}
-              />
-            ))}
-          </div>
+              {/* Content Area */}
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  {/* Meta comments */}
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-brand-muted uppercase tracking-wider">
+                    <span>{tLocal.byAdmin}</span>
+                    <span>&bull;</span>
+                    <span className="flex items-center gap-1">
+                      <MessageSquare className="w-3 h-3" />
+                      {art.commentsCount} {tLocal.comments}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h4 className="font-serif-display text-lg font-bold text-brand-charcoal leading-snug group-hover:text-brand-saffron transition-colors duration-300">
+                    {art.title}
+                  </h4>
+                  <p className="text-brand-muted text-xs leading-relaxed font-light line-clamp-2">
+                    {art.desc}
+                  </p>
+                </div>
 
-          {/* Counter */}
-          <span className="font-mono text-[11px] text-brand-muted tracking-wide">
-            {String(activeIndex + 1).padStart(2, '0')}{' '}
-            <span className="text-brand-clay">/</span>{' '}
-            {String(stories.length).padStart(2, '0')}
-          </span>
+                {/* Read more link */}
+                <div className="pt-2">
+                  <a
+                    href={`/${lang}/events`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-charcoal hover:text-brand-saffron transition-colors"
+                  >
+                    <span>{tLocal.readMore}</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </a>
+                </div>
+              </div>
+
+            </motion.div>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="pt-4">
+          <button
+            onClick={() => router.push(`/${lang}/events`)}
+            className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-8 py-3.5 text-[13px] tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5"
+          >
+            {tLocal.viewAll}
+          </button>
         </div>
 
       </div>
