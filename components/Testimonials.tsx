@@ -53,7 +53,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
             {isMarathi ? 'अभिप्राय आणि विश्वास' : 'Testimonials'}
           </span>
           <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal max-w-xl mx-auto leading-tight">
-            {isMarathi ? 'आमच्या मौल्यवान देणगीदारांचे अनुभव' : 'Our Valuable Customers Awesome Feedback'}
+            {isMarathi ? 'आमच्या मौल्यवान देणगीदारांचे अनुभव' : 'Our Valuable Donors\' Awesome Feedback'}
           </h2>
           <div className="w-16 h-[2px] bg-brand-yellow mx-auto mt-2" />
         </div>
