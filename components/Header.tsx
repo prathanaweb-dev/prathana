@@ -20,6 +20,13 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
 
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
+  const isHomePage = pathname ? (pathname === `/${lang}` || pathname === `/${lang}/` || pathname === '/' || pathname === '/en' || pathname === '/mr') : false;
+  const useLightText = isHomePage && !isScrolled && !mobileMenuOpen;
+
+  const navLinkClass = `text-[13px] font-bold transition-colors duration-300 tracking-wide ${
+    useLightText ? 'text-white/85 hover:text-white' : 'text-brand-muted hover:text-brand-charcoal'
+  }`;
+
   const navLinks = [
     { name: t.nav.story, href: `/${lang}/about` },
     { name: t.nav.vision, href: `/${lang}/vision-mission` },
@@ -87,10 +94,14 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             className="w-10 h-10 object-contain transition-transform duration-500 group-hover:rotate-12"
           />
           <div className="flex flex-col">
-            <span className="font-serif-display text-xl md:text-2xl font-bold tracking-tight text-brand-charcoal leading-none">
+            <span className={`font-serif-display text-xl md:text-2xl font-bold tracking-tight leading-none ${
+              useLightText ? 'text-white' : 'text-brand-charcoal'
+            }`}>
               Prathana
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-brand-saffron font-semibold mt-0.5">
+            <span className={`text-[10px] uppercase tracking-widest font-semibold mt-0.5 transition-colors duration-300 ${
+              useLightText ? 'text-brand-yellow' : 'text-brand-saffron'
+            }`}>
               Solapur
             </span>
           </div>
@@ -101,7 +112,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* Home */}
           <a
             href={`/${lang}`}
-            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+            className={navLinkClass}
           >
             {lang === 'mr' ? 'मुख्य पान' : 'Home'}
           </a>
@@ -109,7 +120,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* About Us */}
           <a
             href={`/${lang}/about`}
-            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide whitespace-nowrap"
+            className={`${navLinkClass} whitespace-nowrap`}
           >
             {t.nav.story}
           </a>
@@ -117,14 +128,16 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* Campaigns */}
           <a
             href={`/${lang}/donation`}
-            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+            className={navLinkClass}
           >
             {lang === 'mr' ? 'मोहिमा' : 'Campaigns'}
           </a>
 
           {/* Pages Dropdown (Hover-based group) */}
           <div className="relative group py-2">
-            <button className="flex items-center gap-1 text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide cursor-pointer">
+            <button className={`flex items-center gap-1 text-[13px] font-bold transition-colors duration-300 tracking-wide cursor-pointer ${
+              useLightText ? 'text-white/85 hover:text-white' : 'text-brand-muted hover:text-brand-charcoal'
+            }`}>
               <span>{lang === 'mr' ? 'विभाग' : 'Pages'}</span>
               <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-300" />
             </button>
@@ -167,7 +180,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* Blog (Events) */}
           <a
             href={`/${lang}/events`}
-            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+            className={navLinkClass}
           >
             {lang === 'mr' ? 'बातम्या' : 'Blog'}
           </a>
@@ -175,7 +188,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* Contact (Footer) */}
           <a
             href="#footer"
-            className="text-[13px] font-bold text-brand-muted hover:text-brand-charcoal transition-colors duration-300 tracking-wide"
+            className={navLinkClass}
           >
             {lang === 'mr' ? 'संपर्क' : 'Contact'}
           </a>
@@ -184,7 +197,11 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           <div className="relative">
             <button
               onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-brand-clay hover:bg-brand-sand/55 text-[12px] font-bold text-brand-charcoal transition-colors duration-300"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[12px] font-bold transition-colors duration-300 ${
+                useLightText
+                  ? 'border-white/30 hover:bg-white/10 text-white'
+                  : 'border-brand-clay hover:bg-brand-sand/55 text-brand-charcoal'
+              }`}
             >
               <Globe className="w-3.5 h-3.5" />
               <span>{t.nav.langCode}</span>
@@ -224,8 +241,12 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           </div>
 
           {/* Call & Search Block — Responsive */}
-          <div className="hidden xl:flex items-center gap-4 border-l border-brand-clay/60 pl-4 h-8 shrink-0">
-            <button className="text-brand-charcoal hover:text-brand-saffron transition-colors" aria-label="Search">
+          <div className={`hidden xl:flex items-center gap-4 border-l pl-4 h-8 shrink-0 ${
+            useLightText ? 'border-white/20' : 'border-brand-clay/60'
+          }`}>
+            <button className={`transition-colors ${
+              useLightText ? 'text-white/80 hover:text-brand-yellow' : 'text-brand-charcoal hover:text-brand-saffron'
+            }`} aria-label="Search">
               <Search className="w-4 h-4" />
             </button>
             <div className="flex items-center gap-2">
@@ -233,8 +254,12 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                 <Phone className="w-3.5 h-3.5 fill-current" />
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-[9px] uppercase tracking-widest text-brand-muted font-bold leading-none">Call Us</span>
-                <span className="text-[11px] font-bold text-brand-charcoal mt-0.5 leading-none">+91 98765 43210</span>
+                <span className={`text-[9px] uppercase tracking-widest font-bold leading-none ${
+                  useLightText ? 'text-white/60' : 'text-brand-muted'
+                }`}>Call Us</span>
+                <span className={`text-[11px] font-bold mt-0.5 leading-none ${
+                  useLightText ? 'text-white' : 'text-brand-charcoal'
+                }`}>+91 98765 43210</span>
               </div>
             </div>
           </div>
@@ -252,7 +277,11 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           {/* Mobile Lang Button */}
           <button
             onClick={() => switchLanguage(lang === 'en' ? 'mr' : 'en')}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-brand-clay text-[11px] font-bold text-brand-charcoal"
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[11px] font-bold ${
+              useLightText
+                ? 'border-white/30 text-white hover:bg-white/10'
+                : 'border-brand-clay text-brand-charcoal'
+            }`}
             title="Switch Language"
           >
             <Globe className="w-3 h-3" />
@@ -268,7 +297,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-brand-charcoal"
+            className={`p-2 transition-colors ${useLightText ? 'text-white' : 'text-brand-charcoal'}`}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (

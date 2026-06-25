@@ -86,11 +86,15 @@ export default function VolunteerDashboard() {
   };
 
   return (
-    <div className="relative min-h-screen bg-brand-paper flex flex-col justify-between">
+    <div className="relative min-h-screen bg-brand-paper bg-grid-pattern overflow-hidden flex flex-col justify-between">
+      {/* Ambient background glows */}
+      <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-3.5s' }} />
+
       <Header lang={lang} />
 
-      <main className="flex-1 pt-32 pb-24">
-        <div className="max-w-4xl mx-auto px-6 md:px-12">
+      <main className="flex-1 pt-32 pb-24 z-10">
+        <div className="max-w-4xl mx-auto px-6 md:px-12 text-left">
           
           {pageLoading ? (
             <div className="flex justify-center py-20">

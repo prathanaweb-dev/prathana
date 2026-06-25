@@ -100,7 +100,7 @@ export default function EventsClient({
             className="space-y-16"
           >
             {/* Header */}
-            <div className="space-y-4 max-w-3xl">
+            <div className="space-y-4 max-w-3xl text-left">
               <span className="section-label">{t.events.label}</span>
               <h1 className="font-serif-display text-4xl sm:text-6xl font-bold tracking-tight text-brand-charcoal leading-[1.05]">
                 {t.events.title}
@@ -112,7 +112,7 @@ export default function EventsClient({
             </div>
 
             {/* List */}
-            <div className="space-y-10 min-h-[300px]">
+            <div className="space-y-6 min-h-[300px]">
               {initialEvents.length > 0 ? (
                 initialEvents.map((evt, idx) => {
                   const title = (lang === 'mr' && evt.title_mr) ? evt.title_mr : evt.title;
@@ -124,15 +124,15 @@ export default function EventsClient({
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: idx * 0.06 }}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-6 pb-10 border-b border-brand-clay/40 items-start group cursor-pointer"
+                      className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 bg-white border border-brand-clay/60 rounded-3xl items-start group cursor-pointer premium-card text-left"
                       onClick={() => setSelectedEventId(evt.id)}
                     >
                       {/* Image */}
-                      <div className="md:col-span-4 h-40 rounded-2xl overflow-hidden bg-brand-sand">
+                      <div className="md:col-span-4 h-40 w-full rounded-2xl overflow-hidden bg-brand-sand relative">
                         <img
                           src={evt.featured_image}
                           alt={title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103"
+                          className="w-full h-full object-cover transition-transform duration-750 group-hover:scale-105 editorial-img"
                         />
                       </div>
 
@@ -160,7 +160,7 @@ export default function EventsClient({
                   );
                 })
               ) : (
-                <div className="text-center py-20 border border-dashed border-brand-clay rounded-2xl bg-white">
+                <div className="text-center py-20 border border-dashed border-brand-clay rounded-2xl bg-white/50 backdrop-blur-sm">
                   <p className="font-serif-display italic text-brand-muted text-lg">
                     {t.events.noItems}
                   </p>

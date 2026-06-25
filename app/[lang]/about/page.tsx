@@ -1,13 +1,14 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
+import { useParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 
-interface AboutPageProps {
-  params: Promise<{ lang: string }>;
-}
-
-export default async function AboutPage({ params }: AboutPageProps) {
-  const { lang } = await params;
+export default function AboutPage() {
+  const params = useParams();
+  const lang = (params?.lang as string) || 'en';
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
   const values = [
@@ -50,15 +51,24 @@ export default async function AboutPage({ params }: AboutPageProps) {
   ];
 
   return (
-    <div className="relative min-h-screen bg-brand-paper flex flex-col justify-between">
+    <div className="relative min-h-screen bg-brand-paper bg-grid-pattern overflow-hidden flex flex-col justify-between">
+      {/* Ambient background glows */}
+      <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none animate-drift" />
+      <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-3.5s' }} />
+
       <Header lang={lang} />
 
       {/* Main Content Area */}
-      <main className="flex-1 pt-32 pb-24">
+      <main className="flex-1 pt-32 pb-24 z-10">
         <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-24">
           
           {/* Section 1: Editorial Header */}
-          <div className="space-y-6 max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6 max-w-3xl"
+          >
             <span className="section-label">{t.about.label}</span>
             <h1 className="font-serif-display text-4xl sm:text-6xl font-bold tracking-tight text-brand-charcoal leading-[1.05]">
               {lang === 'mr' ? 'अन्नाने सुरुवात, शिक्षणाने क्रांती.' : 'It started with a plate of food.'}
@@ -67,11 +77,17 @@ export default async function AboutPage({ params }: AboutPageProps) {
             <p className="text-lg text-brand-muted font-light leading-relaxed">
               {t.about.p1}
             </p>
-          </div>
+          </motion.div>
 
           {/* Section 2: Split Narrative Block */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            <div className="lg:col-span-6 rounded-3xl overflow-hidden border border-brand-clay">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start"
+          >
+            <div className="lg:col-span-6 rounded-3xl overflow-hidden border border-brand-clay shadow-md">
               <img
                 src="https://images.unsplash.com/photo-1593113503873-e4b412c93f4b?q=80&w=800&auto=format&fit=crop"
                 alt="Humanitarian outreach in Solapur"
@@ -93,34 +109,53 @@ export default async function AboutPage({ params }: AboutPageProps) {
                 </cite>
               </blockquote>
             </div>
-          </div>
+          </motion.div>
 
           {/* Section 3: Core Values (3-col cards) */}
           <div className="space-y-12">
-            <div className="space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.6 }}
+              className="space-y-3"
+            >
               <span className="section-label">{lang === 'mr' ? 'मूल्ये' : 'Our Values'}</span>
               <h2 className="font-serif-display text-3xl font-bold text-brand-charcoal">
                 {lang === 'mr' ? 'आम्हाला जोडणारी तत्वे.' : 'The Principles Steering Us.'}
               </h2>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {values.map((v) => (
-                <div key={v.title} className="p-7 bg-white border border-brand-clay/60 rounded-2xl space-y-3">
+              {values.map((v, index) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  key={v.title}
+                  className="p-7 bg-white border border-brand-clay/60 rounded-2xl space-y-3 premium-card"
+                >
                   <h4 className="font-serif-display text-lg font-bold text-brand-charcoal">
                     {v.title}
                   </h4>
                   <p className="text-xs text-brand-muted leading-relaxed font-light">
                     {v.desc}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
 
           {/* Section 4: Leadership Group */}
           <div className="space-y-12">
-            <div className="space-y-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.6 }}
+              className="space-y-3"
+            >
               <span className="section-label">{lang === 'mr' ? 'नेतृत्व' : 'Leadership'}</span>
               <h2 className="font-serif-display text-3xl font-bold text-brand-charcoal">
                 {t.about.leadershipTitle}
@@ -128,11 +163,18 @@ export default async function AboutPage({ params }: AboutPageProps) {
               <p className="text-sm text-brand-muted font-light max-w-xl">
                 {t.about.leadershipSub}
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {t.about.leaders.map((leader, i) => (
-                <div key={leader.name} className="bg-white border border-brand-clay/60 rounded-2xl overflow-hidden flex flex-col justify-between h-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, delay: i * 0.05 }}
+                  key={leader.name}
+                  className="bg-white border border-brand-clay/60 rounded-2xl overflow-hidden flex flex-col justify-between h-full premium-card"
+                >
                   <div className="p-6 space-y-4">
                     <div className="w-12 h-12 rounded-xl bg-brand-sand flex items-center justify-center font-serif-display text-brand-charcoal font-bold text-lg">
                       {leader.name.split(' ').map(n => n[0]).join('')}
@@ -149,7 +191,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
                       {leader.bio}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

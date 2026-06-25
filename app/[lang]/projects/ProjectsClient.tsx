@@ -51,7 +51,12 @@ export default function ProjectsClient({
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-16">
       {/* Header */}
-      <div className="space-y-4 max-w-3xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="space-y-4 max-w-3xl text-left"
+      >
         <span className="section-label">{t.projects.label}</span>
         <h1 className="font-serif-display text-4xl sm:text-6xl font-bold tracking-tight text-brand-charcoal leading-[1.05]">
           {t.projects.title}
@@ -60,10 +65,15 @@ export default function ProjectsClient({
         <p className="text-base text-brand-muted font-light leading-relaxed">
           {t.projects.desc}
         </p>
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap items-center gap-2.5 border-b border-brand-clay/40 pb-5">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex flex-wrap items-center gap-2.5 border-b border-brand-clay/40 pb-5"
+      >
         {statuses.map((s) => (
           <button
             key={s.id}
@@ -71,13 +81,13 @@ export default function ProjectsClient({
             className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-300 ${
               activeTab === s.id
                 ? 'bg-brand-charcoal text-white border-brand-charcoal shadow-sm'
-                : 'bg-transparent text-brand-muted border-brand-clay hover:bg-brand-sand/35 hover:text-brand-charcoal'
+                : 'bg-white/60 text-brand-muted border-brand-clay hover:bg-brand-sand/35 hover:text-brand-charcoal hover:border-brand-charcoal/20'
             }`}
           >
             {s.label}
           </button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Projects List */}
       <div className="space-y-6 min-h-[300px]">
@@ -96,7 +106,7 @@ export default function ProjectsClient({
                   exit={{ opacity: 0, y: 15 }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
                   key={proj.id}
-                  className="bg-white border border-brand-clay/60 rounded-3xl overflow-hidden shadow-sm flex flex-col md:flex-row h-full group"
+                  className="bg-white border border-brand-clay/60 rounded-3xl overflow-hidden flex flex-col md:flex-row h-full group premium-card text-left"
                 >
                   {/* Left: Image */}
                   <div className="h-56 md:h-auto md:w-80 relative overflow-hidden bg-brand-sand flex-shrink-0">
