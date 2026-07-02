@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 
 interface AboutProps {
   lang: string;
+  onDonateClick?: (campaignId?: string) => void;
 }
 
-export default function About({ lang }: AboutProps) {
+export default function About({ lang, onDonateClick }: AboutProps) {
   const router = useRouter();
 
   const isMarathi = lang === 'mr';
@@ -20,26 +21,35 @@ export default function About({ lang }: AboutProps) {
       {
         title: isMarathi ? 'सकस आहार' : 'Healthy Food',
         desc: isMarathi ? 'सोलापूरमधील गरीब आणि रस्त्यावरील बालकांसाठी रोज पोषक आणि दर्जेदार जेवणाची व्यवस्था.' : 'Providing nutrition-dense meals daily to children in Solapur slums.',
+        ctaText: isMarathi ? 'आहार प्रायोजित करा' : 'Sponsor a Meal',
+        statText: isMarathi ? '१,५००+ रोजचे जेवण' : '1,500+ Daily Meals',
+        campaignId: 'campaign-1',
         icon: Utensils,
-        strokeColor: '#0e271f',
-        bgFill: '#f4f6f5',
-        iconBg: 'bg-[#0e271f] text-white',
+        strokeColor: 'var(--color-brand-green)',
+        bgFill: '#f2f6f4',
+        iconBg: 'bg-brand-green text-white',
       },
       {
         title: isMarathi ? 'वैद्यकीय सेवा' : 'Medical Care',
         desc: isMarathi ? 'तपासणी शिबिरे, मोफत औषधे आणि बालकांच्या आरोग्याची नियमित काळजी.' : 'Conducting health camps and supplying prescription medicines.',
+        ctaText: isMarathi ? 'वैद्यकीय मदत करा' : 'Sponsor Care',
+        statText: isMarathi ? '२५०+ तपासण्या' : '250+ Weekly Audits',
+        campaignId: 'campaign-2',
         icon: Stethoscope,
-        strokeColor: '#0c5237',
-        bgFill: '#fdf2f0',
-        iconBg: 'bg-[#f05a33] text-white',
+        strokeColor: '#d36d4b',
+        bgFill: '#faf5f2',
+        iconBg: 'bg-[#d36d4b] text-white',
       },
       {
         title: isMarathi ? 'गुणवत्तापूर्ण शिक्षण' : 'Child Education',
         desc: isMarathi ? 'शैक्षणिक साहित्य वाटप, फी मदत आणि विशेष अभ्यास वर्गांचे संचालन.' : 'Distributing educational kits and coordinating tutoring hubs.',
+        ctaText: isMarathi ? 'शैक्षणिक साहित्य द्या' : 'Sponsor a Kit',
+        statText: isMarathi ? '४५+ बालके शाळेत' : '45+ Kids Enrolled',
+        campaignId: 'campaign-3',
         icon: BookOpen,
-        strokeColor: '#fbb03b',
-        bgFill: '#fffcf2',
-        iconBg: 'bg-[#fbb03b] text-white',
+        strokeColor: 'var(--color-brand-yellow)',
+        bgFill: '#fbf9f0',
+        iconBg: 'bg-brand-yellow text-brand-charcoal',
       },
     ],
     aboutTitle: isMarathi ? 'एकमेकांना मदत करून जग सुंदर बनवूया' : 'Helping Each Other Can Make World Better',
@@ -84,10 +94,11 @@ export default function About({ lang }: AboutProps) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
                   transition={{ duration: 0.6, delay: idx * 0.15 }}
-                  className="relative px-8 pb-12 pt-16 min-h-[360px] flex flex-col items-center justify-center text-center group mt-10 hover:-translate-y-1 transition-all duration-300 isolate"
+                  onClick={() => onDonateClick && onDonateClick(card.campaignId)}
+                  className="relative px-8 pb-10 pt-16 min-h-[380px] flex flex-col items-center justify-between text-center group mt-10 hover:-translate-y-2 transition-all duration-500 isolate cursor-pointer"
                 >
                   {/* Vector SVG Dome shape card */}
-                  <svg className="absolute inset-0 w-full h-full -z-10 filter drop-shadow-[0_8px_16px_rgba(21,34,27,0.03)] group-hover:drop-shadow-[0_16px_32px_rgba(21,34,27,0.06)] group-hover:scale-[1.01] transition-all duration-500" viewBox="0 0 100 120" preserveAspectRatio="none">
+                  <svg className="absolute inset-0 w-full h-full -z-10 filter drop-shadow-[0_8px_16px_rgba(21,34,27,0.03)] group-hover:drop-shadow-[0_20px_40px_rgba(21,34,27,0.07)] group-hover:scale-[1.01] transition-all duration-500" viewBox="0 0 100 120" preserveAspectRatio="none">
                     <path
                       d="M 6,114 C 6,70 12,12 50,12 C 88,12 94,70 94,114 C 50,108 6,114 6,114 Z"
                       fill={card.bgFill}
@@ -99,14 +110,28 @@ export default function About({ lang }: AboutProps) {
                   </svg>
 
                   {/* Overlapping Peak Icon */}
-                  <div className={`absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center ${card.iconBg} shadow-md z-10 hover:scale-110 transition-transform duration-300`}>
+                  <div className={`absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center ${card.iconBg} shadow-md z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
                     <Icon className="w-7 h-7" />
                   </div>
 
                   {/* Card Content centered */}
-                  <div className="space-y-3 flex-1 flex flex-col justify-center">
-                    <h3 className="font-serif-display text-xl font-bold text-brand-charcoal">{card.title}</h3>
-                    <p className="text-brand-muted text-xs sm:text-sm leading-relaxed font-light px-2">{card.desc}</p>
+                  <div className="space-y-4 flex-1 flex flex-col justify-between pt-4 w-full">
+                    <div className="space-y-3">
+                      {/* Metric Stat badge */}
+                      <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-wider text-brand-charcoal bg-brand-charcoal/5 px-3 py-1 rounded-full group-hover:bg-brand-yellow/20 group-hover:text-brand-forest transition-colors duration-300">
+                        {card.statText}
+                      </span>
+                      <h3 className="font-serif-display text-xl font-bold text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">{card.title}</h3>
+                      <p className="text-brand-muted text-xs leading-relaxed font-light px-2 line-clamp-3">{card.desc}</p>
+                    </div>
+
+                    {/* Interactive CTA Link */}
+                    <div className="pt-3 border-t border-brand-clay/20">
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">
+                        <span>{card.ctaText}</span>
+                        <span className="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               );

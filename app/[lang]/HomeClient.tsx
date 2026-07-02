@@ -103,7 +103,7 @@ export default function HomeClient({
       />
 
       {/* About: Charity with Difference & Helping each other collage */}
-      <About lang={lang} />
+      <About lang={lang} onDonateClick={handleDonateOpen} />
 
       {/* Campaigns: 3-column Grid layout */}
       <Campaigns lang={lang} campaigns={campaigns} onDonateClick={handleDonateOpen} />
