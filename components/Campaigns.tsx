@@ -23,7 +23,7 @@ export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsP
     <section id="campaigns" className="py-24 bg-brand-paper relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute top-[30%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-yellow/4 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 space-y-12">
 
@@ -36,7 +36,7 @@ export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsP
             transition={{ duration: 0.6 }}
             className="space-y-3 text-left"
           >
-            <span className="text-[11px] uppercase tracking-widest font-bold text-brand-saffron">
+            <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
               {lang === 'mr' ? 'आपल्या सक्रिय मोहिमा' : 'Our Campaigns'}
             </span>
             <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal max-w-xl leading-tight">

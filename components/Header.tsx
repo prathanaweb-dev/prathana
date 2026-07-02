@@ -101,7 +101,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
               Prathana
             </span>
             <span className={`text-[10px] uppercase tracking-widest font-semibold mt-0.5 transition-colors duration-300 ${
-              useLightText ? 'text-brand-yellow' : 'text-brand-saffron'
+              useLightText ? 'text-brand-yellow' : 'text-brand-forest'
             }`}>
               Foundation
             </span>
@@ -222,7 +222,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                     <button
                       onClick={() => switchLanguage('en')}
                       className={`w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-brand-sand/40 transition-colors ${
-                        lang === 'en' ? 'text-brand-saffron bg-brand-sand/20' : 'text-brand-charcoal'
+                        lang === 'en' ? 'text-brand-forest bg-brand-sand/20 font-bold' : 'text-brand-charcoal'
                       }`}
                     >
                       English
@@ -230,7 +230,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                     <button
                       onClick={() => switchLanguage('mr')}
                       className={`w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-brand-sand/40 transition-colors ${
-                        lang === 'mr' ? 'text-brand-saffron bg-brand-sand/20' : 'text-brand-charcoal'
+                        lang === 'mr' ? 'text-brand-forest bg-brand-sand/20 font-bold' : 'text-brand-charcoal'
                       }`}
                     >
                       मराठी (Marathi)
@@ -246,7 +246,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             useLightText ? 'border-white/20' : 'border-brand-clay/60'
           }`}>
             <button className={`transition-colors ${
-              useLightText ? 'text-white/80 hover:text-brand-yellow' : 'text-brand-charcoal hover:text-brand-saffron'
+              useLightText ? 'text-white/80 hover:text-brand-yellow' : 'text-brand-charcoal hover:text-brand-forest'
             }`} aria-label="Search">
               <Search className="w-4 h-4" />
             </button>
@@ -331,7 +331,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05, duration: 0.4 }}
-                  className="block py-2.5 font-serif-display text-2xl font-medium text-brand-charcoal hover:text-brand-saffron transition-colors"
+                  className="block py-2.5 font-serif-display text-2xl font-medium text-brand-charcoal hover:text-brand-forest transition-colors"
                 >
                   {link.name}
                 </motion.a>

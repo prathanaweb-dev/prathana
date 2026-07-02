@@ -57,7 +57,7 @@ export default function About({ lang }: AboutProps) {
   return (
     <section id="about" className="py-24 bg-brand-paper relative overflow-hidden">
       {/* Background ambient blobs */}
-      <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-saffron/4 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-brand-yellow/4 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-brand-green/4 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-24">
@@ -65,7 +65,7 @@ export default function About({ lang }: AboutProps) {
         {/* ── SECTION 1: Charity With Difference ── */}
         <div className="text-center space-y-12">
           <div className="space-y-3">
-            <span className="text-[11px] uppercase tracking-widest font-bold text-brand-saffron">
+            <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
               {tLocal.charityTitle}
             </span>
             <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal">
@@ -87,7 +87,7 @@ export default function About({ lang }: AboutProps) {
                   className="relative px-8 pb-12 pt-16 min-h-[360px] flex flex-col items-center justify-center text-center group mt-10 hover:-translate-y-1 transition-all duration-300 isolate"
                 >
                   {/* Vector SVG Dome shape card */}
-                  <svg className="absolute inset-0 w-full h-full -z-10" viewBox="0 0 100 120" preserveAspectRatio="none">
+                  <svg className="absolute inset-0 w-full h-full -z-10 filter drop-shadow-[0_8px_16px_rgba(21,34,27,0.03)] group-hover:drop-shadow-[0_16px_32px_rgba(21,34,27,0.06)] group-hover:scale-[1.01] transition-all duration-500" viewBox="0 0 100 120" preserveAspectRatio="none">
                     <path
                       d="M 6,114 C 6,70 12,12 50,12 C 88,12 94,70 94,114 C 50,108 6,114 6,114 Z"
                       fill={card.bgFill}
@@ -174,7 +174,7 @@ export default function About({ lang }: AboutProps) {
           {/* Right Side: Features Checklist */}
           <div className="lg:col-span-6 space-y-8 text-left">
             <div className="space-y-4">
-              <span className="text-[11px] uppercase tracking-widest font-bold text-brand-saffron">
+              <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
                 {isMarathi ? 'आम्ही कोण आहोत' : 'Who We Are'}
               </span>
               <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal leading-tight">
@@ -190,7 +190,7 @@ export default function About({ lang }: AboutProps) {
             <div className="space-y-6">
               {/* Feature 1 */}
               <div className="flex items-start gap-4">
-                <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-saffron flex-shrink-0 mt-1">
+                <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-forest flex-shrink-0 mt-1">
                   <Check className="w-3.5 h-3.5" />
                 </div>
                 <div className="space-y-1">
@@ -201,7 +201,7 @@ export default function About({ lang }: AboutProps) {
 
               {/* Feature 2 */}
               <div className="flex items-start gap-4">
-                <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-saffron flex-shrink-0 mt-1">
+                <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-forest flex-shrink-0 mt-1">
                   <Check className="w-3.5 h-3.5" />
                 </div>
                 <div className="space-y-1">

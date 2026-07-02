@@ -49,7 +49,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
         
         {/* Header Block */}
         <div className="text-center space-y-3">
-          <span className="text-[11px] uppercase tracking-widest font-bold text-brand-saffron">
+          <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
             {isMarathi ? 'अभिप्राय आणि विश्वास' : 'Testimonials'}
           </span>
           <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal max-w-xl mx-auto leading-tight">
@@ -70,7 +70,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
               className="flex flex-col space-y-6 text-left"
             >
               {/* Speech bubble box */}
-              <div className={`bg-white p-8 rounded-3xl shadow-sm border-l-4 ${t.borderColor} relative space-y-4`}>
+              <div className={`bg-white p-8 rounded-3xl shadow-sm border-l-4 ${t.borderColor} relative space-y-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300`}>
                 {/* Rating Stars */}
                 <div className="flex items-center gap-1">
                   {[...Array(t.rating)].map((_, i) => (

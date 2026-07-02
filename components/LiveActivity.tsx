@@ -120,7 +120,7 @@ export default function LiveActivity({ lang, donations, campaigns, stats }: Live
                       <span className="text-[13px] text-brand-charcoal whitespace-nowrap">
                         <span className="font-medium">{donation.donor_name}</span>
                         <span className="text-brand-muted mx-1.5">&rarr;</span>
-                        <span className="font-mono font-semibold text-brand-saffron">
+                        <span className="font-mono font-semibold text-brand-green">
                           ₹{Number(donation.amount).toLocaleString('en-IN')}
                         </span>
                         <span className="text-brand-muted mx-1.5">&middot;</span>

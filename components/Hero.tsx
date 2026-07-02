@@ -74,7 +74,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
           >
             <span className="w-2 h-2 rounded-full bg-brand-yellow animate-pulse" />
             <span className="text-[11px] uppercase tracking-widest text-brand-yellow font-bold">
-              {lang === 'mr' ? 'प्रार्थना सोलापूर · तळागाळातील मदत' : 'Prathana Solapur · Grassroots Outreach'}
+              {lang === 'mr' ? 'प्रार्थना फाउंडेशन · तळागाळातील मदत' : 'Prathana Foundation · Grassroots Outreach'}
             </span>
           </motion.div>
 
@@ -144,6 +144,38 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             />
             {/* Visual bottom gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand-forest/60 via-transparent to-transparent" />
+          </motion.div>
+
+          {/* Floating kids stats card */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="absolute -bottom-4 right-4 bg-white/95 backdrop-blur-md border border-brand-clay/60 p-4 rounded-2xl shadow-xl flex items-center gap-3 z-20 text-brand-charcoal"
+          >
+            <div className="w-9 h-9 rounded-xl bg-brand-green/10 flex items-center justify-center text-brand-green">
+              <Heart className="w-5 h-5 fill-current" />
+            </div>
+            <div>
+              <span className="block text-xs font-bold text-brand-charcoal">45+ Children</span>
+              <span className="block text-[9px] text-brand-muted font-light uppercase tracking-wider">Sponsored at Balgram</span>
+            </div>
+          </motion.div>
+
+          {/* Floating tax exemption card */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="absolute top-8 -left-8 bg-white/95 backdrop-blur-md border border-brand-clay/60 p-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 z-20 text-brand-charcoal hidden sm:flex"
+          >
+            <div className="w-8 h-8 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-yellow font-extrabold text-xs">
+              ✓
+            </div>
+            <div>
+              <span className="block text-[11px] font-bold text-brand-charcoal">80G Tax Exemption</span>
+              <span className="block text-[8px] text-brand-muted font-light uppercase tracking-wider">Approved Charity</span>
+            </div>
           </motion.div>
 
           {/* Golden abstract circle highlight decoration */}
