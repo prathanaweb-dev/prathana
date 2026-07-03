@@ -11,7 +11,6 @@ interface FooterProps {
 }
 
 export default function Footer({ lang, onDonateClick }: FooterProps) {
-  const [email, setEmail] = useState('');
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
   const isMarathi = lang === 'mr';
@@ -20,52 +19,9 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      alert(isMarathi ? 'बातम्यांच्या वर्गणीसाठी नोंदणी केल्याबद्दल धन्यवाद!' : 'Thank you for subscribing to our newsletter!');
-      setEmail('');
-    }
-  };
-
   return (
     <footer className="relative overflow-hidden text-white">
       
-      {/* Newsletter Subscribe Banner Block */}
-      <div className="bg-brand-green border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-left space-y-1">
-            <h3 className="font-serif-display text-2xl sm:text-3xl font-bold tracking-tight">
-              {isMarathi ? 'आमच्या वृत्तपत्राचे सदस्य व्हा' : 'Subscribe To Our Newsletter'}
-            </h3>
-            <p className="text-white/70 text-xs font-light">
-              {isMarathi 
-                ? 'नवीनतम मोहीम प्रगती आणि सोलापूर उपक्रम थेट तुमच्या इनबॉक्समध्ये मिळवा.' 
-                : 'Get latest campaign progress and Solapur outreach updates directly in your inbox.'}
-            </p>
-          </div>
-          
-          {/* Subscribe Form */}
-          <form onSubmit={handleSubscribe} className="w-full md:w-auto flex items-center bg-white rounded-full p-1 overflow-hidden shadow-md max-w-md flex-1">
-            <input
-              type="email"
-              placeholder={isMarathi ? 'ईमेल पत्ता प्रविष्ट करा' : 'Enter your email address'}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 px-4 py-2 text-brand-charcoal text-xs focus:outline-none placeholder:text-brand-muted/70 bg-transparent"
-            />
-            <button
-              type="submit"
-              className="bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-6 py-2.5 rounded-full text-xs tracking-wider transition-colors flex items-center gap-1.5 shrink-0"
-            >
-              <span>{isMarathi ? 'नोंदणी करा' : 'Subscribe'}</span>
-              <Send className="w-3 h-3 fill-current" />
-            </button>
-          </form>
-        </div>
-      </div>
-
       {/* Main Footer — Deep Forest Green Background */}
       <div className="bg-brand-forest">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
@@ -90,7 +46,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                     Prathana
                   </span>
                   <span className="text-[9px] uppercase tracking-widest text-brand-yellow font-bold mt-1">
-                    Solapur
+                    Foundation
                   </span>
                 </div>
               </div>
