@@ -291,7 +291,7 @@ export default function AdminDashboard() {
         description: campDesc,
         description_mr: campDescMr,
         goal_amount: Number(campGoal),
-        image: campImage || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop',
+        image: campImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
         status: campStatus,
         is_completed: campStatus === 'completed',
       };
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
         title_mr: actTitleMr,
         description: actDesc,
         description_mr: actDescMr,
-        image: actImage || 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=800&auto=format&fit=crop',
+        image: actImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
         category: actCategory,
       };
 
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
         title_mr: projTitleMr,
         description: projDesc,
         description_mr: projDescMr,
-        image: projImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop',
+        image: projImage || '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg',
         status: projStatus,
         start_date: projStart,
         end_date: projEnd,
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
         title_mr: evtTitleMr,
         content: evtContent,
         content_mr: evtContentMr,
-        featured_image: evtImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop',
+        featured_image: evtImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
         published_date: evtDate,
       };
 

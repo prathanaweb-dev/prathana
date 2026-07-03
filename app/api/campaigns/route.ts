@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       title,
       description,
       goal_amount: Number(goal_amount),
-      image: image || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop',
+      image: image || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
     });
 
     if (!campaign) {
