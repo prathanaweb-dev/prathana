@@ -138,8 +138,8 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             className="relative w-full max-w-[400px] aspect-[4/5] rounded-[40px_10px_40px_10px] overflow-hidden border-8 border-brand-yellow/20 bg-brand-charcoal shadow-2xl"
           >
             <img
-              src="https://images.unsplash.com/photo-1594708767771-a7502209ff51?q=80&w=800&auto=format&fit=crop"
-              alt="Happy smiling child supported by Prathana Foundation"
+              src="/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg"
+              alt="Happy smiling children supported by Prathana Foundation"
               className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
             />
             {/* Visual bottom gradient */}

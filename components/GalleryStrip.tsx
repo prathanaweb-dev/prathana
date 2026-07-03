@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 export default function GalleryStrip() {
   const images = [
-    'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=400&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1594708767771-a7502209ff51?q=80&w=400&auto=format&fit=crop',
+    '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
+    '/naturalfarming/Natural%20Farming/_MG_0169.JPG',
+    '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
+    '/awards/Awards/FB_IMG_1782107660649.jpg.jpeg',
   ];
 
   return (

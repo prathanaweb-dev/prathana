@@ -59,10 +59,9 @@ export default function CTABanners({ lang, onDonateClick }: CTABannersProps) {
         </div>
       </div>
 
-      {/* Center Overlapping Child Photo Circle */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-8 border-brand-paper bg-brand-sand overflow-hidden hidden md:block z-20 shadow-xl">
         <img
-          src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=400&auto=format&fit=crop"
+          src="/balgram/Balgram/486262711_4051383575091764_2412107029084713359_n.jpg"
           alt="Outreach child face"
           className="w-full h-full object-cover"
         />

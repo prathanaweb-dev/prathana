@@ -89,7 +89,7 @@ export default function AboutPage() {
           >
             <div className="lg:col-span-6 rounded-3xl overflow-hidden border border-brand-clay shadow-md">
               <img
-                src="https://images.unsplash.com/photo-1593113503873-e4b412c93f4b?q=80&w=800&auto=format&fit=crop"
+                src="/awards/Awards/FB_IMG_1782107660649.jpg.jpeg"
                 alt="Humanitarian outreach in Solapur"
                 className="w-full h-[400px] object-cover editorial-img"
               />

@@ -155,7 +155,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <div className="col-span-6 sm:pl-6">
               <div className="rounded-3xl overflow-hidden border border-brand-clay/40 shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop"
+                  src="/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg"
                   alt="Outreach kitchen food prep"
                   className="w-full h-[320px] object-cover transition-transform duration-700 hover:scale-105"
                   loading="lazy"
@@ -167,7 +167,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <div className="col-span-6 relative -translate-y-6">
               <div className="rounded-3xl overflow-hidden border border-brand-clay/40 shadow-xl relative">
                 <img
-                  src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop"
+                  src="/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg"
                   alt="Children studying at Balgram"
                   className="w-full h-[220px] object-cover transition-transform duration-700 hover:scale-105"
                   loading="lazy"
@@ -185,7 +185,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <div className="col-span-8 col-start-4 -mt-8">
               <div className="rounded-2xl overflow-hidden border border-brand-clay/40 shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=600&auto=format&fit=crop"
+                  src="/naturalfarming/Natural%20Farming/_MG_0169.JPG"
                   alt="Natural farming training Solapur"
                   className="w-full h-[160px] object-cover transition-transform duration-700 hover:scale-105"
                   loading="lazy"

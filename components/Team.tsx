@@ -16,22 +16,22 @@ export default function Team({ lang }: TeamProps) {
     {
       name: isMarathi ? 'प्रसाद मोहिते' : 'Prasad Mohite',
       role: isMarathi ? 'संस्थापक आणि अध्यक्ष' : 'Founder & President',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop',
+      image: '/balgram/Balgram/WhatsApp%20Image%202026-06-22%20at%201.09.36%20PM.jpeg',
     },
     {
       name: isMarathi ? 'अनू मोहिते' : 'Anu Mohite',
       role: isMarathi ? 'सचिव आणि सह-संस्थापक' : 'Secretary & Co-Founder',
-      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1782107621493.jpg.jpeg',
     },
     {
       name: isMarathi ? 'अदनान शफी' : 'Adnan Shafi',
       role: isMarathi ? 'मार्गदर्शक / समन्वयक' : 'Field Coordinator',
-      image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=400&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1578738139799.jpg',
     },
     {
       name: isMarathi ? 'जेनी विल्सन' : 'Jenny Wilson',
       role: isMarathi ? 'आरोग्य स्वयंसेवक' : 'Health Volunteer',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1582799490946.jpg',
     },
   ];
 

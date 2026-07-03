@@ -125,7 +125,7 @@ export default function PaymentModal({
           currency: orderData.currency,
           name: 'Prathana Foundation',
           description: `Donation: ${currentCampaign?.title || 'NGO campaign'}`,
-          image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=120&auto=format&fit=crop',
+          image: '/logo.png',
           order_id: orderData.orderId,
           handler: async function (response: any) {
             setLoading(true);

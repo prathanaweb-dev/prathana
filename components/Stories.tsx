@@ -31,7 +31,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'सोलापूरमधील वस्ती भागातील बालकांमध्ये कुपोषण दूर करण्यासाठी आमच्या स्वयंपाकघराने राबविलेले उपक्रम.'
         : 'How our community kitchen feeds street and begging children daily to support their school retention.',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=400&auto=format&fit=crop',
+      image: '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
     },
     {
       date: isMarathi ? '१८ जून २०२६' : '18 June 2026',
@@ -42,7 +42,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'ग्रामीण भागातील गरजू विद्यार्थ्यांना वह्या, पुस्तके, दप्तर आणि इतर शैक्षणिक साहित्याचे वाटप.'
         : 'Distributing education bags, writing books, and uniforms to orphaned children at Balgram.',
-      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop',
+      image: '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
     },
     {
       date: isMarathi ? '१५ जून २०२६' : '15 June 2026',
@@ -53,7 +53,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'भीक मागणाऱ्या बालकांना शिक्षणाची गोडी लावून त्यांना शाळेत दाखल करण्याचे आमचे प्रयत्न.'
         : 'Enrolling children rescued from begging into public schools and tracking their long-term growth.',
-      image: 'https://images.unsplash.com/photo-1594708767771-a7502209ff51?q=80&w=400&auto=format&fit=crop',
+      image: '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg',
     },
   ];
 

@@ -18,7 +18,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
       rating: 5,
       name: isMarathi ? 'अमित देशमुख' : 'Amit Deshmukh',
       role: isMarathi ? 'नियमित देणगीदार, पुणे' : 'Regular Donor, Pune',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1782107629068.jpg.jpeg',
       borderColor: 'border-l-brand-green',
     },
     {
@@ -28,7 +28,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
       rating: 5,
       name: isMarathi ? 'सुप्रिया पाटील' : 'Supriya Patil',
       role: isMarathi ? 'सामाजिक कार्यकर्ता, सोलापूर' : 'Social Worker, Solapur',
-      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1782107634186.jpg.jpeg',
       borderColor: 'border-l-brand-yellow',
     },
     {
@@ -38,7 +38,7 @@ export default function Testimonials({ lang }: TestimonialsProps) {
       rating: 5,
       name: isMarathi ? 'राजेश कुलकर्णी' : 'Rajesh Kulkarni',
       role: isMarathi ? 'माजी नगरसेवक, सोलापूर' : 'Supporter, Solapur',
-      image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=150&auto=format&fit=crop',
+      image: '/awards/Awards/FB_IMG_1782107647729.jpg.jpeg',
       borderColor: 'border-l-[#e75c3c]',
     },
   ];

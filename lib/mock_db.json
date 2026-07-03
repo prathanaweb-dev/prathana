@@ -9,7 +9,7 @@
       "description_mr": "मोरवंची, सोलापूर येथील प्रार्थना बालग्राममधील ४५ मुलांच्या शिक्षण, आरोग्य आणि संगोपनासाठी मदत. अनेक मुले ही शेतकरी आत्महत्याग्रस्त कुटुंबातील किंवा भीक मागणाऱ्या आणि उपेक्षित कुटुंबातील आहेत.",
       "goal_amount": 300000,
       "amount_raised": 185000,
-      "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop",
+      "image": "/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg",
       "is_completed": false,
       "status": "active",
       "created_at": "2026-05-17T04:56:33.870Z"
@@ -23,7 +23,7 @@
       "description_mr": "मोरवंची, सोलापूर येथील प्रार्थना वृद्धाश्रमात राहणाऱ्या २५ बेघर, दुर्लक्षित किंवा निराधार वृद्ध ज्येष्ठ नागरिकांना सकस आहार, औषधोपचार, मायेचा निवारा आणि सन्मान देण्यास हातभार लावा.",
       "goal_amount": 250000,
       "amount_raised": 95000,
-      "image": "https://images.unsplash.com/photo-1581579438747-1dc8d1e0ca96?q=80&w=800&auto=format&fit=crop",
+      "image": "/awards/Awards/FB_IMG_1782107621493.jpg.jpeg",
       "is_completed": false,
       "status": "active",
       "created_at": "2026-05-27T04:56:33.870Z"
@@ -37,7 +37,7 @@
       "description_mr": "सोलापूरमधील गरीब आणि गरजू विद्यार्थ्यांना शैक्षणिक साहित्य संच (दप्तर, वह्या, पेन, गणवेश आणि जोडे) पुरवून शिक्षणाच्या प्रवाहात टिकवून ठेवणे.",
       "goal_amount": 500000,
       "amount_raised": 323500,
-      "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop",
+      "image": "/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg",
       "is_completed": false,
       "status": "active",
       "created_at": "2026-06-06T04:56:33.870Z"
@@ -128,7 +128,7 @@
       "title_mr": "प्रार्थना बालग्राम बाल संगोपन",
       "description": "Providing shelter, clothing, education, healthcare, and life-skills building for 45 children from farmer-suicide families and vulnerable street situations.",
       "description_mr": "शेतकरी आत्महत्याग्रस्त कुटुंबातील आणि सोलापूरच्या रस्त्यावरील ४५ अनाथ व वंचित मुलांचे संगोपन, निवास, आरोग्य आणि शिक्षण व्यवस्था सायकलवर फिरून सांभाळणे.",
-      "image": "https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=800&auto=format&fit=crop",
+      "image": "/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg",
       "category": "education",
       "created_at": "2026-06-01T10:00:00.000Z"
     },
@@ -138,7 +138,7 @@
       "title_mr": "प्रार्थना वृद्धाश्रम वृद्ध संगोपन",
       "description": "Providing shelter, care, dignity, and medical attention to 25 senior citizens who have been abandoned or neglected.",
       "description_mr": "कुटुंबाकडून सोडून दिलेल्या किंवा निराधार २५ वृद्ध ज्येष्ठ नागरिकांना मोरवंची कॅम्पसमध्ये निवारा, वैद्यकीय सेवा आणि सन्मानाचे जीवन देणे.",
-      "image": "https://images.unsplash.com/photo-1581579438747-1dc8d1e0ca96?q=80&w=800&auto=format&fit=crop",
+      "image": "/awards/Awards/FB_IMG_1782107621493.jpg.jpeg",
       "category": "healthcare",
       "created_at": "2026-06-02T10:00:00.000Z"
     },
@@ -148,7 +148,7 @@
       "title_mr": "नैसर्गिक शेती प्रकल्प",
       "description": "Growing chemical-free crops and 16+ varieties of vegetables on campus, providing fresh nutrition for our residents while teaching kids farming skills.",
       "description_mr": "बालग्राममध्ये रासायनिक खतांशिवाय शाश्वत पद्धतीने १६ हून अधिक प्रकारच्या भाज्या आणि धान्य पिकवणे, ज्यामुळे मुलांचे पोषण होते व ते शेतीचे धडे शिकतात.",
-      "image": "https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=800&auto=format&fit=crop",
+      "image": "/naturalfarming/Natural%20Farming/_MG_0169.JPG",
       "category": "nutrition",
       "created_at": "2026-06-03T10:00:00.000Z"
     }
@@ -160,7 +160,7 @@
       "title_mr": "युवा विकास प्रकल्प",
       "description": "Inspiring and equipping young people with leadership, personality development, mental well-being, and social responsibility workshops.",
       "description_mr": "तरुणांमध्ये नेतृत्वगुण, व्यक्तिमत्त्व विकास आणि सामाजिक जबाबदारी निर्माण करण्यासाठी निवासी शिबिरे आणि कार्यशाळा राबवणे.",
-      "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
+      "image": "/awards/Awards/FB_IMG_1782107660649.jpg.jpeg",
       "status": "active",
       "start_date": "2026-04-01",
       "end_date": "2026-10-31",
@@ -172,7 +172,7 @@
       "title_mr": "आपत्ती व्यवस्थापन मदत कार्य",
       "description": "Mobilizing resources and volunteers to provide food kits, essential supplies, and rehabilitation during floods and emergencies in Solapur.",
       "description_mr": "सोलापूरमधील पूर किंवा इतर आपत्तीच्या वेळी पूरग्रस्तांना आणि गरजू कुटुंबांना तातडीने रेशन किट, जेवण आणि पुनर्वसनाचे साहित्य पुरवणे.",
-      "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop",
+      "image": "/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg",
       "status": "active",
       "start_date": "2026-08-15",
       "end_date": "2027-02-28",
@@ -184,7 +184,7 @@
       "title_mr": "वंचितांची शाळा उपक्रम",
       "description": "Our first project in 2018, bringing street and begging children back to mainstream education. Laid the path for establishing Prathana Balgram.",
       "description_mr": "२०१८ मधील पहिला उपक्रम, ज्यामध्ये भीक मागणाऱ्या आणि कचरा वेचणाऱ्या मुलांना शिक्षणाच्या प्रवाहात आणले. यातूनच पुढे बालग्रामची पायाभरणी झाली.",
-      "image": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=800&auto=format&fit=crop",
+      "image": "/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg",
       "status": "completed",
       "start_date": "2018-01-01",
       "end_date": "2018-12-31",
@@ -198,7 +198,7 @@
       "title_mr": "शैक्षणिक साहित्य वाटप उपक्रम",
       "content": "Our Education Support Program successfully provided stationery, school bags, notebooks, and uniforms to needy students across Solapur marginalized clusters, removing educational barriers.",
       "content_mr": "सोलापूरमधील गरीब आणि गरजू विद्यार्थ्यांना शालेय साहित्य संच (दप्तर, वह्या, पेन, गणवेश आणि जोडे) यशस्वीरीत्या पुरवले आहेत, जेणेकरून मुले आत्मविश्वासाने शिक्षण घेऊ शकतील.",
-      "featured_image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop",
+      "featured_image": "/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg",
       "published_date": "2026-06-10",
       "created_at": "2026-06-10T12:00:00.000Z"
     },
@@ -208,7 +208,7 @@
       "title_mr": "बालग्राम आवारात नैसर्गिक शेतीची काढणी",
       "content": "Children and coordinators at Prathana Balgram successfully harvested a fresh crop of organic chemical-free vegetables. Growing food teaches children life-skills and connection with nature.",
       "content_mr": "प्रार्थना बालग्राममधील मुले आणि कार्यकर्त्यांनी रासायनिक खतांशिवाय नैसर्गिक पद्धतीने घेतलेल्या ताज्या भाजीपाल्याची काढणी केली. यामुळे मुले श्रम आणि पर्यावरणाचे मूल्य शिकतात.",
-      "featured_image": "https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=800&auto=format&fit=crop",
+      "featured_image": "/naturalfarming/Natural%20Farming/_MG_0169.JPG",
       "published_date": "2026-06-05",
       "created_at": "2026-06-05T12:00:00.000Z"
     }

@@ -17,28 +17,28 @@ export default function Gallery({ lang }: GalleryProps) {
 
   const photos = [
     {
-      url: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?q=80&w=800&auto=format&fit=crop',
+      url: '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
       title: lang === 'mr' ? 'पोषण मोहीम' : 'Nutrition Drive',
       desc: lang === 'mr' ? 'सोलापूरमधील वस्त्यांमध्ये अन्न वितरण.' : 'Cooked lunch service at Solapur slum clusters.',
       category: 'nutrition',
       gridClass: 'md:col-span-7 h-[380px]',
     },
     {
-      url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=600&auto=format&fit=crop',
+      url: '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg',
       title: lang === 'mr' ? 'अभ्यास वर्ग' : 'Tuition Hubs',
       desc: lang === 'mr' ? 'शाळेनंतर निवारा केंद्रात मार्गदर्शन.' : 'After-school study support classes.',
       category: 'education',
       gridClass: 'md:col-span-5 h-[380px]',
     },
     {
-      url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?q=80&w=600&auto=format&fit=crop',
+      url: '/awards/Awards/FB_IMG_1782107660649.jpg.jpeg',
       title: lang === 'mr' ? 'आरोग्य शिबिरे' : 'Health Camps',
       desc: lang === 'mr' ? 'वृद्ध महिलांची प्राथमिक तपासणी.' : 'Primary clinical audits for elderly widows.',
       category: 'healthcare',
       gridClass: 'md:col-span-5 h-[280px]',
     },
     {
-      url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop',
+      url: '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
       title: lang === 'mr' ? 'साहित्य वाटप' : 'Kit Distributions',
       desc: lang === 'mr' ? 'विद्यार्थ्यांना शालेय साहित्य संच वाटप.' : 'Distribution of stationery and school kits.',
       category: 'distribution',
