@@ -87,6 +87,12 @@ export default function About({ lang, onDonateClick }: AboutProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
+              // Alternate leaf shapes for organic feel
+              const isEven = idx % 2 === 0;
+              const leafRadiusClass = isEven 
+                ? 'rounded-[50px_12px_50px_12px]' 
+                : 'rounded-[12px_50px_12px_50px]';
+
               return (
                 <motion.div
                   key={idx}
@@ -95,20 +101,12 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                   viewport={{ once: true, margin: '-60px' }}
                   transition={{ duration: 0.6, delay: idx * 0.15 }}
                   onClick={() => onDonateClick && onDonateClick(card.campaignId)}
-                  className="relative px-8 pb-10 pt-16 min-h-[380px] flex flex-col items-center justify-between text-center group mt-10 hover:-translate-y-2 transition-all duration-500 isolate cursor-pointer"
+                  style={{ 
+                    backgroundColor: card.bgFill,
+                    borderColor: card.strokeColor,
+                  }}
+                  className={`relative px-8 pb-10 pt-16 min-h-[380px] flex flex-col items-center justify-between text-center group mt-10 hover:-translate-y-2 border-2 shadow-[0_8px_30px_rgba(21,34,27,0.03)] hover:shadow-[0_20px_50px_rgba(21,34,27,0.07)] transition-all duration-500 isolate cursor-pointer ${leafRadiusClass}`}
                 >
-                  {/* Vector SVG Dome shape card */}
-                  <svg className="absolute inset-0 w-full h-full -z-10 filter drop-shadow-[0_8px_16px_rgba(21,34,27,0.03)] group-hover:drop-shadow-[0_20px_40px_rgba(21,34,27,0.07)] group-hover:scale-[1.01] transition-all duration-500" viewBox="0 0 100 120" preserveAspectRatio="none">
-                    <path
-                      d="M 6,114 C 6,70 12,12 50,12 C 88,12 94,70 94,114 C 50,108 6,114 6,114 Z"
-                      fill={card.bgFill}
-                      stroke={card.strokeColor}
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-
                   {/* Overlapping Peak Icon */}
                   <div className={`absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center ${card.iconBg} shadow-md z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
                     <Icon className="w-7 h-7" />
