@@ -53,7 +53,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'भीक मागणाऱ्या बालकांना शिक्षणाची गोडी लावून त्यांना शाळेत दाखल करण्याचे आमचे प्रयत्न.'
         : 'Enrolling children rescued from begging into public schools and tracking their long-term growth.',
-      image: '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg',
+      image: '/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg',
     },
   ];
 

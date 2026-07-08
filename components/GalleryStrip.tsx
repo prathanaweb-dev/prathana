@@ -5,14 +5,16 @@ import { motion } from 'framer-motion';
 export default function GalleryStrip() {
   const images = [
     '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
+    '/Vrudhashram/Vrudhashram/486624799_4051683148395140_1808839315720356419_n.jpg',
+    '/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg',
     '/naturalfarming/Natural%20Farming/_MG_0169.JPG',
+    '/Vrudhashram/Vrudhashram/485888831_4051682965061825_6203613217436305161_n.jpg',
     '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
-    '/awards/Awards/FB_IMG_1782107660649.jpg.jpeg',
   ];
 
   return (
     <section className="w-full overflow-hidden bg-brand-charcoal">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-0.5">
         {images.map((img, idx) => (
           <div key={idx} className="relative aspect-[4/3] group overflow-hidden bg-brand-charcoal cursor-pointer">
             {/* Grayscale image */}
