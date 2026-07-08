@@ -39,7 +39,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                 <img
                   src="/logo.png"
                   alt="Prathana Foundation Logo"
-                  className="w-10 h-10 object-contain bg-white/10 rounded-xl p-1"
+                  className="w-12 h-12 object-contain bg-white/10 rounded-xl p-1"
                 />
                 <div className="flex flex-col">
                   <span className="font-serif-display text-lg font-bold leading-none">

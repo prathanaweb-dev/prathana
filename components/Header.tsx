@@ -92,7 +92,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
           <img
             src="/logo.png"
             alt="Prathana Foundation Logo"
-            className="w-10 h-10 object-contain transition-transform duration-500 group-hover:rotate-12"
+            className="w-12 h-12 object-contain transition-all duration-500 group-hover:scale-105 group-hover:rotate-6 drop-shadow-[0_2px_8px_rgba(21,34,27,0.06)]"
           />
           <div className="flex flex-col">
             <span className={`font-serif-display text-xl md:text-2xl font-bold tracking-tight leading-none ${
