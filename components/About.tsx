@@ -160,53 +160,58 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         {/* ── SECTION 2: Helping Each Other Can Make World Better ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8">
           
-          {/* Left Side: Overlapping Image Collage */}
-          <div className="lg:col-span-6 relative grid grid-cols-12 gap-4 items-center">
-            {/* Green border stripe on the far left */}
-            <div className="absolute left-0 top-12 bottom-12 w-3 bg-brand-green rounded-full opacity-70 hidden sm:block" />
-            
-            {/* Main top left vertical image */}
-            <div className="col-span-6 sm:pl-6">
-              <div className="rounded-3xl overflow-hidden border border-brand-clay/40 shadow-lg">
-                <img
-                  src="/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg"
-                  alt="Outreach kitchen food prep"
-                  className="w-full h-[320px] object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-            </div>
+          {/* Left Side: Photo Mosaic Collage */}
+          <div className="lg:col-span-6 relative">
+            {/* Decorative green stripe accent */}
+            <div className="absolute -left-3 top-8 bottom-8 w-1.5 bg-brand-green rounded-full opacity-60 hidden lg:block" />
 
-            {/* Overlapping middle/right image with play button overlay */}
-            <div className="col-span-6 relative -translate-y-6">
-              <div className="rounded-3xl overflow-hidden border border-brand-clay/40 shadow-xl relative">
-                <img
-                  src="/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg"
-                  alt="Children studying at Balgram"
-                  className="w-full h-[220px] object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-                {/* Yellow play button overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-brand-charcoal/20">
-                  <div className="w-12 h-12 rounded-full bg-brand-yellow flex items-center justify-center text-brand-charcoal shadow-md animate-pulse">
-                    <span className="text-xs font-extrabold">+</span>
+            <div className="grid grid-cols-2 gap-4 pl-0 lg:pl-4">
+
+              {/* Column A — tall portrait image */}
+              <div className="relative">
+                <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-xl h-[420px]">
+                  <img
+                    src="/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg"
+                    alt="Children at Prathana Balgram"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                {/* Floating stat chip */}
+                <div className="absolute -bottom-4 -right-4 bg-white border border-brand-clay/30 rounded-2xl shadow-lg px-4 py-3 flex items-center gap-2.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-brand-green flex-shrink-0" />
+                  <div className="flex flex-col leading-none">
+                    <span className="font-mono font-black text-lg text-brand-charcoal">45+</span>
+                    <span className="text-[9px] uppercase tracking-widest text-brand-muted font-semibold mt-0.5">{isMarathi ? 'मुले' : 'Children'}</span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bottom-right offset image */}
-            <div className="col-span-8 col-start-4 -mt-8">
-              <div className="rounded-2xl overflow-hidden border border-brand-clay/40 shadow-lg">
-                <img
-                  src="/naturalfarming/Natural%20Farming/_MG_0169.JPG"
-                  alt="Natural farming training Solapur"
-                  className="w-full h-[160px] object-cover transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
+              {/* Column B — two stacked images, top one offset up */}
+              <div className="flex flex-col gap-4 -mt-8">
+                {/* Top stacked image — taller */}
+                <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-lg h-[220px]">
+                  <img
+                    src="/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg"
+                    alt="Outreach activity at Balgram"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                {/* Bottom stacked image */}
+                <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-md h-[180px]">
+                  <img
+                    src="/naturalfarming/Natural%20Farming/_MG_0169.JPG"
+                    alt="Natural farming at Balgram campus"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
               </div>
+
             </div>
           </div>
+
 
           {/* Right Side: Features Checklist */}
           <div className="lg:col-span-6 space-y-8 text-left">
