@@ -84,50 +84,63 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <div className="w-16 h-[2px] bg-brand-yellow mx-auto mt-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
-              // Alternate leaf shapes for organic feel
-              const isEven = idx % 2 === 0;
-              const leafRadiusClass = isEven 
-                ? 'rounded-[50px_12px_50px_12px]' 
-                : 'rounded-[12px_50px_12px_50px]';
+              const accentColors = [
+                { bar: 'from-brand-green to-emerald-400', glow: 'rgba(76,140,94,0.15)', ring: 'border-brand-green/30', badge: 'bg-brand-green/10 text-brand-green' },
+                { bar: 'from-[#d36d4b] to-orange-300', glow: 'rgba(211,109,75,0.15)', ring: 'border-[#d36d4b]/30', badge: 'bg-[#d36d4b]/10 text-[#d36d4b]' },
+                { bar: 'from-brand-yellow to-amber-300', glow: 'rgba(230,190,0,0.15)', ring: 'border-brand-yellow/30', badge: 'bg-brand-yellow/10 text-amber-700' },
+              ][idx];
 
               return (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.6, delay: idx * 0.15 }}
+                  transition={{ duration: 0.55, delay: idx * 0.12 }}
                   onClick={() => onDonateClick && onDonateClick(card.campaignId)}
-                  style={{ 
-                    backgroundColor: card.bgFill,
-                    borderColor: card.strokeColor,
-                  }}
-                  className={`relative px-8 pb-10 pt-16 min-h-[380px] flex flex-col items-center justify-between text-center group mt-10 hover:-translate-y-2 border-2 shadow-[0_8px_30px_rgba(21,34,27,0.03)] hover:shadow-[0_20px_50px_rgba(21,34,27,0.07)] transition-all duration-500 isolate cursor-pointer ${leafRadiusClass}`}
+                  className={`group relative flex flex-col bg-white rounded-3xl border ${accentColors.ring} overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2`}
+                  style={{ boxShadow: `0 4px 24px ${accentColors.glow}, 0 1px 4px rgba(21,34,27,0.04)` }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${accentColors.glow}, 0 2px 8px rgba(21,34,27,0.06)`; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 24px ${accentColors.glow}, 0 1px 4px rgba(21,34,27,0.04)`; }}
                 >
-                  {/* Overlapping Peak Icon */}
-                  <div className={`absolute -top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center ${card.iconBg} shadow-md z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
-                    <Icon className="w-7 h-7" />
-                  </div>
+                  {/* Top gradient accent bar */}
+                  <div className={`h-1 w-full bg-gradient-to-r ${accentColors.bar}`} />
 
-                  {/* Card Content centered */}
-                  <div className="space-y-4 flex-1 flex flex-col justify-between pt-4 w-full">
-                    <div className="space-y-3">
-                      {/* Metric Stat badge */}
-                      <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-wider text-brand-charcoal bg-brand-charcoal/5 px-3 py-1 rounded-full group-hover:bg-brand-yellow/20 group-hover:text-brand-forest transition-colors duration-300">
+                  {/* Card body */}
+                  <div className="p-7 flex flex-col gap-5 flex-1">
+
+                    {/* Icon + stat row */}
+                    <div className="flex items-start justify-between">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${card.iconBg} shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border ${accentColors.badge}`}>
                         {card.statText}
                       </span>
-                      <h3 className="font-serif-display text-xl font-bold text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">{card.title}</h3>
-                      <p className="text-brand-muted text-xs leading-relaxed font-light px-2 line-clamp-3">{card.desc}</p>
                     </div>
 
-                    {/* Interactive CTA Link */}
-                    <div className="pt-3 border-t border-brand-clay/20">
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">
-                        <span>{card.ctaText}</span>
-                        <span className="group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
+                    {/* Text */}
+                    <div className="space-y-2 flex-1">
+                      <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-forest transition-colors duration-300">
+                        {card.title}
+                      </h3>
+                      <p className="text-brand-muted text-[13px] leading-relaxed font-light">
+                        {card.desc}
+                      </p>
+                    </div>
+
+                    {/* CTA row */}
+                    <div className="flex items-center justify-between pt-4 border-t border-brand-clay/15">
+                      <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">
+                        {card.ctaText}
+                        <span className="w-5 h-5 rounded-full bg-brand-charcoal/8 flex items-center justify-center group-hover:bg-brand-forest/10 group-hover:translate-x-1 transition-all duration-300 text-xs">→</span>
+                      </span>
+                      {/* Index number */}
+                      <span className="font-mono text-5xl font-black text-brand-charcoal/5 leading-none select-none group-hover:text-brand-charcoal/8 transition-colors duration-500">
+                        0{idx + 1}
                       </span>
                     </div>
                   </div>
@@ -142,6 +155,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow" />
           </div>
         </div>
+
 
         {/* ── SECTION 2: Helping Each Other Can Make World Better ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8">
