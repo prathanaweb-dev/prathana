@@ -16,22 +16,32 @@ export default function Team({ lang }: TeamProps) {
     {
       name: isMarathi ? 'प्रसाद मोहिते' : 'Prasad Mohite',
       role: isMarathi ? 'संस्थापक आणि अध्यक्ष' : 'Founder & President',
-      image: '/balgram/Balgram/WhatsApp%20Image%202026-06-22%20at%201.09.36%20PM.jpeg',
+      image: '/team/Team/Prasad%20Mohite%20(Founder%20%26%20President)).jpg',
     },
     {
       name: isMarathi ? 'अनू मोहिते' : 'Anu Mohite',
-      role: isMarathi ? 'सचिव आणि सह-संस्थापक' : 'Secretary & Co-Founder',
-      image: '/awards/Awards/FB_IMG_1782107621493.jpg.jpeg',
+      role: isMarathi ? 'सचिव' : 'Secretary',
+      image: '/team/Team/Anu%20Mohite%20(Secretary).jpg',
     },
     {
-      name: isMarathi ? 'अदनान शफी' : 'Adnan Shafi',
-      role: isMarathi ? 'मार्गदर्शक / समन्वयक' : 'Field Coordinator',
-      image: '/awards/Awards/FB_IMG_1578738139799.jpg',
+      name: isMarathi ? 'विष्णू भोसले' : 'Vishnu Bhosale',
+      role: isMarathi ? 'मुख्य कार्यकारी अधिकारी' : 'CEO',
+      image: '/team/Team/Vishnu%20Bhosale%20(CEO).jpeg',
     },
     {
-      name: isMarathi ? 'जेनी विल्सन' : 'Jenny Wilson',
-      role: isMarathi ? 'आरोग्य स्वयंसेवक' : 'Health Volunteer',
-      image: '/awards/Awards/FB_IMG_1582799490946.jpg',
+      name: isMarathi ? 'पांडुरंग तुपसामुद्रे' : 'Pandurang Tupsamudre',
+      role: isMarathi ? 'उपाध्यक्ष' : 'Vice-President',
+      image: '/team/Team/Pandurang%20Tupsamudre%20(Vice-President).jpeg',
+    },
+    {
+      name: isMarathi ? 'सोमनाथ लामगुंडे' : 'Somnath Lamgunde',
+      role: isMarathi ? 'संचालक' : 'Director',
+      image: '/team/Team/Somnath%20Lamgunde%20(Director).jpeg',
+    },
+    {
+      name: isMarathi ? 'समाधान वाडणे' : 'Samadhan Vadane',
+      role: isMarathi ? 'प्रकल्प अधिकारी (कृषी)' : 'Project Officer – Agriculture',
+      image: '/team/Team/Samadhan%20Vadane%20(Project%20Officer%20Agri).jpeg',
     },
   ];
 
@@ -51,7 +61,7 @@ export default function Team({ lang }: TeamProps) {
         </div>
 
         {/* 4-Column Profile Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {teamMembers.map((member, idx) => (
             <motion.div
               key={idx}
