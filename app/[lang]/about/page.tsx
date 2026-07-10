@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { translations as globalTranslations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
-import { motion, AnimatePresence, useScroll, useSpring, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useSpring, useInView, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import {
   Heart, ShieldCheck, Leaf, BookOpen, Users, Globe,
@@ -294,6 +294,125 @@ const content = {
     },
   },
 };
+
+/* ─── HorizontalTimeline ─────────────────────────────────────────────────── */
+type TimelineNode = { year: string; title: string; desc: string; img: string };
+
+function HorizontalTimeline({
+  nodes, eyebrow, title, sub, lang
+}: {
+  nodes: TimelineNode[]; eyebrow: string; title: string; sub: string; lang: string;
+}) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Each card is 340px wide + 24px gap on desktop
+  const CARD_W = 364; // card width + gap
+  const totalScroll = CARD_W * (nodes.length - 1);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const x = useTransform(scrollYProgress, [0, 1], [0, -totalScroll]);
+  const xSpring = useSpring(x, { stiffness: 80, damping: 20 });
+
+  // Progress bar
+  const progress = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+
+  return (
+    <section
+      id="timeline"
+      ref={sectionRef}
+      // tall container to create scroll room — hidden on mobile
+      className="relative bg-[#0d1a14]"
+      style={{ height: `calc(100vh + ${totalScroll}px)` }}
+    >
+      {/* ── sticky wrapper ── */}
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+
+        {/* Header */}
+        <div className="px-6 md:px-16 mb-10 max-w-2xl">
+          <span className="inline-flex items-center gap-2 text-brand-yellow text-[11px] font-bold tracking-[0.3em] uppercase mb-4">
+            <span className="w-5 h-px bg-brand-yellow/60" />
+            {eyebrow}
+          </span>
+          <h2 className="font-serif-display text-4xl md:text-5xl font-bold text-white leading-tight mb-3">
+            {title}
+          </h2>
+          <p className="text-white/40 text-[14px] font-light leading-relaxed">{sub}</p>
+        </div>
+
+        {/* Progress bar */}
+        <div className="px-6 md:px-16 mb-8">
+          <div className="w-full max-w-xs h-0.5 bg-white/10 rounded-full overflow-hidden">
+            <motion.div className="h-full bg-brand-yellow rounded-full" style={{ width: progress }} />
+          </div>
+        </div>
+
+        {/* Horizontal card strip */}
+        <div className="pl-6 md:pl-16">
+          <motion.div
+            ref={trackRef}
+            className="flex gap-6 will-change-transform"
+            style={{ x: xSpring }}
+          >
+            {nodes.map((node, i) => (
+              <div
+                key={i}
+                className="flex-none w-[300px] md:w-[340px] bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-brand-yellow/30 transition-colors duration-300 group"
+              >
+                {/* Image */}
+                <div className="relative h-44 md:h-52 overflow-hidden">
+                  <img
+                    src={node.img}
+                    alt={node.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  {/* Year badge */}
+                  <span className="absolute bottom-3 left-4 text-[11px] font-bold text-brand-yellow tracking-[0.2em] uppercase">
+                    {node.year}
+                  </span>
+                  {/* Step number */}
+                  <span className="absolute top-3 right-4 w-7 h-7 rounded-full bg-white/10 border border-white/20 text-white text-[11px] font-bold flex items-center justify-center backdrop-blur-sm">
+                    {i + 1}
+                  </span>
+                </div>
+                {/* Content */}
+                <div className="p-5 space-y-3">
+                  <div className="w-6 h-0.5 bg-brand-yellow rounded-full" />
+                  <h3 className="font-serif-display text-base font-bold text-white leading-snug">
+                    {node.title}
+                  </h3>
+                  <p className="text-white/50 text-[13px] font-light leading-relaxed line-clamp-3">
+                    {node.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {/* Trailing space */}
+            <div className="flex-none w-6 md:w-16" />
+          </motion.div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="px-6 md:px-16 mt-8 flex items-center gap-3">
+          <motion.div
+            animate={{ x: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+            className="flex items-center gap-1 text-white/25 text-[11px] font-mono tracking-widest uppercase"
+          >
+            <span>Scroll to explore</span>
+            <ArrowRight size={12} />
+          </motion.div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
 
 const valueIcons = [
   <Heart key="h" size={24} />,
@@ -677,68 +796,9 @@ export default function AboutPage() {
         </section>
 
         {/* ════════════════════════════════════════
-            INTERACTIVE TIMELINE
+            HORIZONTAL SCROLL JOURNEY
         ════════════════════════════════════════ */}
-        <section id="timeline" className="py-28 md:py-40 bg-brand-paper">
-          <div className="max-w-6xl mx-auto px-6 md:px-12 space-y-14">
-
-            <div className="text-center max-w-2xl mx-auto space-y-4">
-              <span className="section-label">{local.timeline.eyebrow}</span>
-              <h2 className="font-serif-display text-4xl md:text-5xl font-bold">{local.timeline.title}</h2>
-              <p className="text-brand-muted font-light text-[15px] leading-relaxed">{local.timeline.sub}</p>
-              <div className="w-12 h-1 bg-brand-yellow rounded-full mx-auto" />
-            </div>
-
-            {/* Node strip */}
-            <div className="relative">
-              <div className="absolute top-5 left-0 right-0 h-px bg-brand-clay/50 -translate-y-1/2 hidden md:block" />
-              <div className="relative flex overflow-x-auto gap-3 md:gap-0 md:justify-between pb-4 scrollbar-none">
-                {local.timeline.nodes.map((n, i) => (
-                  <button key={i} onClick={() => setTimelineIdx(i)}
-                    className="flex-none flex flex-col items-center gap-3 group focus:outline-none cursor-pointer md:flex-1">
-                    <div className={`relative w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold font-sans text-xs transition-all duration-300 z-10
-                      ${timelineIdx === i
-                        ? 'bg-brand-saffron border-brand-saffron text-white scale-110 shadow-lg shadow-brand-saffron/30'
-                        : 'bg-white border-brand-clay text-brand-muted group-hover:border-brand-saffron/60 group-hover:scale-105'}`}>
-                      {i + 1}
-                    </div>
-                    <span className={`text-[11px] font-semibold text-center leading-tight px-1 transition-colors duration-300
-                      ${timelineIdx === i ? 'text-brand-saffron' : 'text-brand-muted group-hover:text-brand-charcoal'}`}>
-                      {n.year}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Detail card */}
-            <AnimatePresence mode="wait">
-              <motion.div key={timelineIdx}
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.35 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white rounded-2xl overflow-hidden border border-brand-clay/40 shadow-xl shadow-brand-charcoal/5"
-              >
-                <div className="relative overflow-hidden min-h-[280px] lg:min-h-[360px]">
-                  <img src={local.timeline.nodes[timelineIdx].img} alt={local.timeline.nodes[timelineIdx].title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent" />
-                </div>
-                <div className="p-8 md:p-12 flex flex-col justify-center space-y-5">
-                  <span className="text-[11px] font-bold text-brand-saffron tracking-[0.2em] uppercase">
-                    {local.timeline.nodes[timelineIdx].year} · {lang === 'mr' ? 'टप्पा' : 'Milestone'}
-                  </span>
-                  <h3 className="font-serif-display text-2xl md:text-3xl font-bold text-brand-charcoal">
-                    {local.timeline.nodes[timelineIdx].title}
-                  </h3>
-                  <div className="w-8 h-0.5 bg-brand-yellow rounded-full" />
-                  <p className="text-brand-muted font-light leading-relaxed text-[15px]">
-                    {local.timeline.nodes[timelineIdx].desc}
-                  </p>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </section>
+        <HorizontalTimeline nodes={local.timeline.nodes} eyebrow={local.timeline.eyebrow} title={local.timeline.title} sub={local.timeline.sub} lang={lang} />
 
         {/* ════════════════════════════════════════
             FOUNDERS
