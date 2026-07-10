@@ -330,7 +330,7 @@ function HorizontalTimeline({
       style={{ height: `calc(100vh + ${totalScroll}px)` }}
     >
       {/* ── sticky wrapper ── */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+      <div className="sticky top-0 h-screen flex flex-col justify-center" style={{ overflow: 'clip' }}>
 
         {/* Header */}
         <div className="px-6 md:px-16 mb-10 max-w-2xl">
@@ -489,7 +489,7 @@ export default function AboutPage() {
   const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter(i => i.category === galleryFilter);
 
   return (
-    <div className="relative min-h-screen bg-brand-paper overflow-x-hidden flex flex-col font-sans antialiased text-brand-charcoal">
+    <div className="relative min-h-screen bg-brand-paper flex flex-col font-sans antialiased text-brand-charcoal">
 
       {/* Page-level glow blobs */}
       <div className="fixed top-[15%] right-[-8%] w-[480px] h-[480px] bg-brand-saffron/6 rounded-full blur-[130px] pointer-events-none animate-drift -z-10" />
