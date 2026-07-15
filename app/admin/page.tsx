@@ -1,20 +1,27 @@
 'use client';
 
+// Never statically prerender — requires Firebase Auth (browser-only)
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut, Auth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
-const fbApp  = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const fbAuth = getAuth(fbApp);
+
+function getFirebaseAuth(): Auth | null {
+  if (typeof window === 'undefined') return null;
+  const fbApp = getApps().length === 0 ? initializeApp(firebaseConfig as any) : getApp();
+  return getAuth(fbApp);
+}
 import {
   LayoutDashboard, Megaphone, HandCoins, Users, BookOpen,
   MessageSquare, LogOut, Plus, Edit2, Trash2, Check, X,
@@ -173,9 +180,10 @@ export default function AdminDashboard() {
 
   // ── Auth — Firebase ──
   useEffect(() => {
-    const unsub = onAuthStateChanged(fbAuth, async (user) => {
+    const auth = getFirebaseAuth();
+    if (!auth) { router.push('/admin/login'); return; }
+    const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Refresh cookie so it doesn't expire mid-session
         const token = await user.getIdToken();
         document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
         localStorage.setItem('prathana_admin_session', 'true');
@@ -227,7 +235,8 @@ export default function AdminDashboard() {
   };
 
   const logout = async () => {
-    await signOut(fbAuth);
+    const auth = getFirebaseAuth();
+    if (auth) await signOut(auth);
     localStorage.removeItem('prathana_admin_session');
     document.cookie = 'prathana_admin=; path=/; max-age=0';
     router.push('/admin/login');

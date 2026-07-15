@@ -1,22 +1,29 @@
 'use client';
 
+// Never statically prerender — Firebase Auth needs the browser
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, Auth } from 'firebase/auth';
 import { Heart, Lock, Mail, Loader2, Shield, AlertCircle } from 'lucide-react';
 
-// Initialise Firebase client (safe to call multiple times)
 const firebaseConfig = {
-  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
-const app  = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+
+// Lazy — only initialise on the client, never during SSR
+function getFirebaseAuth(): Auth | null {
+  if (typeof window === 'undefined') return null;
+  const fbApp = getApps().length === 0 ? initializeApp(firebaseConfig as any) : getApp();
+  return getAuth(fbApp);
+}
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -28,9 +35,10 @@ export default function AdminLogin() {
 
   // If already signed in → go straight to dashboard
   useEffect(() => {
+    const auth = getFirebaseAuth();
+    if (!auth) { setChecking(false); return; }
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Persist token in cookie so middleware can verify it
         const token = await user.getIdToken();
         document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
         localStorage.setItem('prathana_admin_session', 'true');
@@ -47,9 +55,10 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
     try {
+      const auth = getFirebaseAuth();
+      if (!auth) throw new Error('Firebase not available');
       const cred  = await signInWithEmailAndPassword(auth, email, password);
       const token = await cred.user.getIdToken();
-      // Store token in cookie for middleware + keep localStorage fallback
       document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
       localStorage.setItem('prathana_admin_session', 'true');
       router.push('/admin');
