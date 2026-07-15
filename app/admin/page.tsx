@@ -2,6 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+};
+const fbApp  = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const fbAuth = getAuth(fbApp);
 import {
   LayoutDashboard, Megaphone, HandCoins, Users, BookOpen,
   MessageSquare, LogOut, Plus, Edit2, Trash2, Check, X,
@@ -158,11 +171,21 @@ export default function AdminDashboard() {
 
   const [formBusy, setFormBusy] = useState(false);
 
-  // ── Auth ──
+  // ── Auth — Firebase ──
   useEffect(() => {
-    const ok = localStorage.getItem('prathana_admin_session') === 'true';
-    if (!ok) router.push('/admin/login');
-    else { setAuthorized(true); fetchAll(); }
+    const unsub = onAuthStateChanged(fbAuth, async (user) => {
+      if (user) {
+        // Refresh cookie so it doesn't expire mid-session
+        const token = await user.getIdToken();
+        document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
+        localStorage.setItem('prathana_admin_session', 'true');
+        setAuthorized(true);
+        fetchAll();
+      } else {
+        router.push('/admin/login');
+      }
+    });
+    return () => unsub();
   }, []);
 
   const notify = (msg: string, type: 'success'|'error' = 'success') => setToast({ msg, type });
@@ -203,7 +226,12 @@ export default function AdminDashboard() {
     finally { setLoading(false); }
   };
 
-  const logout = () => { localStorage.removeItem('prathana_admin_session'); router.push('/admin/login'); };
+  const logout = async () => {
+    await signOut(fbAuth);
+    localStorage.removeItem('prathana_admin_session');
+    document.cookie = 'prathana_admin=; path=/; max-age=0';
+    router.push('/admin/login');
+  };
 
   // ── Campaign CRUD ──
   const openCampDrawer = (camp?: Campaign) => {

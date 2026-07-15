@@ -2,132 +2,163 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Heart, Lock, Mail, Loader2 } from 'lucide-react';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { Heart, Lock, Mail, Loader2, Shield, AlertCircle } from 'lucide-react';
+
+// Initialise Firebase client (safe to call multiple times)
+const firebaseConfig = {
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+};
+const app  = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
 
 export default function AdminLogin() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [checking, setChecking] = useState(true);
 
+  // If already signed in → go straight to dashboard
   useEffect(() => {
-    // Check if already logged in
-    const isLogged = localStorage.getItem('prathana_admin_session') === 'true';
-    if (isLogged) {
-      router.push('/admin');
-    }
-  }, [router]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    setTimeout(() => {
-      // Mock credentials for review: admin@prathana.org / prathana2026
-      if (email === 'admin@prathana.org' && password === 'prathana2026') {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Persist token in cookie so middleware can verify it
+        const token = await user.getIdToken();
+        document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
         localStorage.setItem('prathana_admin_session', 'true');
         router.push('/admin');
       } else {
-        setError('Invalid administrative credentials.');
-        setLoading(false);
+        setChecking(false);
       }
-    }, 1000);
+    });
+    return () => unsub();
+  }, [router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const cred  = await signInWithEmailAndPassword(auth, email, password);
+      const token = await cred.user.getIdToken();
+      // Store token in cookie for middleware + keep localStorage fallback
+      document.cookie = `prathana_admin=${token}; path=/; max-age=3600; SameSite=Strict`;
+      localStorage.setItem('prathana_admin_session', 'true');
+      router.push('/admin');
+    } catch (err: any) {
+      const code = err?.code || '';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setError('Invalid email or password.');
+      } else if (code === 'auth/too-many-requests') {
+        setError('Too many attempts. Please wait and try again.');
+      } else {
+        setError('Sign-in failed. Check your credentials.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-brand-paper text-brand-charcoal flex flex-col items-center justify-center p-6 bg-grid-pattern relative overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-yellow/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/6 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-amber-400" />
+      </div>
+    );
+  }
 
-      {/* Login Card */}
-      <div className="relative w-full max-w-md bg-white/80 backdrop-blur-md border border-brand-clay p-8 rounded-2xl shadow-xl space-y-6 z-10">
-        
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <img
-            src="/logo.png"
-            alt="Prathana Foundation Logo"
-            className="w-16 h-16 object-contain mx-auto mb-2"
-          />
-          <h2 className="font-serif-display text-2xl font-bold tracking-tight text-brand-charcoal">
-            Administrative Gateway
-          </h2>
-          <p className="text-xs text-brand-muted uppercase tracking-widest font-semibold">
-            Prathana Foundation Solapur
+  return (
+    <div className="min-h-screen bg-[#0d1117] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Ambient glows */}
+      <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] bg-amber-500/6 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Card */}
+      <div className="relative w-full max-w-md bg-[#131720] border border-white/8 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden">
+
+        {/* Top accent bar */}
+        <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400" />
+
+        <div className="p-8 space-y-7">
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center mx-auto">
+              <Heart size={22} className="text-amber-400 fill-amber-400/30" />
+            </div>
+            <div>
+              <h1 className="font-bold text-xl text-white">Administrative Gateway</h1>
+              <p className="text-[11px] text-white/30 uppercase tracking-widest mt-1">Prathana Foundation · Solapur</p>
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl font-medium">
+              <AlertCircle size={15} className="flex-shrink-0" />
+              {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-white/30 font-bold mb-1.5">
+                Admin Email
+              </label>
+              <div className="relative">
+                <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="admin@prathana.org"
+                  className="w-full pl-9 pr-4 py-3 bg-[#1a1f2e] border border-white/8 rounded-xl text-sm text-white placeholder-white/15 outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-white/30 font-bold mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <Lock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/20" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••••"
+                  className="w-full pl-9 pr-4 py-3 bg-[#1a1f2e] border border-white/8 rounded-xl text-sm text-white placeholder-white/15 outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/10 transition-all"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer mt-2"
+            >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <Shield size={15} />}
+              {loading ? 'Signing in…' : 'Access Dashboard'}
+            </button>
+          </form>
+
+          {/* Footer note */}
+          <p className="text-center text-[10px] text-white/15 leading-relaxed">
+            Sign in with your Firebase Admin account.<br />
+            Unauthorised access is prohibited.
           </p>
         </div>
-
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg text-center font-medium">
-            {error}
-          </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">
-              Admin Email
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-brand-muted">
-                <Mail className="w-4.5 h-4.5" />
-              </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@prathana.org"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">
-              Secure Password
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-brand-muted">
-                <Lock className="w-4.5 h-4.5" />
-              </div>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-4 focus:ring-brand-yellow/5 transition-all"
-              />
-            </div>
-          </div>
-
-          <div className="p-3 bg-brand-sand/50 border border-brand-clay/60 rounded-lg text-[10px] text-brand-muted leading-normal">
-            <strong>Mock Credentials for Verification:</strong> <br />
-            Email: <code className="text-brand-forest font-bold">admin@prathana.org</code> <br />
-            Password: <code className="text-brand-forest font-bold">prathana2026</code>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-lg text-xs tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-1.5"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Authorizing...
-              </>
-            ) : (
-              'Access Dashboard'
-            )}
-          </button>
-        </form>
-
       </div>
     </div>
   );
