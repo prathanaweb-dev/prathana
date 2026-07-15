@@ -20,8 +20,39 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
 
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
-  const isHomePage = pathname ? (pathname === `/${lang}` || pathname === `/${lang}/` || pathname === '/' || pathname === '/en' || pathname === '/mr') : false;
-  const useLightText = isHomePage && !isScrolled && !mobileMenuOpen;
+  // Pages whose hero section is dark — header should use light text
+  const darkHeroPages = [
+    `/${lang}`,
+    `/${lang}/`,
+    `/${lang}/about`,
+    `/${lang}/vision-mission`,
+    `/${lang}/donation`,
+    `/${lang}/gallery`,
+    `/${lang}/activities`,
+    `/${lang}/projects`,
+    `/${lang}/events`,
+    `/${lang}/volunteer`,
+    '/en', '/mr', '/'
+  ];
+  const hasDarkHero = darkHeroPages.some(p => pathname === p || pathname?.startsWith(p + '/') === false && pathname === p);
+  // simpler: just check if it starts with any known dark page prefix
+  const onDarkPage = !pathname ? false : (
+    pathname === `/${lang}` ||
+    pathname === `/${lang}/` ||
+    pathname === '/en' ||
+    pathname === '/mr' ||
+    pathname === '/' ||
+    pathname.startsWith(`/${lang}/about`) ||
+    pathname.startsWith(`/${lang}/vision-mission`) ||
+    pathname.startsWith(`/${lang}/donation`) ||
+    pathname.startsWith(`/${lang}/gallery`) ||
+    pathname.startsWith(`/${lang}/activities`) ||
+    pathname.startsWith(`/${lang}/projects`) ||
+    pathname.startsWith(`/${lang}/events`) ||
+    pathname.startsWith(`/${lang}/volunteer`)
+  );
+
+  const useLightText = onDarkPage && !isScrolled && !mobileMenuOpen;
 
   const navLinkClass = `text-[13px] font-bold transition-colors duration-300 tracking-wide ${
     useLightText ? 'text-white/85 hover:text-white' : 'text-brand-muted hover:text-brand-charcoal'
@@ -82,8 +113,10 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled || mobileMenuOpen
-          ? 'bg-brand-paper/90 backdrop-blur-md border-b border-brand-clay/60 py-3 shadow-[0_4px_30px_rgba(21,34,27,0.03)]'
-          : 'bg-transparent py-5'
+          ? 'bg-brand-paper/95 backdrop-blur-md border-b border-brand-clay/60 py-3 shadow-[0_4px_30px_rgba(21,34,27,0.06)]'
+          : onDarkPage
+            ? 'bg-gradient-to-b from-black/50 to-transparent py-5'
+            : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
