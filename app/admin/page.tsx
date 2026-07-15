@@ -1,796 +1,590 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Campaign, Donation, Volunteer, Activity, Project, EventItem } from '@/lib/db';
 import {
-  Heart,
-  Plus,
-  Edit2,
-  FileText,
-  LogOut,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  X,
-  RefreshCw,
-  Users,
-  Award,
-  Calendar,
-  Layers,
-  Trash2,
-  Check,
-  UserCheck,
-  ClipboardList
+  LayoutDashboard, Megaphone, HandCoins, Users, BookOpen,
+  MessageSquare, LogOut, Plus, Edit2, Trash2, Check, X,
+  ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
+  RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
+  Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
+  FileText, Layers, Award, BarChart3, ChevronDown
 } from 'lucide-react';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface Campaign { id: string; title: string; title_mr?: string; description: string; goal_amount: number; amount_raised: number; image: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
+interface Donation  { id: string; campaign_id: string; donor_name: string; donor_email: string; amount: number; payment_id: string; payment_status: 'pending'|'success'|'failed'; created_at: string; }
+interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
+interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
+interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date: string; end_date: string; created_at: string; }
+interface EventItem { id: string; title: string; content: string; featured_image: string; published_date: string; created_at: string; }
+interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
+  useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, [onClose]);
+  return (
+    <div className={`fixed bottom-6 right-6 z-[200] flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl text-sm font-semibold border backdrop-blur-sm transition-all
+      ${type === 'success' ? 'bg-emerald-900/90 border-emerald-700 text-emerald-100' : 'bg-red-900/90 border-red-700 text-red-100'}`}>
+      {type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+      {msg}
+      <button onClick={onClose} className="ml-2 opacity-60 hover:opacity-100"><X size={14} /></button>
+    </div>
+  );
+}
+
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+function StatCard({ icon, label, value, sub, color }: { icon: React.ReactNode; label: string; value: string|number; sub?: string; color: string }) {
+  return (
+    <div className={`relative bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 overflow-hidden group hover:border-white/10 transition-all duration-300`}>
+      <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 -translate-y-1/2 translate-x-1/2 ${color}`} />
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${color} bg-opacity-20`}>
+        {icon}
+      </div>
+      <div className="text-3xl font-bold text-white mb-1">{value}</div>
+      <div className="text-xs font-semibold text-white/40 uppercase tracking-wider">{label}</div>
+      {sub && <div className="text-[11px] text-white/25 mt-1">{sub}</div>}
+    </div>
+  );
+}
+
+// ─── Drawer ───────────────────────────────────────────────────────────────────
+function Drawer({ open, title, onClose, children }: { open: boolean; title: string; onClose: () => void; children: React.ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative ml-auto w-full max-w-lg bg-[#131720] border-l border-white/8 h-full flex flex-col shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
+          <h2 className="text-white font-bold text-lg">{title}</h2>
+          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors cursor-pointer"><X size={20} /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Field ────────────────────────────────────────────────────────────────────
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">{label}</label>
+      {children}
+    </div>
+  );
+}
+const inputCls = "w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/10 transition-all";
+const selectCls = inputCls + " cursor-pointer";
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
+function Badge({ status }: { status: string }) {
+  const map: Record<string, string> = {
+    active:    'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    completed: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
+    pending:   'bg-amber-500/15 text-amber-400 border-amber-500/20',
+    approved:  'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    rejected:  'bg-red-500/15 text-red-400 border-red-500/20',
+    success:   'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    failed:    'bg-red-500/15 text-red-400 border-red-500/20',
+    planned:   'bg-violet-500/15 text-violet-400 border-violet-500/20',
+  };
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${map[status] || 'bg-white/5 text-white/40 border-white/10'}`}>
+      {status}
+    </span>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'content'|'messages';
+type ContentSub = 'activities'|'projects'|'events';
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
-  
-  // Dashboard navigation tabs
-  const [tab, setTab] = useState<'dashboard' | 'campaigns' | 'donations' | 'volunteers' | 'content'>('dashboard');
-  const [contentTab, setContentTab] = useState<'activities' | 'projects' | 'events'>('activities');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [tab, setTab] = useState<Tab>('dashboard');
+  const [contentSub, setContentSub] = useState<ContentSub>('activities');
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [toast, setToast] = useState<{msg:string; type:'success'|'error'} | null>(null);
 
-  // Database lists
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [donations, setDonations] = useState<Donation[]>([]);
+  // Data
+  const [campaigns, setCampaigns]   = useState<Campaign[]>([]);
+  const [donations, setDonations]   = useState<Donation[]>([]);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [projects, setProjects]     = useState<Project[]>([]);
+  const [events, setEvents]         = useState<EventItem[]>([]);
+  const [contacts, setContacts]     = useState<Contact[]>([]);
 
   // Stats
-  const [stats, setStats] = useState({
-    totalRaised: 0,
-    totalGoal: 0,
-    totalDonors: 0,
-    activeCampaigns: 0,
-    volunteerCount: 0,
-  });
+  const [stats, setStats] = useState({ totalRaised: 0, totalGoal: 0, totalDonors: 0, activeCampaigns: 0, volunteerCount: 0, unreadMessages: 0 });
 
-  // Modal forms management
-  const [isCampaignFormOpen, setIsCampaignFormOpen] = useState(false);
-  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  // Drawers
+  const [campDrawer, setCampDrawer] = useState(false);
+  const [actDrawer, setActDrawer]   = useState(false);
+  const [projDrawer, setProjDrawer] = useState(false);
+  const [evtDrawer, setEvtDrawer]   = useState(false);
 
-  const [isActivityFormOpen, setIsActivityFormOpen] = useState(false);
-  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  // Editing targets
+  const [editCamp, setEditCamp] = useState<Campaign|null>(null);
+  const [editAct,  setEditAct]  = useState<Activity|null>(null);
+  const [editProj, setEditProj] = useState<Project|null>(null);
+  const [editEvt,  setEditEvt]  = useState<EventItem|null>(null);
 
-  const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  // Campaign form
+  const [cTitle, setCTitle] = useState(''); const [cTitleMr, setCTitleMr] = useState('');
+  const [cDesc, setCDesc]   = useState(''); const [cDescMr, setCDescMr]   = useState('');
+  const [cGoal, setCGoal]   = useState(''); const [cImage, setCImage]     = useState('');
+  const [cStatus, setCStatus] = useState<'active'|'completed'>('active');
 
-  const [isEventFormOpen, setIsEventFormOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
+  // Activity form
+  const [aTitle, setATitle] = useState(''); const [aTitleMr, setATitleMr] = useState('');
+  const [aDesc, setADesc]   = useState(''); const [aDescMr, setADescMr]   = useState('');
+  const [aImage, setAImage] = useState(''); const [aCat, setACat] = useState<Activity['category']>('general');
 
-  // Forms inputs state
-  // 1. Campaign
-  const [campTitle, setCampTitle] = useState('');
-  const [campTitleMr, setCampTitleMr] = useState('');
-  const [campDesc, setCampDesc] = useState('');
-  const [campDescMr, setCampDescMr] = useState('');
-  const [campGoal, setCampGoal] = useState('');
-  const [campImage, setCampImage] = useState('');
-  const [campStatus, setCampStatus] = useState<'active' | 'completed'>('active');
+  // Project form
+  const [pTitle, setPTitle] = useState(''); const [pTitleMr, setPTitleMr] = useState('');
+  const [pDesc, setPDesc]   = useState(''); const [pDescMr, setPDescMr]   = useState('');
+  const [pImage, setPImage] = useState(''); const [pStatus, setPStatus] = useState<Project['status']>('active');
+  const [pStart, setPStart] = useState(''); const [pEnd, setPEnd] = useState('');
 
-  // 2. Activity
-  const [actTitle, setActTitle] = useState('');
-  const [actTitleMr, setActTitleMr] = useState('');
-  const [actDesc, setActDesc] = useState('');
-  const [actDescMr, setActDescMr] = useState('');
-  const [actImage, setActImage] = useState('');
-  const [actCategory, setActCategory] = useState<'nutrition' | 'education' | 'healthcare' | 'general'>('nutrition');
+  // Event form
+  const [eTitle, setETitle] = useState(''); const [eTitleMr, setETitleMr] = useState('');
+  const [eContent, setEContent] = useState(''); const [eContentMr, setEContentMr] = useState('');
+  const [eImage, setEImage] = useState(''); const [eDate, setEDate] = useState('');
 
-  // 3. Project
-  const [projTitle, setProjTitle] = useState('');
-  const [projTitleMr, setProjTitleMr] = useState('');
-  const [projDesc, setProjDesc] = useState('');
-  const [projDescMr, setProjDescMr] = useState('');
-  const [projImage, setProjImage] = useState('');
-  const [projStatus, setProjStatus] = useState<'planned' | 'active' | 'completed'>('active');
-  const [projStart, setProjStart] = useState('');
-  const [projEnd, setProjEnd] = useState('');
+  const [formBusy, setFormBusy] = useState(false);
 
-  // 4. Event
-  const [evtTitle, setEvtTitle] = useState('');
-  const [evtTitleMr, setEvtTitleMr] = useState('');
-  const [evtContent, setEvtContent] = useState('');
-  const [evtContentMr, setEvtContentMr] = useState('');
-  const [evtImage, setEvtImage] = useState('');
-  const [evtDate, setEvtDate] = useState('');
-
-  // Form notifications
-  const [formError, setFormError] = useState('');
-  const [formLoading, setFormLoading] = useState(false);
-
-  // Authentication check
+  // ── Auth ──
   useEffect(() => {
-    const isLogged = localStorage.getItem('prathana_admin_session') === 'true';
-    if (!isLogged) {
-      router.push('/admin/login');
-    } else {
-      setAuthorized(true);
-      fetchAdminData();
-    }
-  }, [router]);
+    const ok = localStorage.getItem('prathana_admin_session') === 'true';
+    if (!ok) router.push('/admin/login');
+    else { setAuthorized(true); fetchAll(); }
+  }, []);
 
-  const fetchAdminData = async () => {
+  const notify = (msg: string, type: 'success'|'error' = 'success') => setToast({ msg, type });
+
+  // ── Fetch ──
+  const fetchAll = async () => {
     setLoading(true);
     try {
-      // 1. Campaigns
-      const campRes = await fetch('/api/campaigns');
-      const campData = await campRes.json();
-      if (campData.success) setCampaigns(campData.campaigns);
+      const [c, d, v, a, p, e, co] = await Promise.all([
+        fetch('/api/campaigns').then(r => r.json()),
+        fetch('/api/donations').then(r => r.json()),
+        fetch('/api/volunteers').then(r => r.json()),
+        fetch('/api/activities').then(r => r.json()),
+        fetch('/api/projects').then(r => r.json()),
+        fetch('/api/events').then(r => r.json()),
+        fetch('/api/contact').then(r => r.json()),
+      ]);
+      const camps = c.campaigns || [];
+      const dons  = d.donations  || [];
+      const vols  = v.volunteers || [];
+      const acts  = a.activities || [];
+      const projs = p.projects   || [];
+      const evts  = e.events     || [];
+      const msgs  = co.contacts  || [];
 
-      // 2. Donations
-      const donRes = await fetch('/api/donations');
-      const donData = await donRes.json();
-      if (donData.success) setDonations(donData.donations);
-
-      // 3. Volunteers
-      const volRes = await fetch('/api/volunteers');
-      const volData = await volRes.json();
-      if (volData.success) setVolunteers(volData.volunteers);
-
-      // 4. Activities
-      const actRes = await fetch('/api/activities');
-      const actData = await actRes.json();
-      if (actData.success) setActivities(actData.activities);
-
-      // 5. Projects
-      const projRes = await fetch('/api/projects');
-      const projData = await projRes.json();
-      if (projData.success) setProjects(projData.projects);
-
-      // 6. Events
-      const evtRes = await fetch('/api/events');
-      const evtData = await evtRes.json();
-      if (evtData.success) setEvents(evtData.events);
-
-      // Calculate totals
-      const raised = campData.campaigns?.reduce((acc: number, c: any) => acc + Number(c.amount_raised), 0) || 0;
-      const goals = campData.campaigns?.reduce((acc: number, c: any) => acc + Number(c.goal_amount), 0) || 0;
-      const activeCamps = campData.campaigns?.filter((c: any) => c.status === 'active' && !c.is_completed).length || 0;
-      const verifiedDonors = donData.donations?.filter((d: any) => d.payment_status === 'success').length || 0;
-      const appVols = volData.volunteers?.filter((v: any) => v.status === 'approved').length || 0;
+      setCampaigns(camps); setDonations(dons); setVolunteers(vols);
+      setActivities(acts); setProjects(projs); setEvents(evts); setContacts(msgs);
 
       setStats({
-        totalRaised: raised,
-        totalGoal: goals,
-        totalDonors: verifiedDonors,
-        activeCampaigns: activeCamps,
-        volunteerCount: appVols,
+        totalRaised:     camps.reduce((s: number, x: Campaign) => s + Number(x.amount_raised), 0),
+        totalGoal:       camps.reduce((s: number, x: Campaign) => s + Number(x.goal_amount), 0),
+        totalDonors:     dons.filter((x: Donation) => x.payment_status === 'success').length,
+        activeCampaigns: camps.filter((x: Campaign) => x.status === 'active').length,
+        volunteerCount:  vols.filter((x: Volunteer) => x.status === 'approved').length,
+        unreadMessages:  msgs.filter((x: Contact) => !x.read).length,
       });
-
-    } catch (err) {
-      console.error('Error fetching dashboard records:', err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('prathana_admin_session');
-    router.push('/admin/login');
+  const logout = () => { localStorage.removeItem('prathana_admin_session'); router.push('/admin/login'); };
+
+  // ── Campaign CRUD ──
+  const openCampDrawer = (camp?: Campaign) => {
+    setEditCamp(camp || null);
+    setCTitle(camp?.title || ''); setCTitleMr(camp?.title_mr || '');
+    setCDesc(camp?.description || ''); setCDescMr('');
+    setCGoal(camp?.goal_amount?.toString() || ''); setCImage(camp?.image || '');
+    setCStatus(camp?.status || 'active');
+    setCampDrawer(true);
   };
-
-  // Convert files to Base64 strings
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => setter(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  // Open forms helper
-  const openCampaignForm = (camp?: Campaign) => {
-    setFormError('');
-    if (camp) {
-      setEditingCampaign(camp);
-      setCampTitle(camp.title);
-      setCampTitleMr(camp.title_mr || '');
-      setCampDesc(camp.description);
-      setCampDescMr(camp.description_mr || '');
-      setCampGoal(camp.goal_amount.toString());
-      setCampImage(camp.image);
-      setCampStatus(camp.status || (camp.is_completed ? 'completed' : 'active'));
-    } else {
-      setEditingCampaign(null);
-      setCampTitle('');
-      setCampTitleMr('');
-      setCampDesc('');
-      setCampDescMr('');
-      setCampGoal('');
-      setCampImage('');
-      setCampStatus('active');
-    }
-    setIsCampaignFormOpen(true);
-  };
-
-  const openActivityForm = (act?: Activity) => {
-    setFormError('');
-    if (act) {
-      setEditingActivity(act);
-      setActTitle(act.title);
-      setActTitleMr(act.title_mr || '');
-      setActDesc(act.description);
-      setActDescMr(act.description_mr || '');
-      setActImage(act.image);
-      setActCategory(act.category);
-    } else {
-      setEditingActivity(null);
-      setActTitle('');
-      setActTitleMr('');
-      setActDesc('');
-      setActDescMr('');
-      setActImage('');
-      setActCategory('nutrition');
-    }
-    setIsActivityFormOpen(true);
-  };
-
-  const openProjectForm = (proj?: Project) => {
-    setFormError('');
-    if (proj) {
-      setEditingProject(proj);
-      setProjTitle(proj.title);
-      setProjTitleMr(proj.title_mr || '');
-      setProjDesc(proj.description);
-      setProjDescMr(proj.description_mr || '');
-      setProjImage(proj.image);
-      setProjStatus(proj.status);
-      setProjStart(proj.start_date);
-      setProjEnd(proj.end_date);
-    } else {
-      setEditingProject(null);
-      setProjTitle('');
-      setProjTitleMr('');
-      setProjDesc('');
-      setProjDescMr('');
-      setProjImage('');
-      setProjStatus('active');
-      setProjStart('');
-      setProjEnd('');
-    }
-    setIsProjectFormOpen(true);
-  };
-
-  const openEventForm = (evt?: EventItem) => {
-    setFormError('');
-    if (evt) {
-      setEditingEvent(evt);
-      setEvtTitle(evt.title);
-      setEvtTitleMr(evt.title_mr || '');
-      setEvtContent(evt.content);
-      setEvtContentMr(evt.content_mr || '');
-      setEvtImage(evt.featured_image);
-      setEvtDate(evt.published_date);
-    } else {
-      setEditingEvent(null);
-      setEvtTitle('');
-      setEvtTitleMr('');
-      setEvtContent('');
-      setEvtContentMr('');
-      setEvtImage('');
-      setEvtDate(new Date().toISOString().split('T')[0]);
-    }
-    setIsEventFormOpen(true);
-  };
-
-  // Submit forms handler
-  const handleCampaignSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError('');
-    setFormLoading(true);
-
+  const saveCampaign = async () => {
+    if (!cTitle || !cGoal) return notify('Title and goal are required', 'error');
+    setFormBusy(true);
     try {
-      const payload = {
-        title: campTitle,
-        title_mr: campTitleMr,
-        description: campDesc,
-        description_mr: campDescMr,
-        goal_amount: Number(campGoal),
-        image: campImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
-        status: campStatus,
-        is_completed: campStatus === 'completed',
-      };
-
+      const body = { title: cTitle, title_mr: cTitleMr, description: cDesc, description_mr: cDescMr, goal_amount: Number(cGoal), amount_raised: editCamp?.amount_raised || 0, image: cImage, is_completed: cStatus === 'completed', status: cStatus, slug: cTitle.toLowerCase().replace(/\s+/g, '-') };
       const url = '/api/campaigns';
-      const method = editingCampaign ? 'PUT' : 'POST';
-      const bodyPayload = editingCampaign ? { id: editingCampaign.id, updates: payload } : payload;
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) throw new Error('Failed to save campaign details');
-
-      await fetchAdminData();
-      setIsCampaignFormOpen(false);
-    } catch (err: any) {
-      setFormError(err.message || 'Operation failed');
-    } finally {
-      setFormLoading(false);
-    }
+      const method = editCamp ? 'PUT' : 'POST';
+      const payload = editCamp ? { id: editCamp.id, ...body } : body;
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Save failed');
+      notify(editCamp ? 'Campaign updated!' : 'Campaign created!');
+      setCampDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteCampaign = async (id: string) => {
+    if (!confirm('Delete this campaign?')) return;
+    const res = await fetch(`/api/campaigns?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Campaign deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
-  const handleActivitySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError('');
-    setFormLoading(true);
+  // ── Volunteer actions ──
+  const updateVolStatus = async (id: string, status: 'approved'|'rejected') => {
+    const res = await fetch('/api/volunteers', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+    const data = await res.json();
+    if (data.success) { notify(`Volunteer ${status}`); fetchAll(); } else notify('Update failed', 'error');
+  };
 
+  // ── Activity CRUD ──
+  const openActDrawer = (act?: Activity) => {
+    setEditAct(act || null);
+    setATitle(act?.title || ''); setATitleMr('');
+    setADesc(act?.description || ''); setADescMr('');
+    setAImage(act?.image || ''); setACat(act?.category as any || 'general');
+    setActDrawer(true);
+  };
+  const saveActivity = async () => {
+    if (!aTitle) return notify('Title is required', 'error');
+    setFormBusy(true);
     try {
-      const payload = {
-        title: actTitle,
-        title_mr: actTitleMr,
-        description: actDesc,
-        description_mr: actDescMr,
-        image: actImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
-        category: actCategory,
-      };
-
-      const url = '/api/activities';
-      const method = editingActivity ? 'PUT' : 'POST';
-      const bodyPayload = editingActivity ? { id: editingActivity.id, updates: payload } : payload;
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) throw new Error('Failed to save activity');
-
-      await fetchAdminData();
-      setIsActivityFormOpen(false);
-    } catch (err: any) {
-      setFormError(err.message || 'Operation failed');
-    } finally {
-      setFormLoading(false);
-    }
+      const body = { title: aTitle, title_mr: aTitleMr, description: aDesc, description_mr: aDescMr, image: aImage, category: aCat };
+      const method = editAct ? 'PUT' : 'POST';
+      const payload = editAct ? { id: editAct.id, ...body } : body;
+      const res = await fetch('/api/activities', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify(editAct ? 'Activity updated!' : 'Activity created!');
+      setActDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteActivity = async (id: string) => {
+    if (!confirm('Delete this activity?')) return;
+    const res = await fetch(`/api/activities?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Activity deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
-  const handleProjectSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError('');
-    setFormLoading(true);
-
+  // ── Project CRUD ──
+  const openProjDrawer = (proj?: Project) => {
+    setEditProj(proj || null);
+    setPTitle(proj?.title || ''); setPTitleMr('');
+    setPDesc(proj?.description || ''); setPDescMr('');
+    setPImage(proj?.image || ''); setPStatus(proj?.status || 'active');
+    setPStart(proj?.start_date || ''); setPEnd(proj?.end_date || '');
+    setProjDrawer(true);
+  };
+  const saveProject = async () => {
+    if (!pTitle) return notify('Title is required', 'error');
+    setFormBusy(true);
     try {
-      const payload = {
-        title: projTitle,
-        title_mr: projTitleMr,
-        description: projDesc,
-        description_mr: projDescMr,
-        image: projImage || '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg',
-        status: projStatus,
-        start_date: projStart,
-        end_date: projEnd,
-      };
-
-      const url = '/api/projects';
-      const method = editingProject ? 'PUT' : 'POST';
-      const bodyPayload = editingProject ? { id: editingProject.id, updates: payload } : payload;
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) throw new Error('Failed to save project details');
-
-      await fetchAdminData();
-      setIsProjectFormOpen(false);
-    } catch (err: any) {
-      setFormError(err.message || 'Operation failed');
-    } finally {
-      setFormLoading(false);
-    }
+      const body = { title: pTitle, title_mr: pTitleMr, description: pDesc, description_mr: pDescMr, image: pImage, status: pStatus, start_date: pStart, end_date: pEnd };
+      const method = editProj ? 'PUT' : 'POST';
+      const payload = editProj ? { id: editProj.id, ...body } : body;
+      const res = await fetch('/api/projects', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify(editProj ? 'Project updated!' : 'Project created!');
+      setProjDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteProject = async (id: string) => {
+    if (!confirm('Delete this project?')) return;
+    const res = await fetch(`/api/projects?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Project deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
-  const handleEventSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError('');
-    setFormLoading(true);
-
+  // ── Event CRUD ──
+  const openEvtDrawer = (evt?: EventItem) => {
+    setEditEvt(evt || null);
+    setETitle(evt?.title || ''); setETitleMr('');
+    setEContent(evt?.content || ''); setEContentMr('');
+    setEImage(evt?.featured_image || ''); setEDate(evt?.published_date || '');
+    setEvtDrawer(true);
+  };
+  const saveEvent = async () => {
+    if (!eTitle) return notify('Title is required', 'error');
+    setFormBusy(true);
     try {
-      const payload = {
-        title: evtTitle,
-        title_mr: evtTitleMr,
-        content: evtContent,
-        content_mr: evtContentMr,
-        featured_image: evtImage || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
-        published_date: evtDate,
-      };
-
-      const url = '/api/events';
-      const method = editingEvent ? 'PUT' : 'POST';
-      const bodyPayload = editingEvent ? { id: editingEvent.id, updates: payload } : payload;
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) throw new Error('Failed to save news event');
-
-      await fetchAdminData();
-      setIsEventFormOpen(false);
-    } catch (err: any) {
-      setFormError(err.message || 'Operation failed');
-    } finally {
-      setFormLoading(false);
-    }
+      const body = { title: eTitle, title_mr: eTitleMr, content: eContent, content_mr: eContentMr, featured_image: eImage, published_date: eDate };
+      const method = editEvt ? 'PUT' : 'POST';
+      const payload = editEvt ? { id: editEvt.id, ...body } : body;
+      const res = await fetch('/api/events', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify(editEvt ? 'Event updated!' : 'Event created!');
+      setEvtDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteEvent = async (id: string) => {
+    if (!confirm('Delete this event?')) return;
+    const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Event deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
-  // Delete handlers
-  const handleDeleteItem = async (apiPath: string, id: string) => {
-    if (!confirm('Are you sure you want to delete this record?')) return;
-    try {
-      const res = await fetch(`/api/${apiPath}?id=${id}`, { method: 'DELETE' });
-      if (res.ok) fetchAdminData();
-    } catch (err) {
-      console.error('Delete failed:', err);
-    }
+  const markRead = async (id: string) => {
+    await fetch('/api/contact', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+    fetchAll();
   };
 
-  // Volunteer operations
-  const handleVolunteerStatus = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
-    try {
-      const res = await fetch('/api/volunteers', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status }),
-      });
-      if (res.ok) fetchAdminData();
-    } catch (err) {
-      console.error('Volunteer status update failed:', err);
-    }
-  };
+  if (!authorized) return null;
 
-  const handleAssignActivity = async (id: string, activityTitle: string) => {
-    try {
-      const res = await fetch('/api/volunteers', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, assigned_activity: activityTitle }),
-      });
-      if (res.ok) fetchAdminData();
-    } catch (err) {
-      console.error('Volunteer activity assignment failed:', err);
-    }
-  };
+  // ── Nav items ──
+  const navItems: { id: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
+    { id: 'dashboard',  icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
+    { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
+    { id: 'donations',  icon: <HandCoins size={18} />,       label: 'Donations',  badge: stats.totalDonors },
+    { id: 'volunteers', icon: <Users size={18} />,           label: 'Volunteers', badge: volunteers.filter(v => v.status === 'pending').length || undefined },
+    { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
+    { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
+  ];
 
-  if (!authorized) {
-    return (
-      <div className="min-h-screen bg-brand-paper text-brand-muted flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
-      </div>
-    );
-  }
+  const fmtCurrency = (n: number) => '₹' + n.toLocaleString('en-IN');
+  const fmtDate = (s: string) => new Date(s).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const filteredDonations = donations.filter(d =>
+    d.donor_name.toLowerCase().includes(search.toLowerCase()) ||
+    d.donor_email.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen bg-brand-paper text-brand-charcoal flex flex-col relative bg-grid-pattern overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-yellow/8 rounded-full blur-[120px] pointer-events-none animate-drift" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/6 rounded-full blur-[120px] pointer-events-none animate-drift" style={{ animationDelay: '-4s' }} />
+    <div className="flex h-screen bg-[#0d1117] text-white overflow-hidden font-sans">
 
-      {/* Admin Navbar */}
-      <header className="border-b border-brand-clay/60 bg-white/70 backdrop-blur-md py-4 px-6 md:px-12 flex justify-between items-center z-10">
-        <div className="flex items-center gap-2">
-          <img
-            src="/logo.png"
-            alt="Prathana Foundation Logo"
-            className="w-6 h-6 object-contain"
-          />
+      {/* ── Sidebar ────────────────────────────────────────────────────── */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0d1117] border-r border-white/5 flex flex-col transition-transform duration-300
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:flex`}>
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-6 py-6 border-b border-white/5">
+          <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+            <Heart size={16} className="text-amber-400 fill-amber-400/30" />
+          </div>
           <div>
-            <span className="font-serif-display text-lg font-bold text-brand-charcoal">
-              Prathana Control Panel
-            </span>
-            <span className="block text-[8px] uppercase tracking-widest text-brand-forest -mt-1 font-semibold">
-              Admin Dashboard
-            </span>
+            <div className="text-sm font-bold text-white leading-none">Prathana</div>
+            <div className="text-[10px] text-white/30 uppercase tracking-widest mt-0.5">Admin Panel</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={fetchAdminData}
-            className="p-2 border border-brand-clay/80 rounded-lg hover:bg-brand-sand text-brand-muted hover:text-brand-charcoal transition-colors"
-            title="Refresh Database Logs"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-4 py-2 border border-brand-clay/80 rounded-lg text-xs font-semibold hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all text-brand-muted"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Logout
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          {navItems.map(n => (
+            <button key={n.id} onClick={() => { setTab(n.id); setSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer group
+                ${tab === n.id ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}>
+              <span className="flex-shrink-0">{n.icon}</span>
+              <span className="flex-1 text-left">{n.label}</span>
+              {n.badge != null && n.badge > 0 && (
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tab === n.id ? 'bg-amber-500/30 text-amber-300' : 'bg-white/10 text-white/50'}`}>
+                  {n.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {/* Logout */}
+        <div className="px-3 py-4 border-t border-white/5">
+          <button onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400/70 hover:text-red-400 hover:bg-red-500/8 transition-all cursor-pointer">
+            <LogOut size={16} />
+            Sign Out
           </button>
         </div>
-      </header>
+      </aside>
 
-      {/* Main layout container (full-width for dock layout) */}
-      <div className="flex-1 flex flex-col w-full z-10 max-w-7xl mx-auto pb-28">
-        {/* Main Content Pane */}
-        <main className="flex-1 p-6 md:p-8 flex flex-col gap-6 overflow-x-hidden">
-          
-          {loading ? (
-            <div className="flex flex-1 items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
+      {/* Mobile overlay */}
+      {sidebarOpen && <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+
+      {/* ── Main ───────────────────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* Top bar */}
+        <header className="flex items-center gap-4 px-6 py-4 border-b border-white/5 bg-[#0d1117] flex-shrink-0">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-white/40 hover:text-white cursor-pointer">
+            <Menu size={20} />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-base font-bold text-white capitalize">{tab === 'dashboard' ? 'Overview' : tab}</h1>
+            <p className="text-[11px] text-white/30">Prathana Foundation Control Panel</p>
+          </div>
+          <button onClick={fetchAll} className="text-white/30 hover:text-white transition-colors cursor-pointer" title="Refresh">
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
+          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+            <Shield size={14} className="text-amber-400" />
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+
+          {loading && (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 size={32} className="animate-spin text-amber-400" />
             </div>
-          ) : (
+          )}
+
+          {!loading && (
             <>
-              {/* ───────────────────────────────────────────────────────────────
-                  TAB 1: DASHBOARD METRICS SUMMARY
-                  ─────────────────────────────────────────────────────────────── */}
+              {/* ════ DASHBOARD ════ */}
               {tab === 'dashboard' && (
-                <div className="space-y-8 animate-in fade-in duration-200">
-                  <div className="space-y-1">
-                    <span className="section-label">Summary Overview</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">System Metrics</h2>
+                <div className="space-y-6">
+                  {/* Stats grid */}
+                  <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
+                    <StatCard icon={<TrendingUp size={18} className="text-amber-400" />} label="Total Raised" value={fmtCurrency(stats.totalRaised)} sub={`Goal: ${fmtCurrency(stats.totalGoal)}`} color="bg-amber-400" />
+                    <StatCard icon={<HandCoins size={18} className="text-emerald-400" />} label="Donors" value={stats.totalDonors} sub="Successful payments" color="bg-emerald-400" />
+                    <StatCard icon={<Megaphone size={18} className="text-blue-400" />} label="Active Campaigns" value={stats.activeCampaigns} color="bg-blue-400" />
+                    <StatCard icon={<Users size={18} className="text-violet-400" />} label="Volunteers" value={stats.volunteerCount} sub="Approved" color="bg-violet-400" />
+                    <StatCard icon={<MessageSquare size={18} className="text-rose-400" />} label="Messages" value={stats.unreadMessages} sub="Unread" color="bg-rose-400" />
+                    <StatCard icon={<BookOpen size={18} className="text-cyan-400" />} label="Content Items" value={activities.length + projects.length + events.length} sub="Activities + Projects + Events" color="bg-cyan-400" />
                   </div>
 
-                  {/* 4-col metric cards grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
-                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Total Donations</span>
-                      <span className="block font-mono text-2xl font-bold text-brand-green">₹{stats.totalRaised.toLocaleString('en-IN')}</span>
+                  {/* Recent donations */}
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                      <h3 className="font-semibold text-white text-sm">Recent Donations</h3>
+                      <button onClick={() => setTab('donations')} className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer">
+                        View all <ArrowUpRight size={12} />
+                      </button>
                     </div>
-
-                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
-                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Campaigns Target</span>
-                      <span className="block font-mono text-2xl font-bold text-brand-charcoal">₹{stats.totalGoal.toLocaleString('en-IN')}</span>
-                    </div>
-
-                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
-                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Active Campaigns</span>
-                      <span className="block font-mono text-2xl font-bold text-brand-forest">{stats.activeCampaigns}</span>
-                    </div>
-
-                    <div className="p-5 bg-white border border-brand-clay/65 rounded-xl space-y-2 shadow-sm">
-                      <span className="block text-[9px] uppercase tracking-widest text-brand-muted font-bold">Approved Volunteers</span>
-                      <span className="block font-mono text-2xl font-bold text-brand-gold">{stats.volunteerCount}</span>
+                    <div className="divide-y divide-white/5">
+                      {donations.slice(0, 5).map(d => (
+                        <div key={d.id} className="flex items-center gap-4 px-6 py-3">
+                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-bold text-white/40">
+                            {d.donor_name[0]?.toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-white truncate">{d.donor_name}</div>
+                            <div className="text-[11px] text-white/30">{d.donor_email}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-bold text-amber-400">{fmtCurrency(d.amount)}</div>
+                            <Badge status={d.payment_status} />
+                          </div>
+                        </div>
+                      ))}
+                      {donations.length === 0 && <div className="px-6 py-8 text-center text-sm text-white/20">No donations yet</div>}
                     </div>
                   </div>
 
-                  {/* Recent Activity Mini-Grids */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Recent Applications */}
-                    <div className="bg-white border border-brand-clay/65 rounded-xl p-5 space-y-4 shadow-sm">
-                      <h4 className="font-serif-display font-bold text-brand-charcoal pb-3 border-b border-brand-clay/50 flex justify-between items-center text-sm">
-                        <span>Pending Volunteer Applications</span>
-                        <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[8px] uppercase tracking-wider font-bold">
-                          {volunteers.filter(v => v.status === 'pending').length} Queue
-                        </span>
-                      </h4>
-                      <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
-                        {volunteers.filter(v => v.status === 'pending').slice(0, 4).map(v => (
-                          <div key={v.id} className="flex justify-between items-center bg-brand-sand/40 p-3 rounded-lg border border-brand-clay/50 text-xs">
-                            <div>
-                              <span className="block font-semibold text-brand-charcoal">{v.name}</span>
-                              <span className="block text-[9px] text-brand-muted">{v.email} &bull; {v.phone}</span>
-                            </div>
-                            <button
-                              onClick={() => setTab('volunteers')}
-                              className="px-3 py-1 bg-brand-charcoal hover:bg-brand-yellow hover:text-brand-charcoal text-white rounded text-[10px] font-semibold transition-all shadow-sm"
-                            >
-                              Review
-                            </button>
-                          </div>
-                        ))}
-                        {volunteers.filter(v => v.status === 'pending').length === 0 && (
-                          <p className="text-brand-muted text-xs text-center py-6 font-light">All applications reviewed.</p>
-                        )}
-                      </div>
+                  {/* Recent volunteers */}
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                      <h3 className="font-semibold text-white text-sm">Pending Volunteers</h3>
+                      <button onClick={() => setTab('volunteers')} className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer">
+                        View all <ArrowUpRight size={12} />
+                      </button>
                     </div>
-
-                    {/* Recent Donors */}
-                    <div className="bg-white border border-brand-clay/65 rounded-xl p-5 space-y-4 shadow-sm">
-                      <h4 className="font-serif-display font-bold text-brand-charcoal pb-3 border-b border-brand-clay/50 flex justify-between items-center text-sm">
-                        <span>Recent Contribution Audits</span>
-                        <span className="px-2 py-0.5 rounded bg-brand-green/10 text-brand-green text-[8px] uppercase tracking-wider font-bold">
-                          {donations.filter(d => d.payment_status === 'success').length} verified
-                        </span>
-                      </h4>
-                      <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
-                        {donations.slice(0, 4).map(d => (
-                          <div key={d.id} className="flex justify-between items-center bg-brand-sand/40 p-3 rounded-lg border border-brand-clay/50 text-xs">
-                            <div>
-                              <span className="block font-semibold text-brand-charcoal">{d.donor_name}</span>
-                              <span className="block text-[9px] text-brand-muted">{new Date(d.created_at).toLocaleDateString()}</span>
-                            </div>
-                            <span className="font-serif-display font-bold text-brand-green text-sm">
-                              ₹{Number(d.amount).toLocaleString('en-IN')}
-                            </span>
+                    <div className="divide-y divide-white/5">
+                      {volunteers.filter(v => v.status === 'pending').slice(0, 4).map(v => (
+                        <div key={v.id} className="flex items-center gap-4 px-6 py-3">
+                          <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center text-xs font-bold text-violet-400">
+                            {v.name[0]?.toUpperCase()}
                           </div>
-                        ))}
-                        {donations.length === 0 && (
-                          <p className="text-brand-muted text-xs text-center py-6 font-light">No ledger inputs registered.</p>
-                        )}
-                      </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-white">{v.name}</div>
+                            <div className="text-[11px] text-white/30">{v.city} · {v.occupation}</div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => updateVolStatus(v.id, 'approved')} className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 flex items-center justify-center hover:bg-emerald-500/25 transition-colors cursor-pointer"><Check size={13} /></button>
+                            <button onClick={() => updateVolStatus(v.id, 'rejected')} className="w-7 h-7 rounded-lg bg-red-500/15 border border-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/25 transition-colors cursor-pointer"><X size={13} /></button>
+                          </div>
+                        </div>
+                      ))}
+                      {volunteers.filter(v => v.status === 'pending').length === 0 && <div className="px-6 py-6 text-center text-sm text-white/20">No pending volunteers</div>}
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* ───────────────────────────────────────────────────────────────
-                  TAB 2: CAMPAIGNS MANAGEMENT
-                  ─────────────────────────────────────────────────────────────── */}
+              {/* ════ CAMPAIGNS ════ */}
               {tab === 'campaigns' && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <span className="section-label">Fiduciary Targets</span>
-                      <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Campaigns Manager</h2>
-                    </div>
-                    <button
-                      onClick={() => openCampaignForm()}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-md hover:-translate-y-0.5 transition-all duration-300 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Campaign
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-white font-bold">Campaigns ({campaigns.length})</h2>
+                    <button onClick={() => openCampDrawer()} className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-colors cursor-pointer">
+                      <Plus size={14} /> New Campaign
                     </button>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {campaigns.map(camp => (
-                      <div key={camp.id} className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden flex flex-col justify-between shadow-sm">
-                        <div className="h-32 relative bg-brand-sand">
-                          <img src={camp.image} alt={camp.title} className="w-full h-full object-cover opacity-90" />
-                          <span className={`absolute top-3 right-3 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest rounded-full text-white ${
-                            camp.status === 'completed' || camp.is_completed ? 'bg-brand-green text-white' : 'bg-brand-yellow text-brand-charcoal font-bold'
-                          }`}>
-                            {camp.status || (camp.is_completed ? 'completed' : 'active')}
-                          </span>
+                  <div className="grid gap-4">
+                    {campaigns.map(c => (
+                      <div key={c.id} className="bg-[#1a1f2e] border border-white/5 rounded-2xl p-5 flex gap-4 items-start hover:border-white/10 transition-all">
+                        {c.image && <img src={c.image} alt={c.title} className="w-20 h-20 rounded-xl object-cover flex-shrink-0 border border-white/10" />}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-semibold text-white truncate">{c.title}</h3>
+                            <Badge status={c.status} />
+                          </div>
+                          <p className="text-[12px] text-white/40 mt-1 line-clamp-2">{c.description}</p>
+                          <div className="mt-3">
+                            <div className="flex justify-between text-[11px] text-white/30 mb-1">
+                              <span>Raised: {fmtCurrency(c.amount_raised)}</span>
+                              <span>Goal: {fmtCurrency(c.goal_amount)}</span>
+                            </div>
+                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.min(100, (c.amount_raised / c.goal_amount) * 100)}%` }} />
+                            </div>
+                          </div>
                         </div>
-                        <div className="p-5 space-y-4">
-                          <div className="space-y-1">
-                            <span className="block font-mono text-[9px] text-brand-muted">{camp.id}</span>
-                            <h4 className="font-serif-display text-base font-bold text-brand-charcoal line-clamp-1">{camp.title}</h4>
-                            <p className="text-xs text-brand-muted font-light line-clamp-2">{camp.description}</p>
-                          </div>
-                          
-                          <div className="flex gap-2 pt-3 border-t border-brand-clay/40">
-                            <button
-                              onClick={() => openCampaignForm(camp)}
-                              className="flex-1 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg flex items-center justify-center gap-1 transition-colors border border-brand-clay/60"
-                            >
-                              <Edit2 className="w-3.5 h-3.5 text-brand-forest" />
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteItem('campaigns', camp.id)}
-                              className="p-2 border border-brand-clay/60 text-brand-muted hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-lg transition-colors"
-                              title="Delete Campaign"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
+                        <div className="flex flex-col gap-2 flex-shrink-0">
+                          <button onClick={() => openCampDrawer(c)} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-white hover:border-white/20 flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={13} /></button>
+                          <button onClick={() => deleteCampaign(c.id)} className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400/60 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={13} /></button>
                         </div>
                       </div>
                     ))}
-                    {campaigns.length === 0 && (
-                      <div className="col-span-full text-center py-20 border border-dashed border-brand-clay rounded-xl bg-white/50">
-                        <p className="text-brand-muted text-xs font-light">No campaigns registered. Click Add Campaign to start.</p>
-                      </div>
-                    )}
+                    {campaigns.length === 0 && <div className="text-center py-16 text-white/20 text-sm">No campaigns yet. Create one!</div>}
                   </div>
                 </div>
               )}
 
-              {/* ───────────────────────────────────────────────────────────────
-                  TAB 3: VOLUNTEERS MANAGEMENT
-                  ─────────────────────────────────────────────────────────────── */}
-              {tab === 'volunteers' && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="space-y-1">
-                    <span className="section-label">Field Force Manager</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Volunteer Applications</h2>
+              {/* ════ DONATIONS ════ */}
+              {tab === 'donations' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-white font-bold flex-1">Donations ({donations.length})</h2>
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20" />
+                      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search donors..." className="bg-[#1a1f2e] border border-white/10 rounded-xl pl-8 pr-4 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-amber-500/40 w-52" />
+                    </div>
                   </div>
-
-                  <div className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden shadow-sm">
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
                     <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
+                      <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-brand-sand/60 text-brand-charcoal border-b border-brand-clay/70 text-[10px] uppercase tracking-widest font-bold">
-                            <th className="p-4">Applicant</th>
-                            <th className="p-4">Location & Job</th>
-                            <th className="p-4">Interests</th>
-                            <th className="p-4">Status</th>
-                            <th className="p-4">Assigned Activity</th>
-                            <th className="p-4 text-right">Actions</th>
+                          <tr className="border-b border-white/5">
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Donor</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Amount</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden md:table-cell">Status</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden lg:table-cell">Date</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-brand-clay/50 text-xs font-light">
-                          {volunteers.map(vol => (
-                            <tr key={vol.id} className="hover:bg-brand-sand/20 transition-colors">
-                              <td className="p-4 space-y-0.5">
-                                <span className="block font-semibold text-brand-charcoal">{vol.name}</span>
-                                <span className="block text-[10px] text-brand-muted">{vol.email}</span>
-                                <span className="block text-[10px] text-brand-muted">{vol.phone}</span>
+                        <tbody className="divide-y divide-white/5">
+                          {filteredDonations.map(d => (
+                            <tr key={d.id} className="hover:bg-white/2 transition-colors">
+                              <td className="px-5 py-3.5">
+                                <div className="font-medium text-white">{d.donor_name}</div>
+                                <div className="text-[11px] text-white/30">{d.donor_email}</div>
                               </td>
-                              <td className="p-4 space-y-0.5">
-                                <span className="block text-brand-charcoal">{vol.city}</span>
-                                <span className="block text-[10px] text-brand-muted">{vol.occupation}</span>
-                              </td>
-                              <td className="p-4">
-                                <span className="text-[10px] bg-brand-sand px-2.5 py-1 rounded text-brand-muted border border-brand-clay/60 font-mono">
-                                  {vol.interests}
-                                </span>
-                              </td>
-                              <td className="p-4">
-                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                                  vol.status === 'approved' 
-                                    ? 'bg-brand-green/10 text-brand-green' 
-                                    : vol.status === 'rejected'
-                                    ? 'bg-red-500/10 text-red-500'
-                                    : 'bg-amber-500/10 text-amber-500'
-                                }`}>
-                                  <span className={`w-1 h-1 rounded-full ${
-                                    vol.status === 'approved' ? 'bg-brand-green' : vol.status === 'rejected' ? 'bg-red-500' : 'bg-amber-500'
-                                  }`} />
-                                  {vol.status}
-                                </span>
-                              </td>
-                              <td className="p-4">
-                                {vol.status === 'approved' ? (
-                                  <select
-                                    value={vol.assigned_activity || ''}
-                                    onChange={(e) => handleAssignActivity(vol.id, e.target.value)}
-                                    className="px-2.5 py-1.5 bg-white border border-brand-clay text-brand-charcoal rounded text-xs outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
-                                  >
-                                    <option value="">-- Unassigned --</option>
-                                    {activities.map(act => (
-                                      <option key={act.id} value={act.title}>
-                                        {act.title}
-                                      </option>
-                                    ))}
-                                  </select>
-                                ) : (
-                                  <span className="text-brand-muted/70 italic text-[11px]">Requires Approval</span>
-                                )}
-                              </td>
-                              <td className="p-4 text-right">
-                                {vol.status === 'pending' ? (
-                                  <div className="flex justify-end gap-1.5">
-                                    <button
-                                      onClick={() => handleVolunteerStatus(vol.id, 'approved')}
-                                      className="p-1.5 bg-brand-green/10 text-brand-green hover:bg-brand-green hover:text-white rounded border border-brand-green/20 transition-all"
-                                      title="Approve Applicant"
-                                    >
-                                      <UserCheck className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                      onClick={() => handleVolunteerStatus(vol.id, 'rejected')}
-                                      className="p-1.5 bg-red-50 text-red-500 hover:bg-red-600 hover:text-white rounded border border-red-200 transition-all"
-                                      title="Reject Applicant"
-                                    >
-                                      <X className="w-3.5 h-3.5" />
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={() => handleVolunteerStatus(vol.id, 'pending')}
-                                    className="px-2 py-1 border border-brand-clay hover:bg-brand-sand hover:text-brand-charcoal text-brand-muted rounded text-[10px] font-semibold transition-colors"
-                                  >
-                                    Reset to Pending
-                                  </button>
-                                )}
-                              </td>
+                              <td className="px-5 py-3.5 font-bold text-amber-400">{fmtCurrency(d.amount)}</td>
+                              <td className="px-5 py-3.5 hidden md:table-cell"><Badge status={d.payment_status} /></td>
+                              <td className="px-5 py-3.5 text-white/30 text-[12px] hidden lg:table-cell">{fmtDate(d.created_at)}</td>
                             </tr>
                           ))}
-                          {volunteers.length === 0 && (
-                            <tr>
-                              <td colSpan={6} className="text-center py-12 text-brand-muted">
-                                No volunteer registrations found in the log.
-                              </td>
-                            </tr>
+                          {filteredDonations.length === 0 && (
+                            <tr><td colSpan={4} className="text-center py-12 text-white/20">No donations found</td></tr>
                           )}
                         </tbody>
                       </table>
@@ -799,267 +593,196 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              {/* ───────────────────────────────────────────────────────────────
-                  TAB 4: CONTENT MANAGEMENT (SUB-TABS)
-                  ─────────────────────────────────────────────────────────────── */}
-              {tab === 'content' && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="space-y-1">
-                    <span className="section-label">Website Content Management</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Content Hub</h2>
+              {/* ════ VOLUNTEERS ════ */}
+              {tab === 'volunteers' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-white font-bold">Volunteers ({volunteers.length})</h2>
+                    <div className="flex gap-2 text-[11px]">
+                      {['pending','approved','rejected'].map(s => (
+                        <span key={s} className="px-3 py-1 rounded-full bg-white/5 text-white/40 font-semibold capitalize">
+                          {volunteers.filter(v => v.status === s).length} {s}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-white/5">
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Name</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden md:table-cell">City</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden lg:table-cell">Interests</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Status</th>
+                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {volunteers.map(v => (
+                            <tr key={v.id} className="hover:bg-white/2 transition-colors">
+                              <td className="px-5 py-3.5">
+                                <div className="font-medium text-white">{v.name}</div>
+                                <div className="text-[11px] text-white/30">{v.email}</div>
+                              </td>
+                              <td className="px-5 py-3.5 text-white/50 hidden md:table-cell">{v.city}</td>
+                              <td className="px-5 py-3.5 hidden lg:table-cell">
+                                <div className="flex flex-wrap gap-1">
+                                  {v.interests?.split(',').map(i => (
+                                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/30">{i.trim()}</span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-5 py-3.5"><Badge status={v.status} /></td>
+                              <td className="px-5 py-3.5">
+                                {v.status === 'pending' && (
+                                  <div className="flex gap-2">
+                                    <button onClick={() => updateVolStatus(v.id, 'approved')} className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 cursor-pointer transition-colors"><Check size={11} /> Approve</button>
+                                    <button onClick={() => updateVolStatus(v.id, 'rejected')} className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 cursor-pointer transition-colors"><X size={11} /> Reject</button>
+                                  </div>
+                                )}
+                                {v.status !== 'pending' && <span className="text-[11px] text-white/20 italic">—</span>}
+                              </td>
+                            </tr>
+                          ))}
+                          {volunteers.length === 0 && <tr><td colSpan={5} className="text-center py-12 text-white/20">No volunteers yet</td></tr>}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                  {/* Sub-tabs row */}
-                  <div className="flex border-b border-brand-clay pb-3 gap-2">
-                    {[
-                      { id: 'activities', label: 'Activities' },
-                      { id: 'projects', label: 'Projects' },
-                      { id: 'events', label: 'Events & News' },
-                    ].map((sub) => (
-                      <button
-                        key={sub.id}
-                        onClick={() => setContentTab(sub.id as any)}
-                        className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors border ${
-                          contentTab === sub.id
-                            ? 'bg-brand-charcoal text-white border-brand-charcoal shadow-sm'
-                            : 'text-brand-muted border-transparent hover:text-brand-charcoal hover:bg-brand-sand/50'
-                        }`}
-                      >
-                        {sub.label}
+              {/* ════ CONTENT ════ */}
+              {tab === 'content' && (
+                <div className="space-y-4">
+                  {/* Sub tabs */}
+                  <div className="flex items-center gap-1 bg-[#1a1f2e] border border-white/5 rounded-xl p-1 w-fit">
+                    {(['activities','projects','events'] as ContentSub[]).map(s => (
+                      <button key={s} onClick={() => setContentSub(s)}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer
+                          ${contentSub === s ? 'bg-amber-500/20 text-amber-400 border border-amber-500/20' : 'text-white/40 hover:text-white/70'}`}>
+                        {s}
                       </button>
                     ))}
                   </div>
 
-                  {/* Sub-tab: Activities */}
-                  {contentTab === 'activities' && (
+                  {/* Activities */}
+                  {contentSub === 'activities' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-brand-muted font-mono">{activities.length} Activities Found</span>
-                        <button
-                          onClick={() => openActivityForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-sm transition-all duration-300 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add Activity
-                        </button>
+                        <h3 className="font-semibold text-white">Activities ({activities.length})</h3>
+                        <button onClick={() => openActDrawer()} className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"><Plus size={13} /> Add Activity</button>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {activities.map(act => (
-                          <div key={act.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
-                            <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
-                                <img src={act.image} alt={act.title} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="space-y-1">
-                                <span className="px-2 py-0.5 rounded-full bg-brand-sand text-[9px] font-mono text-brand-forest border border-brand-clay/60">
-                                  {act.category}
-                                </span>
-                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{act.title}</h4>
-                                <p className="text-[11px] text-brand-muted font-light line-clamp-1">{act.description}</p>
-                              </div>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {activities.map(a => (
+                          <div key={a.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex gap-3 hover:border-white/10 transition-all">
+                            {a.image && <img src={a.image} alt={a.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-white text-sm">{a.title}</div>
+                              <Badge status={a.category} />
+                              <p className="text-[11px] text-white/30 mt-1 line-clamp-2">{a.description}</p>
                             </div>
-
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => openActivityForm(act)}
-                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Edit2 className="w-3 h-3 text-brand-forest" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteItem('activities', act.id)}
-                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
-                              </button>
+                            <div className="flex flex-col gap-1.5">
+                              <button onClick={() => openActDrawer(a)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
+                              <button onClick={() => deleteActivity(a.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
                             </div>
                           </div>
                         ))}
+                        {activities.length === 0 && <div className="col-span-2 text-center py-12 text-white/20 text-sm">No activities yet</div>}
                       </div>
                     </div>
                   )}
 
-                  {/* Sub-tab: Projects */}
-                  {contentTab === 'projects' && (
+                  {/* Projects */}
+                  {contentSub === 'projects' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-brand-muted font-mono">{projects.length} Projects Found</span>
-                        <button
-                          onClick={() => openProjectForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-sm transition-all duration-300 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add Project
-                        </button>
+                        <h3 className="font-semibold text-white">Projects ({projects.length})</h3>
+                        <button onClick={() => openProjDrawer()} className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"><Plus size={13} /> Add Project</button>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {projects.map(proj => (
-                          <div key={proj.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
-                            <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
-                                <img src={proj.image} alt={proj.title} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="space-y-1">
-                                <span className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest ${
-                                  proj.status === 'completed' ? 'bg-brand-green/10 text-brand-green' : proj.status === 'active' ? 'bg-brand-yellow/15 text-brand-forest' : 'bg-brand-sand text-brand-muted border border-brand-clay/40'
-                                }`}>
-                                  {proj.status}
-                                </span>
-                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{proj.title}</h4>
-                                <p className="text-[10px] text-brand-muted font-mono font-light">
-                                  {proj.start_date} &ndash; {proj.end_date}
-                                </p>
-                              </div>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {projects.map(p => (
+                          <div key={p.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex gap-3 hover:border-white/10 transition-all">
+                            {p.image && <img src={p.image} alt={p.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-white text-sm">{p.title}</div>
+                              <Badge status={p.status} />
+                              <div className="text-[11px] text-white/25 mt-1">{p.start_date} → {p.end_date}</div>
                             </div>
-
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => openProjectForm(proj)}
-                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Edit2 className="w-3 h-3 text-brand-forest" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteItem('projects', proj.id)}
-                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
-                              </button>
+                            <div className="flex flex-col gap-1.5">
+                              <button onClick={() => openProjDrawer(p)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
+                              <button onClick={() => deleteProject(p.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
                             </div>
                           </div>
                         ))}
+                        {projects.length === 0 && <div className="col-span-2 text-center py-12 text-white/20 text-sm">No projects yet</div>}
                       </div>
                     </div>
                   )}
 
-                  {/* Sub-tab: Events */}
-                  {contentTab === 'events' && (
+                  {/* Events */}
+                  {contentSub === 'events' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-brand-muted font-mono">{events.length} Events/Blogs Found</span>
-                        <button
-                          onClick={() => openEventForm()}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-sm transition-all duration-300 text-white rounded text-[11px] font-bold uppercase tracking-wider transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Add Event
-                        </button>
+                        <h3 className="font-semibold text-white">Events & News ({events.length})</h3>
+                        <button onClick={() => openEvtDrawer()} className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"><Plus size={13} /> Add Event</button>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {events.map(evt => (
-                          <div key={evt.id} className="p-4 bg-white border border-brand-clay/65 rounded-xl flex gap-4 items-start justify-between shadow-sm">
-                            <div className="flex gap-4 items-start">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-brand-sand shrink-0">
-                                <img src={evt.featured_image} alt={evt.title} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="space-y-1">
-                                <span className="text-[9px] font-mono text-brand-muted uppercase font-bold tracking-widest flex items-center gap-1">
-                                  <Calendar className="w-3 h-3 text-brand-yellow" />
-                                  {evt.published_date}
-                                </span>
-                                <h4 className="font-serif-display font-bold text-brand-charcoal text-sm pt-1">{evt.title}</h4>
-                                <p className="text-[11px] text-brand-muted font-light line-clamp-1">{evt.content}</p>
-                              </div>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {events.map(e => (
+                          <div key={e.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex gap-3 hover:border-white/10 transition-all">
+                            {e.featured_image && <img src={e.featured_image} alt={e.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-white text-sm">{e.title}</div>
+                              <div className="text-[11px] text-white/25 flex items-center gap-1 mt-1"><Calendar size={10} /> {e.published_date}</div>
+                              <p className="text-[11px] text-white/30 mt-1 line-clamp-2">{e.content}</p>
                             </div>
-
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => openEventForm(evt)}
-                                className="p-1.5 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Edit2 className="w-3 h-3 text-brand-forest" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteItem('events', evt.id)}
-                                className="p-1.5 bg-brand-sand hover:bg-red-50 hover:text-red-600 rounded border border-brand-clay/50 transition-colors"
-                              >
-                                <Trash2 className="w-3 h-3 text-brand-muted hover:text-red-600" />
-                              </button>
+                            <div className="flex flex-col gap-1.5">
+                              <button onClick={() => openEvtDrawer(e)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
+                              <button onClick={() => deleteEvent(e.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
                             </div>
                           </div>
                         ))}
+                        {events.length === 0 && <div className="col-span-2 text-center py-12 text-white/20 text-sm">No events yet</div>}
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* ───────────────────────────────────────────────────────────────
-                  TAB 5: DONATIONS LEDGER TABLE
-                  ─────────────────────────────────────────────────────────────── */}
-              {tab === 'donations' && (
-                <div className="space-y-6 animate-in fade-in duration-200">
-                  <div className="space-y-1">
-                    <span className="section-label">Audit Log</span>
-                    <h2 className="font-serif-display text-2xl font-bold text-brand-charcoal">Donations Ledger</h2>
-                  </div>
-
-                  <div className="bg-white border border-brand-clay/65 rounded-xl overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="bg-brand-sand/60 text-brand-charcoal border-b border-brand-clay/70 text-[10px] uppercase tracking-widest font-bold">
-                            <th className="p-4">Donor Details</th>
-                            <th className="p-4">Campaign ID</th>
-                            <th className="p-4">Amount</th>
-                            <th className="p-4">Payment ID</th>
-                            <th className="p-4">Status</th>
-                            <th className="p-4 text-right">Date</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-brand-clay/50 text-xs font-light">
-                          {donations.map((don) => (
-                            <tr key={don.id} className="hover:bg-brand-sand/20 transition-colors">
-                              <td className="p-4 space-y-0.5">
-                                <span className="block font-semibold text-brand-charcoal">{don.donor_name}</span>
-                                <span className="block text-[10px] text-brand-muted">{don.donor_email}</span>
-                              </td>
-                              <td className="p-4 font-mono text-brand-muted">
-                                {don.campaign_id}
-                              </td>
-                              <td className="p-4 font-serif-display font-bold text-brand-charcoal text-sm">
-                                ₹{Number(don.amount).toLocaleString('en-IN')}
-                              </td>
-                              <td className="p-4 font-mono text-[10px] text-brand-muted">
-                                {don.payment_id}
-                              </td>
-                              <td className="p-4">
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                                  don.payment_status === 'success'
-                                    ? 'bg-brand-green/15 text-brand-green'
-                                    : don.payment_status === 'pending'
-                                    ? 'bg-amber-500/15 text-amber-500'
-                                    : 'bg-red-500/15 text-red-500'
-                                }`}>
-                                  <span className={`w-1 h-1 rounded-full ${
-                                    don.payment_status === 'success' ? 'bg-brand-green' : don.payment_status === 'pending' ? 'bg-amber-500' : 'bg-red-500'
-                                  }`} />
-                                  {don.payment_status}
-                                </span>
-                              </td>
-                              <td className="p-4 text-right text-brand-muted font-mono text-[10px]">
-                                {new Date(don.created_at).toLocaleString('en-IN', {
-                                  day: 'numeric',
-                                  month: 'short',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                })}
-                              </td>
-                            </tr>
-                          ))}
-                          {donations.length === 0 && (
-                            <tr>
-                              <td colSpan={6} className="text-center py-12 text-brand-muted">
-                                No donations registered in the ledger.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+              {/* ════ MESSAGES ════ */}
+              {tab === 'messages' && (
+                <div className="space-y-4">
+                  <h2 className="text-white font-bold">Contact Messages ({contacts.length})</h2>
+                  <div className="space-y-3">
+                    {contacts.map(c => (
+                      <div key={c.id} className={`bg-[#1a1f2e] border rounded-2xl p-5 transition-all ${c.read ? 'border-white/5 opacity-60' : 'border-amber-500/20 shadow-lg shadow-amber-500/5'}`}>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-amber-500/15 border border-amber-500/20 flex items-center justify-center text-sm font-bold text-amber-400">
+                              {c.name[0]?.toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="font-semibold text-white text-sm flex items-center gap-2">
+                                {c.name}
+                                {!c.read && <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />}
+                              </div>
+                              <div className="text-[11px] text-white/30">{c.email} {c.phone && `· ${c.phone}`}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 flex-shrink-0">
+                            <span className="text-[11px] text-white/20">{fmtDate(c.created_at)}</span>
+                            {!c.read && (
+                              <button onClick={() => markRead(c.id)} className="text-[11px] px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 cursor-pointer transition-colors flex items-center gap-1">
+                                <Check size={11} /> Mark Read
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <p className="mt-3 text-[13px] text-white/60 leading-relaxed bg-black/20 rounded-xl p-3 border border-white/5">{c.message}</p>
+                      </div>
+                    ))}
+                    {contacts.length === 0 && <div className="text-center py-16 text-white/20 text-sm">No contact messages yet</div>}
                   </div>
                 </div>
               )}
@@ -1068,328 +791,80 @@ export default function AdminDashboard() {
         </main>
       </div>
 
-      {/* ───────────────────────────────────────────────────────────────────────
-          MODAL DIALOGS AND FORMS SECTION
-          ─────────────────────────────────────────────────────────────────────── */}
+      {/* ── Drawers ──────────────────────────────────────────────────────── */}
 
-      {/* 1. Campaign Creator Modal */}
-      {isCampaignFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsCampaignFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
-                {editingCampaign ? 'Edit Campaign Details' : 'Register New Campaign'}
-              </h3>
-              <button onClick={() => setIsCampaignFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* Campaign drawer */}
+      <Drawer open={campDrawer} title={editCamp ? 'Edit Campaign' : 'New Campaign'} onClose={() => setCampDrawer(false)}>
+        <Field label="Title (English)"><input value={cTitle} onChange={e => setCTitle(e.target.value)} className={inputCls} placeholder="Campaign title" /></Field>
+        <Field label="Title (Marathi)"><input value={cTitleMr} onChange={e => setCTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Description"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Campaign description..." /></Field>
+        <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
+        <Field label="Image URL"><input value={cImage} onChange={e => setCImage(e.target.value)} className={inputCls} placeholder="/image.jpg or https://..." /></Field>
+        <Field label="Status">
+          <select value={cStatus} onChange={e => setCStatus(e.target.value as any)} className={selectCls}>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+          </select>
+        </Field>
+        <button onClick={saveCampaign} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {editCamp ? 'Save Changes' : 'Create Campaign'}
+        </button>
+      </Drawer>
 
-            <form onSubmit={handleCampaignSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{formError}</span>
-                </div>
-              )}
+      {/* Activity drawer */}
+      <Drawer open={actDrawer} title={editAct ? 'Edit Activity' : 'New Activity'} onClose={() => setActDrawer(false)}>
+        <Field label="Title (English)"><input value={aTitle} onChange={e => setATitle(e.target.value)} className={inputCls} placeholder="Activity title" /></Field>
+        <Field label="Title (Marathi)"><input value={aTitleMr} onChange={e => setATitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Description"><textarea value={aDesc} onChange={e => setADesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
+        <Field label="Image URL"><input value={aImage} onChange={e => setAImage(e.target.value)} className={inputCls} /></Field>
+        <Field label="Category">
+          <select value={aCat} onChange={e => setACat(e.target.value as any)} className={selectCls}>
+            {['nutrition','education','healthcare','general'].map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </Field>
+        <button onClick={saveActivity} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {editAct ? 'Save Changes' : 'Create Activity'}
+        </button>
+      </Drawer>
 
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Title (English)</label>
-                <input type="text" required value={campTitle} onChange={(e) => setCampTitle(e.target.value)} placeholder="e.g. Sponsor Nutrition Lunch Boxes" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Title (Marathi)</label>
-                <input type="text" value={campTitleMr} onChange={(e) => setCampTitleMr(e.target.value)} placeholder="उदा. पोषण भोजन पेटी प्रायोजक व्हा" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Goal Amount (INR)</label>
-                <input type="number" required value={campGoal} onChange={(e) => setCampGoal(e.target.value)} placeholder="e.g. 350000" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={campDesc} onChange={(e) => setCampDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={campDescMr} onChange={(e) => setCampDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Image</label>
-                <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setCampImage)} className="hidden" id="camp-file" />
-                <label htmlFor="camp-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
-                {campImage && <img src={campImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
-              </div>
-
-              {editingCampaign && (
-                <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Campaign Status</label>
-                  <select value={campStatus} onChange={(e) => setCampStatus(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10">
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
-                <button type="button" onClick={() => setIsCampaignFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-md hover:-translate-y-0.5 transition-all duration-300 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
-                  {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Campaign'}
-                </button>
-              </div>
-            </form>
-          </div>
+      {/* Project drawer */}
+      <Drawer open={projDrawer} title={editProj ? 'Edit Project' : 'New Project'} onClose={() => setProjDrawer(false)}>
+        <Field label="Title (English)"><input value={pTitle} onChange={e => setPTitle(e.target.value)} className={inputCls} placeholder="Project title" /></Field>
+        <Field label="Title (Marathi)"><input value={pTitleMr} onChange={e => setPTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Description"><textarea value={pDesc} onChange={e => setPDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
+        <Field label="Image URL"><input value={pImage} onChange={e => setPImage(e.target.value)} className={inputCls} /></Field>
+        <Field label="Status">
+          <select value={pStatus} onChange={e => setPStatus(e.target.value as any)} className={selectCls}>
+            {['planned','active','completed'].map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Start Date"><input type="date" value={pStart} onChange={e => setPStart(e.target.value)} className={inputCls} /></Field>
+          <Field label="End Date"><input type="date" value={pEnd} onChange={e => setPEnd(e.target.value)} className={inputCls} /></Field>
         </div>
-      )}
+        <button onClick={saveProject} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {editProj ? 'Save Changes' : 'Create Project'}
+        </button>
+      </Drawer>
 
-      {/* 2. Activity Creator Modal */}
-      {isActivityFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsActivityFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
-                {editingActivity ? 'Edit Activity Details' : 'Register New Activity'}
-              </h3>
-              <button onClick={() => setIsActivityFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* Event drawer */}
+      <Drawer open={evtDrawer} title={editEvt ? 'Edit Event' : 'New Event / News'} onClose={() => setEvtDrawer(false)}>
+        <Field label="Title (English)"><input value={eTitle} onChange={e => setETitle(e.target.value)} className={inputCls} placeholder="Event title" /></Field>
+        <Field label="Title (Marathi)"><input value={eTitleMr} onChange={e => setETitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Content"><textarea value={eContent} onChange={e => setEContent(e.target.value)} className={inputCls + ' resize-none h-28'} placeholder="Event content or news article..." /></Field>
+        <Field label="Featured Image URL"><input value={eImage} onChange={e => setEImage(e.target.value)} className={inputCls} /></Field>
+        <Field label="Published Date"><input type="date" value={eDate} onChange={e => setEDate(e.target.value)} className={inputCls} /></Field>
+        <button onClick={saveEvent} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {editEvt ? 'Save Changes' : 'Publish Event'}
+        </button>
+      </Drawer>
 
-            <form onSubmit={handleActivitySubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{formError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Activity Title (English)</label>
-                <input type="text" required value={actTitle} onChange={(e) => setActTitle(e.target.value)} placeholder="e.g. Solapur Evening Tuition" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Activity Title (Marathi)</label>
-                <input type="text" value={actTitleMr} onChange={(e) => setActTitleMr(e.target.value)} placeholder="उदा. सोलापूर संध्याकाळचे अभ्यास वर्ग" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Category</label>
-                <select value={actCategory} onChange={(e) => setActCategory(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10">
-                  <option value="nutrition">Meals & Nutrition</option>
-                  <option value="education">Education Support</option>
-                  <option value="healthcare">Mobile Clinics</option>
-                  <option value="general">General Outreach</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={actDesc} onChange={(e) => setActDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={actDescMr} onChange={(e) => setActDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Banner Photo</label>
-                <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setActImage)} className="hidden" id="act-file" />
-                <label htmlFor="act-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
-                {actImage && <img src={actImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
-                <button type="button" onClick={() => setIsActivityFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-md hover:-translate-y-0.5 transition-all duration-300 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
-                  {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Activity'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 3. Project Creator Modal */}
-      {isProjectFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsProjectFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
-                {editingProject ? 'Edit Project Details' : 'Register New Project'}
-              </h3>
-              <button onClick={() => setIsProjectFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleProjectSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{formError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Title (English)</label>
-                <input type="text" required value={projTitle} onChange={(e) => setProjTitle(e.target.value)} placeholder="e.g. central community kitchen build" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Title (Marathi)</label>
-                <input type="text" value={projTitleMr} onChange={(e) => setProjTitleMr(e.target.value)} placeholder="उदा. मध्यवर्ती समुदाय स्वयंपाकघर उभारणी प्रकल्प" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Start Date</label>
-                  <input type="date" required value={projStart} onChange={(e) => setProjStart(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal" />
-                </div>
-                <div>
-                  <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">End Date</label>
-                  <input type="date" required value={projEnd} onChange={(e) => setProjEnd(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Status</label>
-                <select value={projStatus} onChange={(e) => setProjStatus(e.target.value as any)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10">
-                  <option value="planned">Planned</option>
-                  <option value="active">Active</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (English)</label>
-                <textarea required rows={3} value={projDesc} onChange={(e) => setProjDesc(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Description (Marathi)</label>
-                <textarea rows={3} value={projDescMr} onChange={(e) => setProjDescMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Project Cover Image</label>
-                <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setProjImage)} className="hidden" id="proj-file" />
-                <label htmlFor="proj-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
-                {projImage && <img src={projImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
-                <button type="button" onClick={() => setIsProjectFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-md hover:-translate-y-0.5 transition-all duration-300 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
-                  {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Project'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Event Creator Modal */}
-      {isEventFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#15221B]/40 backdrop-blur-sm" onClick={() => setIsEventFormOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-brand-clay rounded-xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-brand-sand border-b border-brand-clay flex justify-between items-center">
-              <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">
-                {editingEvent ? 'Edit News Event' : 'Add News / Event Post'}
-              </h3>
-              <button onClick={() => setIsEventFormOpen(false)} className="p-1 hover:bg-brand-clay/35 text-brand-muted hover:text-brand-charcoal rounded-full transition-colors">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleEventSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg font-medium flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{formError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Event Title (English)</label>
-                <input type="text" required value={evtTitle} onChange={(e) => setEvtTitle(e.target.value)} placeholder="e.g. Solapur Kit Drive Reaches 400 Kids" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Event Title (Marathi)</label>
-                <input type="text" value={evtTitleMr} onChange={(e) => setEvtTitleMr(e.target.value)} placeholder="उदा. शालेय साहित्य वाटप मोहीम ४०० मुलांपर्यंत पोहोचली" className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Publication Date</label>
-                <input type="date" required value={evtDate} onChange={(e) => setEvtDate(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Content (English)</label>
-                <textarea required rows={5} value={evtContent} onChange={(e) => setEvtContent(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Content (Marathi)</label>
-                <textarea rows={5} value={evtContentMr} onChange={(e) => setEvtContentMr(e.target.value)} className="w-full px-4 py-2 bg-white border border-brand-clay rounded-lg text-sm text-brand-charcoal outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-[10px] uppercase tracking-wider text-brand-muted font-bold mb-1.5">Featured Image</label>
-                <input type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setEvtImage)} className="hidden" id="evt-file" />
-                <label htmlFor="evt-file" className="px-4 py-2 bg-brand-sand hover:bg-brand-clay/40 text-brand-charcoal text-xs font-semibold rounded-lg cursor-pointer transition-colors inline-block border border-brand-clay/60">Upload Photo</label>
-                {evtImage && <img src={evtImage} alt="Preview" className="h-24 w-full object-cover rounded-lg mt-2 border border-brand-clay" />}
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-brand-clay/60">
-                <button type="button" onClick={() => setIsEventFormOpen(false)} className="flex-1 py-2 border border-brand-clay hover:bg-brand-sand text-brand-muted text-xs font-semibold rounded-lg transition-colors">Cancel</button>
-                <button type="submit" disabled={formLoading} className="flex-1 py-2 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold shadow-md hover:-translate-y-0.5 transition-all duration-300 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5">
-                  {formLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Post'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Bottom Nav Dock */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-xl border border-brand-clay px-4 py-2.5 rounded-full shadow-[0_15px_45px_-10px_rgba(21,34,27,0.15)] flex items-center gap-1.5 sm:gap-3 max-w-[95vw] sm:max-w-max overflow-x-auto">
-        {[
-          { id: 'dashboard', label: 'Dashboard', icon: ClipboardList },
-          { id: 'campaigns', label: 'Campaigns', icon: Heart },
-          { id: 'volunteers', label: 'Volunteers', icon: Users },
-          { id: 'content', label: 'Content', icon: Layers },
-          { id: 'donations', label: 'Donations', icon: FileText },
-        ].map((item) => {
-          const Icon = item.icon;
-          const isActive = tab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setTab(item.id as any)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
-                isActive
-                  ? 'bg-brand-saffron text-white shadow-lg shadow-brand-saffron/25 scale-105'
-                  : 'text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/60'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{item.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
+      {/* Toast */}
+      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }
