@@ -377,8 +377,11 @@ export async function recordDonation(donation: Omit<Donation, 'id' | 'created_at
       if (donation.payment_status === 'success') {
         const campaign = await getCampaignById(donation.campaign_id);
         if (campaign) {
+          const newAmountRaised = Number(campaign.amount_raised) + Number(donation.amount);
+          const isNowComplete = newAmountRaised >= Number(campaign.goal_amount);
           await updateCampaign(donation.campaign_id, {
-            amount_raised: Number(campaign.amount_raised) + Number(donation.amount)
+            amount_raised: newAmountRaised,
+            ...(isNowComplete ? { status: 'completed', is_completed: true } : {}),
           });
         }
       }
@@ -394,7 +397,12 @@ export async function recordDonation(donation: Omit<Donation, 'id' | 'created_at
     if (donation.payment_status === 'success') {
       const idx = db.campaigns.findIndex(c => c.id === donation.campaign_id);
       if (idx !== -1) {
-        db.campaigns[idx].amount_raised = Number(db.campaigns[idx].amount_raised) + Number(donation.amount);
+        const newAmountRaised = Number(db.campaigns[idx].amount_raised) + Number(donation.amount);
+        db.campaigns[idx].amount_raised = newAmountRaised;
+        if (newAmountRaised >= Number(db.campaigns[idx].goal_amount)) {
+          db.campaigns[idx].status = 'completed';
+          db.campaigns[idx].is_completed = true;
+        }
       }
     }
     await saveMockDB(db);
@@ -421,8 +429,11 @@ export async function updateDonationStatus(orderId: string, status: 'success' | 
       if (status === 'success' && donation.payment_status !== 'success') {
         const campaign = await getCampaignById(donation.campaign_id);
         if (campaign) {
+          const newAmountRaised = Number(campaign.amount_raised) + Number(donation.amount);
+          const isNowComplete = newAmountRaised >= Number(campaign.goal_amount);
           await updateCampaign(donation.campaign_id, {
-            amount_raised: Number(campaign.amount_raised) + Number(donation.amount)
+            amount_raised: newAmountRaised,
+            ...(isNowComplete ? { status: 'completed', is_completed: true } : {}),
           });
         }
       }
@@ -447,7 +458,12 @@ export async function updateDonationStatus(orderId: string, status: 'success' | 
     if (status === 'success' && oldStatus !== 'success') {
       const campIdx = db.campaigns.findIndex(c => c.id === donation.campaign_id);
       if (campIdx !== -1) {
-        db.campaigns[campIdx].amount_raised = Number(db.campaigns[campIdx].amount_raised) + Number(donation.amount);
+        const newAmountRaised = Number(db.campaigns[campIdx].amount_raised) + Number(donation.amount);
+        db.campaigns[campIdx].amount_raised = newAmountRaised;
+        if (newAmountRaised >= Number(db.campaigns[campIdx].goal_amount)) {
+          db.campaigns[campIdx].status = 'completed';
+          db.campaigns[campIdx].is_completed = true;
+        }
       }
     }
     await saveMockDB(db);
