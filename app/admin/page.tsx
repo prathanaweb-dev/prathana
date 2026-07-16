@@ -28,7 +28,7 @@ import {
   ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
   RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
-  FileText, Layers, Award, BarChart3, ChevronDown
+  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -113,6 +113,79 @@ function Badge({ status }: { status: string }) {
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${map[status] || 'bg-white/5 text-white/40 border-white/10'}`}>
       {status}
     </span>
+  );
+}
+
+// ─── ImageUpload ──────────────────────────────────────────────────────────────
+const CLOUD_NAME   = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME   || 'djoklzpse';
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'prathana_admin';
+
+function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onChange: (url: string) => void; label?: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'prathana');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        onChange(data.secure_url);
+      } else {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">{label}</label>
+
+      {/* Preview */}
+      {value && (
+        <div className="relative w-full h-36 rounded-xl overflow-hidden border border-white/10 group">
+          <img src={value} alt="Preview" className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500/80"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
+
+      {/* Upload button */}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-amber-500/40 hover:text-amber-400 transition-all text-xs font-semibold cursor-pointer disabled:opacity-50"
+      >
+        {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+        {uploading ? 'Uploading…' : value ? 'Replace Photo' : 'Upload Photo'}
+      </button>
+
+      {error && <p className="text-red-400 text-[11px]">{error}</p>}
+
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+    </div>
   );
 }
 
@@ -836,7 +909,7 @@ export default function AdminDashboard() {
         <Field label="Title (Marathi)"><input value={cTitleMr} onChange={e => setCTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
         <Field label="Description"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Campaign description..." /></Field>
         <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
-        <Field label="Image URL"><input value={cImage} onChange={e => setCImage(e.target.value)} className={inputCls} placeholder="/image.jpg or https://..." /></Field>
+        <ImageUpload value={cImage} onChange={setCImage} label="Campaign Photo" />
         <Field label="Status">
           <select value={cStatus} onChange={e => setCStatus(e.target.value as any)} className={selectCls}>
             <option value="active">Active</option>
@@ -854,7 +927,7 @@ export default function AdminDashboard() {
         <Field label="Title (English)"><input value={aTitle} onChange={e => setATitle(e.target.value)} className={inputCls} placeholder="Activity title" /></Field>
         <Field label="Title (Marathi)"><input value={aTitleMr} onChange={e => setATitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
         <Field label="Description"><textarea value={aDesc} onChange={e => setADesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
-        <Field label="Image URL"><input value={aImage} onChange={e => setAImage(e.target.value)} className={inputCls} /></Field>
+        <ImageUpload value={aImage} onChange={setAImage} label="Activity Photo" />
         <Field label="Category">
           <select value={aCat} onChange={e => setACat(e.target.value as any)} className={selectCls}>
             {['nutrition','education','healthcare','general'].map(c => <option key={c} value={c}>{c}</option>)}
@@ -871,7 +944,7 @@ export default function AdminDashboard() {
         <Field label="Title (English)"><input value={pTitle} onChange={e => setPTitle(e.target.value)} className={inputCls} placeholder="Project title" /></Field>
         <Field label="Title (Marathi)"><input value={pTitleMr} onChange={e => setPTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
         <Field label="Description"><textarea value={pDesc} onChange={e => setPDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
-        <Field label="Image URL"><input value={pImage} onChange={e => setPImage(e.target.value)} className={inputCls} /></Field>
+        <ImageUpload value={pImage} onChange={setPImage} label="Project Photo" />
         <Field label="Status">
           <select value={pStatus} onChange={e => setPStatus(e.target.value as any)} className={selectCls}>
             {['planned','active','completed'].map(s => <option key={s} value={s}>{s}</option>)}
@@ -892,7 +965,7 @@ export default function AdminDashboard() {
         <Field label="Title (English)"><input value={eTitle} onChange={e => setETitle(e.target.value)} className={inputCls} placeholder="Event title" /></Field>
         <Field label="Title (Marathi)"><input value={eTitleMr} onChange={e => setETitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
         <Field label="Content"><textarea value={eContent} onChange={e => setEContent(e.target.value)} className={inputCls + ' resize-none h-28'} placeholder="Event content or news article..." /></Field>
-        <Field label="Featured Image URL"><input value={eImage} onChange={e => setEImage(e.target.value)} className={inputCls} /></Field>
+        <ImageUpload value={eImage} onChange={setEImage} label="Featured Photo" />
         <Field label="Published Date"><input type="date" value={eDate} onChange={e => setEDate(e.target.value)} className={inputCls} /></Field>
         <button onClick={saveEvent} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
           {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
