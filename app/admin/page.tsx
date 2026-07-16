@@ -190,7 +190,7 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'content'|'messages';
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'content'|'messages'|'gallery';
 type ContentSub = 'activities'|'projects'|'events';
 
 export default function AdminDashboard() {
@@ -211,6 +211,16 @@ export default function AdminDashboard() {
   const [projects, setProjects]     = useState<Project[]>([]);
   const [events, setEvents]         = useState<EventItem[]>([]);
   const [contacts, setContacts]     = useState<Contact[]>([]);
+  const [gallery, setGallery]       = useState<{id:string;url:string;title:string;title_mr?:string;desc?:string;category:string;created_at:string}[]>([]);
+
+  // Gallery form
+  const [gDrawer, setGDrawer]   = useState(false);
+  const [gUrl, setGUrl]         = useState('');
+  const [gTitle, setGTitle]     = useState('');
+  const [gTitleMr, setGTitleMr] = useState('');
+  const [gDesc, setGDesc]       = useState('');
+  const [gCat, setGCat]         = useState('general');
+  const [gFilter, setGFilter]   = useState('all');
 
   // Stats
   const [stats, setStats] = useState({ totalRaised: 0, totalGoal: 0, totalDonors: 0, activeCampaigns: 0, volunteerCount: 0, unreadMessages: 0 });
@@ -275,7 +285,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co] = await Promise.all([
+      const [c, d, v, a, p, e, co, g] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -283,6 +293,7 @@ export default function AdminDashboard() {
         fetch('/api/projects').then(r => r.json()),
         fetch('/api/events').then(r => r.json()),
         fetch('/api/contact').then(r => r.json()),
+        fetch('/api/gallery').then(r => r.json()),
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -294,6 +305,7 @@ export default function AdminDashboard() {
 
       setCampaigns(camps); setDonations(dons); setVolunteers(vols);
       setActivities(acts); setProjects(projs); setEvents(evts); setContacts(msgs);
+      setGallery(g.photos || []);
 
       setStats({
         totalRaised:     camps.reduce((s: number, x: Campaign) => s + Number(x.amount_raised), 0),
@@ -313,6 +325,26 @@ export default function AdminDashboard() {
     localStorage.removeItem('prathana_admin_session');
     document.cookie = 'prathana_admin=; path=/; max-age=0';
     router.push('/admin/login');
+  };
+
+  // ── Gallery CRUD ──
+  const openGalleryDrawer = () => { setGUrl(''); setGTitle(''); setGTitleMr(''); setGDesc(''); setGCat('general'); setGDrawer(true); };
+  const addPhoto = async () => {
+    if (!gUrl || !gTitle) return notify('Photo and title are required', 'error');
+    setFormBusy(true);
+    try {
+      const res = await fetch('/api/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: gUrl, title: gTitle, title_mr: gTitleMr, desc: gDesc, category: gCat }) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify('Photo added!'); setGDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deletePhoto = async (id: string) => {
+    if (!confirm('Remove this photo?')) return;
+    const res = await fetch(`/api/gallery?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Photo removed'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
   // ── Campaign CRUD ──
@@ -459,6 +491,7 @@ export default function AdminDashboard() {
     { id: 'donations',  icon: <HandCoins size={18} />,       label: 'Donations',  badge: stats.totalDonors },
     { id: 'volunteers', icon: <Users size={18} />,           label: 'Volunteers', badge: volunteers.filter(v => v.status === 'pending').length || undefined },
     { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
+    { id: 'gallery',    icon: <ImageIcon size={18} />,       label: 'Gallery',    badge: gallery.length || undefined },
     { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
   ];
 
@@ -860,6 +893,52 @@ export default function AdminDashboard() {
                 </div>
               )}
 
+              {/* ════ GALLERY ════ */}
+              {tab === 'gallery' && (
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-white font-bold">Photo Gallery ({gallery.length})</h2>
+                    <button onClick={openGalleryDrawer} className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-colors cursor-pointer">
+                      <Plus size={14} /> Add Photo
+                    </button>
+                  </div>
+
+                  {/* Category filter */}
+                  <div className="flex flex-wrap gap-2">
+                    {['all','balgram','farming','vrudhashram','shala','awards','general'].map(cat => (
+                      <button key={cat} onClick={() => setGFilter(cat)}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          gFilter === cat ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40 hover:bg-white/10'
+                        }`}>
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {gallery
+                      .filter(p => gFilter === 'all' || p.category === gFilter)
+                      .map(photo => (
+                        <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-white/8 aspect-square bg-[#1a1f2e]">
+                          <img src={photo.url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                            <p className="text-white text-[11px] font-semibold leading-tight">{photo.title}</p>
+                            <p className="text-white/50 text-[10px] capitalize mt-0.5">{photo.category}</p>
+                          </div>
+                          <button onClick={() => deletePhoto(photo.id)}
+                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white/70 hover:bg-red-500 hover:text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    {gallery.filter(p => gFilter === 'all' || p.category === gFilter).length === 0 && (
+                      <div className="col-span-4 text-center py-16 text-white/20 text-sm">No photos yet — click Add Photo to upload</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* ════ MESSAGES ════ */}
               {tab === 'messages' && (
                 <div className="space-y-4">
@@ -970,6 +1049,23 @@ export default function AdminDashboard() {
         <button onClick={saveEvent} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
           {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
           {editEvt ? 'Save Changes' : 'Publish Event'}
+        </button>
+      </Drawer>
+
+      {/* Gallery drawer */}
+      <Drawer open={gDrawer} title="Add Photo to Gallery" onClose={() => setGDrawer(false)}>
+        <ImageUpload value={gUrl} onChange={setGUrl} label="Photo" />
+        <Field label="Title (English)"><input value={gTitle} onChange={e => setGTitle(e.target.value)} className={inputCls} placeholder="Photo title" /></Field>
+        <Field label="Title (Marathi)"><input value={gTitleMr} onChange={e => setGTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Description"><input value={gDesc} onChange={e => setGDesc(e.target.value)} className={inputCls} placeholder="Short caption..." /></Field>
+        <Field label="Category">
+          <select value={gCat} onChange={e => setGCat(e.target.value)} className={selectCls}>
+            {['balgram','farming','vrudhashram','shala','awards','general'].map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </Field>
+        <button onClick={addPhoto} disabled={formBusy || !gUrl} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={15} />}
+          Add to Gallery
         </button>
       </Drawer>
 

@@ -107,6 +107,16 @@ export interface EventItem {
   created_at: string;
 }
 
+export interface GalleryPhoto {
+  id: string;
+  url: string;
+  title: string;
+  title_mr?: string;
+  desc?: string;
+  category: 'balgram' | 'farming' | 'vrudhashram' | 'shala' | 'awards' | 'general';
+  created_at: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -114,6 +124,7 @@ interface MockDBSchema {
   activities: Activity[];
   projects: Project[];
   events: EventItem[];
+  gallery: GalleryPhoto[];
 }
 
 // Local mock database helpers
@@ -125,6 +136,7 @@ async function getMockDB(): Promise<MockDBSchema> {
     activities: [],
     projects: [],
     events: [],
+    gallery: [],
   };
 
   if (typeof window !== 'undefined') {
@@ -952,4 +964,64 @@ export async function getAggregatedStats() {
     medicalConsults,
     volunteerCount,
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GALLERY METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getGalleryPhotos(): Promise<GalleryPhoto[]> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const q = query(collection(firestore, 'gallery'), orderBy('created_at', 'desc'));
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...d.data() } as GalleryPhoto));
+    } catch (err) {
+      console.error('Firebase getGalleryPhotos error:', err);
+      return [];
+    }
+  }
+  const db = await getMockDB();
+  return (db.gallery || []).slice().reverse();
+}
+
+export async function addGalleryPhoto(photo: Omit<GalleryPhoto, 'id' | 'created_at'>): Promise<GalleryPhoto | null> {
+  const newPhoto: GalleryPhoto = {
+    id: 'photo-' + Math.random().toString(36).substring(2, 9),
+    ...photo,
+    created_at: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'gallery', newPhoto.id);
+      await setDoc(docRef, { ...newPhoto });
+      return newPhoto;
+    } catch (err) {
+      console.error('Firebase addGalleryPhoto error:', err);
+      return null;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.gallery) db.gallery = [];
+  db.gallery.push(newPhoto);
+  await saveMockDB(db);
+  return newPhoto;
+}
+
+export async function deleteGalleryPhoto(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      await deleteDoc(doc(firestore, 'gallery', id));
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteGalleryPhoto error:', err);
+      return false;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.gallery) return false;
+  db.gallery = db.gallery.filter(p => p.id !== id);
+  await saveMockDB(db);
+  return true;
 }
