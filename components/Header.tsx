@@ -59,13 +59,16 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
   }`;
 
   const navLinks = [
+    { name: lang === 'mr' ? 'मुख्य पान' : 'Home', href: `/${lang}` },
     { name: t.nav.story, href: `/${lang}/about` },
+    { name: lang === 'mr' ? 'मोहिमा' : 'Campaigns', href: `/${lang}/donation` },
     { name: t.nav.vision, href: `/${lang}/vision-mission` },
     { name: t.nav.activities, href: `/${lang}/activities` },
     { name: t.nav.projects, href: `/${lang}/projects` },
     { name: t.nav.events, href: `/${lang}/events` },
     { name: t.nav.gallery, href: `/${lang}/gallery` },
     { name: t.nav.volunteer, href: `/${lang}/volunteer` },
+    { name: lang === 'mr' ? 'संपर्क' : 'Contact', href: '#footer' },
   ];
 
   useEffect(() => {
