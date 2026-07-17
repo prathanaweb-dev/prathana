@@ -55,11 +55,11 @@ function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; o
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ icon, label, value, sub, color }: { icon: React.ReactNode; label: string; value: string|number; sub?: string; color: string }) {
+function StatCard({ icon, label, value, sub, boxClass, glowClass }: { icon: React.ReactNode; label: string; value: string|number; sub?: string; boxClass: string; glowClass: string; }) {
   return (
     <div className={`relative bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 overflow-hidden group hover:border-white/10 transition-all duration-300`}>
-      <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 -translate-y-1/2 translate-x-1/2 ${color}`} />
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${color} bg-opacity-20`}>
+      <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 -translate-y-1/2 translate-x-1/2 ${glowClass}`} />
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${boxClass}`}>
         {icon}
       </div>
       <div className="text-3xl font-bold text-white mb-1">{value}</div>
@@ -634,12 +634,12 @@ export default function AdminDashboard() {
                 <div className="space-y-6">
                   {/* Stats grid */}
                   <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
-                    <StatCard icon={<TrendingUp size={18} className="text-amber-400" />} label="Total Raised" value={fmtCurrency(stats.totalRaised)} sub={`Goal: ${fmtCurrency(stats.totalGoal)}`} color="bg-amber-400" />
-                    <StatCard icon={<HandCoins size={18} className="text-emerald-400" />} label="Donors" value={stats.totalDonors} sub="Successful payments" color="bg-emerald-400" />
-                    <StatCard icon={<Megaphone size={18} className="text-blue-400" />} label="Active Campaigns" value={stats.activeCampaigns} color="bg-blue-400" />
-                    <StatCard icon={<Users size={18} className="text-violet-400" />} label="Volunteers" value={stats.volunteerCount} sub="Approved" color="bg-violet-400" />
-                    <StatCard icon={<MessageSquare size={18} className="text-rose-400" />} label="Messages" value={stats.unreadMessages} sub="Unread" color="bg-rose-400" />
-                    <StatCard icon={<BookOpen size={18} className="text-cyan-400" />} label="Content Items" value={activities.length + projects.length + events.length} sub="Activities + Projects + Events" color="bg-cyan-400" />
+                    <StatCard icon={<TrendingUp size={22} className="text-amber-400" />} label="Total Raised" value={fmtCurrency(stats.totalRaised)} sub={`Goal: ${fmtCurrency(stats.totalGoal)}`} boxClass="bg-amber-500/15" glowClass="bg-amber-500" />
+                    <StatCard icon={<HandCoins size={22} className="text-emerald-400" />} label="Donors" value={stats.totalDonors} sub="Successful payments" boxClass="bg-emerald-500/15" glowClass="bg-emerald-500" />
+                    <StatCard icon={<Megaphone size={22} className="text-blue-400" />} label="Active Campaigns" value={stats.activeCampaigns} boxClass="bg-blue-500/15" glowClass="bg-blue-500" />
+                    <StatCard icon={<Users size={22} className="text-violet-400" />} label="Volunteers" value={stats.volunteerCount} sub="Approved" boxClass="bg-violet-500/15" glowClass="bg-violet-500" />
+                    <StatCard icon={<MessageSquare size={22} className="text-rose-400" />} label="Messages" value={stats.unreadMessages} sub="Unread" boxClass="bg-rose-500/15" glowClass="bg-rose-500" />
+                    <StatCard icon={<BookOpen size={22} className="text-cyan-400" />} label="Content Items" value={activities.length + projects.length + events.length} sub="Activities + Projects + Events" boxClass="bg-cyan-500/15" glowClass="bg-cyan-500" />
                   </div>
 
                   {/* Recent donations */}
