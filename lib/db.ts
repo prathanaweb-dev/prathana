@@ -117,6 +117,18 @@ export interface GalleryPhoto {
   created_at: string;
 }
 
+export interface Report {
+  id: string;
+  title: string;
+  title_mr?: string;
+  description?: string;
+  type: 'annual' | 'financial' | 'impact' | 'audit' | 'other';
+  year: string;
+  file_url: string;
+  cover_image?: string;
+  created_at: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -125,6 +137,7 @@ interface MockDBSchema {
   projects: Project[];
   events: EventItem[];
   gallery: GalleryPhoto[];
+  reports: Report[];
 }
 
 // Local mock database helpers
@@ -137,6 +150,7 @@ async function getMockDB(): Promise<MockDBSchema> {
     projects: [],
     events: [],
     gallery: [],
+    reports: [],
   };
 
   if (typeof window !== 'undefined') {
@@ -1022,6 +1036,65 @@ export async function deleteGalleryPhoto(id: string): Promise<boolean> {
   const db = await getMockDB();
   if (!db.gallery) return false;
   db.gallery = db.gallery.filter(p => p.id !== id);
+  await saveMockDB(db);
+  return true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REPORTS METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getReports(): Promise<Report[]> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const q = query(collection(firestore, 'reports'), orderBy('created_at', 'desc'));
+      const snap = await getDocs(q);
+      return snap.docs.map(d => ({ id: d.id, ...d.data() } as Report));
+    } catch (err) {
+      console.error('Firebase getReports error:', err);
+      return [];
+    }
+  }
+  const db = await getMockDB();
+  return (db.reports || []).slice().reverse();
+}
+
+export async function addReport(report: Omit<Report, 'id' | 'created_at'>): Promise<Report | null> {
+  const newReport: Report = {
+    id: 'report-' + Math.random().toString(36).substring(2, 9),
+    ...report,
+    created_at: new Date().toISOString(),
+  };
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'reports', newReport.id);
+      await setDoc(docRef, { ...newReport });
+      return newReport;
+    } catch (err) {
+      console.error('Firebase addReport error:', err);
+      return null;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.reports) db.reports = [];
+  db.reports.push(newReport);
+  await saveMockDB(db);
+  return newReport;
+}
+
+export async function deleteReport(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      await deleteDoc(doc(firestore, 'reports', id));
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteReport error:', err);
+      return false;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.reports) return false;
+  db.reports = db.reports.filter(r => r.id !== id);
   await saveMockDB(db);
   return true;
 }

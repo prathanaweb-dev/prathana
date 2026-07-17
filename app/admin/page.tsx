@@ -39,6 +39,7 @@ interface Activity  { id: string; title: string; description: string; image: str
 interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date: string; end_date: string; created_at: string; }
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
+interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
@@ -191,7 +192,7 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'content'|'messages'|'gallery';
-type ContentSub = 'activities'|'projects'|'events';
+type ContentSub = 'activities'|'projects'|'events'|'reports';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -212,6 +213,7 @@ export default function AdminDashboard() {
   const [events, setEvents]         = useState<EventItem[]>([]);
   const [contacts, setContacts]     = useState<Contact[]>([]);
   const [gallery, setGallery]       = useState<{id:string;url:string;title:string;title_mr?:string;desc?:string;category:string;created_at:string}[]>([]);
+  const [reports, setReports]       = useState<Report[]>([]);
 
   // Gallery form
   const [gDrawer, setGDrawer]   = useState(false);
@@ -221,6 +223,16 @@ export default function AdminDashboard() {
   const [gDesc, setGDesc]       = useState('');
   const [gCat, setGCat]         = useState('general');
   const [gFilter, setGFilter]   = useState('all');
+
+  // Report form
+  const [rDrawer, setRDrawer]     = useState(false);
+  const [rTitle, setRTitle]       = useState('');
+  const [rTitleMr, setRTitleMr]   = useState('');
+  const [rDesc, setRDesc]         = useState('');
+  const [rType, setRType]         = useState<Report['type']>('annual');
+  const [rYear, setRYear]         = useState(new Date().getFullYear().toString());
+  const [rFileUrl, setRFileUrl]   = useState('');
+  const [rCover, setRCover]       = useState('');
 
   // Stats
   const [stats, setStats] = useState({ totalRaised: 0, totalGoal: 0, totalDonors: 0, activeCampaigns: 0, volunteerCount: 0, unreadMessages: 0 });
@@ -286,7 +298,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co, g] = await Promise.all([
+      const [c, d, v, a, p, e, co, g, rp] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -295,6 +307,7 @@ export default function AdminDashboard() {
         fetch('/api/events').then(r => r.json()),
         fetch('/api/contact').then(r => r.json()),
         fetch('/api/gallery').then(r => r.json()),
+        fetch('/api/reports').then(r => r.json()),
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -307,6 +320,7 @@ export default function AdminDashboard() {
       setCampaigns(camps); setDonations(dons); setVolunteers(vols);
       setActivities(acts); setProjects(projs); setEvents(evts); setContacts(msgs);
       setGallery(g.photos || []);
+      setReports(rp.reports || []);
 
       setStats({
         totalRaised:     camps.reduce((s: number, x: Campaign) => s + Number(x.amount_raised), 0),
@@ -346,6 +360,26 @@ export default function AdminDashboard() {
     const res = await fetch(`/api/gallery?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     if (data.success) { notify('Photo removed'); fetchAll(); } else notify('Delete failed', 'error');
+  };
+
+  // ── Report CRUD ──
+  const openReportDrawer = () => { setRTitle(''); setRTitleMr(''); setRDesc(''); setRType('annual'); setRYear(new Date().getFullYear().toString()); setRFileUrl(''); setRCover(''); setRDrawer(true); };
+  const saveReport = async () => {
+    if (!rTitle || !rFileUrl) return notify('Title and file URL are required', 'error');
+    setFormBusy(true);
+    try {
+      const res = await fetch('/api/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: rTitle, title_mr: rTitleMr, description: rDesc, type: rType, year: rYear, file_url: rFileUrl, cover_image: rCover }) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify('Report published!'); setRDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteReport = async (id: string) => {
+    if (!confirm('Delete this report?')) return;
+    const res = await fetch(`/api/reports?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Report deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
   // ── Campaign CRUD ──
@@ -810,8 +844,8 @@ export default function AdminDashboard() {
               {tab === 'content' && (
                 <div className="space-y-4">
                   {/* Sub tabs */}
-                  <div className="flex items-center gap-1 bg-[#1a1f2e] border border-white/5 rounded-xl p-1 w-fit">
-                    {(['activities','projects','events'] as ContentSub[]).map(s => (
+                  <div className="flex items-center gap-1 bg-[#1a1f2e] border border-white/5 rounded-xl p-1 w-fit flex-wrap">
+                    {(['activities','projects','events','reports'] as ContentSub[]).map(s => (
                       <button key={s} onClick={() => setContentSub(s)}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer
                           ${contentSub === s ? 'bg-amber-500/20 text-amber-400 border border-amber-500/20' : 'text-white/40 hover:text-white/70'}`}>
@@ -943,8 +977,78 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   )}
+
+                  {/* ── Reports ── */}
+                  {contentSub === 'reports' && (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="font-bold text-white">Reports & Documents ({reports.length})</h3>
+                          <p className="text-[11px] text-white/30 mt-0.5">Annual reports, financial statements, impact assessments</p>
+                        </div>
+                        <button onClick={openReportDrawer} className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors">
+                          <Plus size={13} /> Add Report
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {reports.map(r => {
+                          const typeColor: Record<string,string> = {
+                            annual:    'bg-blue-500/15 text-blue-400 border-blue-500/20',
+                            financial: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+                            impact:    'bg-violet-500/15 text-violet-400 border-violet-500/20',
+                            audit:     'bg-amber-500/15 text-amber-400 border-amber-500/20',
+                            other:     'bg-white/5 text-white/40 border-white/10',
+                          };
+                          return (
+                            <div key={r.id} className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group flex">
+                              {r.cover_image ? (
+                                <div className="w-24 flex-shrink-0 relative overflow-hidden">
+                                  <img src={r.cover_image} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a1f2e]/60" />
+                                </div>
+                              ) : (
+                                <div className="w-24 flex-shrink-0 bg-[#0f1318] flex items-center justify-center border-r border-white/5">
+                                  <FileText size={24} className="text-white/15" />
+                                </div>
+                              )}
+                              <div className="flex-1 p-4 flex items-center gap-4 min-w-0">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${typeColor[r.type] || typeColor.other}`}>
+                                      {r.type}
+                                    </span>
+                                    <span className="text-[10px] text-white/25 font-semibold">{r.year}</span>
+                                  </div>
+                                  <h4 className="font-bold text-white text-sm leading-snug line-clamp-1">{r.title}</h4>
+                                  {r.description && <p className="text-[11px] text-white/35 mt-0.5 line-clamp-1">{r.description}</p>}
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  <a href={r.file_url} target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-white/50 hover:bg-amber-500/15 hover:text-amber-400 text-[11px] font-semibold transition-colors">
+                                    <ArrowUpRight size={11} /> View
+                                  </a>
+                                  <button onClick={() => deleteReport(r.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors">
+                                    <Trash2 size={12} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {reports.length === 0 && (
+                          <div className="text-center py-16 border border-dashed border-white/8 rounded-2xl">
+                            <FileText size={32} className="text-white/10 mx-auto mb-3" />
+                            <p className="text-white/25 text-sm">No reports yet</p>
+                            <p className="text-white/15 text-xs mt-1">Click "Add Report" to upload your first document</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+
 
               {/* ════ GALLERY ════ */}
               {tab === 'gallery' && (
@@ -1192,6 +1296,53 @@ export default function AdminDashboard() {
         <button onClick={addPhoto} disabled={formBusy || !gUrl} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
           {formBusy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={15} />}
           Add to Gallery
+        </button>
+      </Drawer>
+
+      {/* Report drawer */}
+      <Drawer open={rDrawer} title="📄 Add Report / Document" onClose={() => setRDrawer(false)}>
+        <ImageUpload value={rCover} onChange={setRCover} label="Cover Thumbnail (optional)" />
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Report Type">
+            <select value={rType} onChange={e => setRType(e.target.value as Report['type'])} className={selectCls}>
+              {(['annual','financial','impact','audit','other'] as const).map(t => (
+                <option key={t} value={t}>{t.charAt(0).toUpperCase()+t.slice(1)}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Year">
+            <input value={rYear} onChange={e => setRYear(e.target.value)} className={inputCls} placeholder="2024" maxLength={4} />
+          </Field>
+        </div>
+
+        <Field label="Title (English)">
+          <input value={rTitle} onChange={e => setRTitle(e.target.value)} className={inputCls} placeholder="Annual Report 2024" />
+        </Field>
+        <Field label="Title (Marathi)">
+          <input value={rTitleMr} onChange={e => setRTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक..." />
+        </Field>
+        <Field label="Description (optional)">
+          <textarea value={rDesc} onChange={e => setRDesc(e.target.value)} className={inputCls + ' resize-none h-16'} placeholder="Brief summary of the report..." />
+        </Field>
+
+        <Field label="PDF / File URL">
+          <input
+            value={rFileUrl}
+            onChange={e => setRFileUrl(e.target.value)}
+            className={inputCls}
+            placeholder="https://... (Google Drive, Dropbox, or direct PDF link)"
+          />
+          <p className="text-[10px] text-white/20 mt-1">Paste a shareable link to the PDF. Use Google Drive → Share → Anyone with link.</p>
+        </Field>
+
+        <button
+          onClick={saveReport}
+          disabled={formBusy || !rTitle || !rFileUrl}
+          className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm"
+        >
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : <FileText size={15} />}
+          Publish Report
         </button>
       </Drawer>
 
