@@ -37,7 +37,7 @@ interface Donation  { id: string; campaign_id: string; donor_name: string; donor
 interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
 interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
 interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date: string; end_date: string; created_at: string; }
-interface EventItem { id: string; title: string; content: string; featured_image: string; published_date: string; created_at: string; }
+interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
