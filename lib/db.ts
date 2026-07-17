@@ -134,6 +134,15 @@ export interface Report {
   created_at: string;
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  position: string;
+  position_mr?: string;
+  image: string;
+  created_at: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -143,6 +152,7 @@ interface MockDBSchema {
   events: EventItem[];
   gallery: GalleryPhoto[];
   reports: Report[];
+  team_members: TeamMember[];
 }
 
 // Local mock database helpers
@@ -156,6 +166,7 @@ async function getMockDB(): Promise<MockDBSchema> {
     events: [],
     gallery: [],
     reports: [],
+    team_members: [],
   };
 
   if (typeof window !== 'undefined') {
@@ -1108,3 +1119,85 @@ export async function deleteReport(id: string): Promise<boolean> {
   await saveMockDB(db);
   return true;
 }
+
+// ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
+
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const q = query(collection(firestore, 'team_members'), orderBy('created_at', 'asc'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(d => d.data() as TeamMember);
+    } catch (err) {
+      console.error('Firebase getTeamMembers error:', err);
+      return [];
+    }
+  }
+  const db = await getMockDB();
+  return db.team_members || [];
+}
+
+export async function createTeamMember(data: Omit<TeamMember, 'id' | 'created_at'>): Promise<TeamMember | null> {
+  const newMember: TeamMember = {
+    ...data,
+    id: 'team-' + Math.random().toString(36).substring(2, 9),
+    created_at: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'team_members', newMember.id);
+      await setDoc(docRef, { ...newMember });
+      return newMember;
+    } catch (err) {
+      console.error('Firebase createTeamMember error:', err);
+      return null;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.team_members) db.team_members = [];
+  db.team_members.push(newMember);
+  await saveMockDB(db);
+  return newMember;
+}
+
+export async function updateTeamMember(id: string, updates: Partial<TeamMember>): Promise<TeamMember | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'team_members', id);
+      const snap = await getDoc(docRef);
+      if (!snap.exists()) return null;
+      const updated = { ...snap.data(), ...updates } as TeamMember;
+      await setDoc(docRef, updated);
+      return updated;
+    } catch (err) {
+      console.error('Firebase updateTeamMember error:', err);
+      return null;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.team_members) return null;
+  const idx = db.team_members.findIndex(m => m.id === id);
+  if (idx === -1) return null;
+  db.team_members[idx] = { ...db.team_members[idx], ...updates };
+  await saveMockDB(db);
+  return db.team_members[idx];
+}
+
+export async function deleteTeamMember(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      await deleteDoc(doc(firestore, 'team_members', id));
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteTeamMember error:', err);
+      return false;
+    }
+  }
+  const db = await getMockDB();
+  if (!db.team_members) return false;
+  db.team_members = db.team_members.filter(m => m.id !== id);
+  await saveMockDB(db);
+  return true;
+}
+

@@ -40,6 +40,7 @@ interface Project   { id: string; title: string; description: string; image: str
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
+interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
@@ -191,7 +192,7 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'content'|'messages'|'gallery';
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery';
 type ContentSub = 'activities'|'projects'|'events'|'reports';
 
 export default function AdminDashboard() {
@@ -214,6 +215,15 @@ export default function AdminDashboard() {
   const [contacts, setContacts]     = useState<Contact[]>([]);
   const [gallery, setGallery]       = useState<{id:string;url:string;title:string;title_mr?:string;desc?:string;category:string;created_at:string}[]>([]);
   const [reports, setReports]       = useState<Report[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  // Team form
+  const [tDrawer, setTDrawer]     = useState(false);
+  const [editTeam, setEditTeam]   = useState<TeamMember|null>(null);
+  const [tName, setTName]         = useState('');
+  const [tPos, setTPos]           = useState('');
+  const [tPosMr, setTPosMr]       = useState('');
+  const [tImage, setTImage]       = useState('');
 
   // Gallery form
   const [gDrawer, setGDrawer]   = useState(false);
@@ -298,7 +308,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co, g, rp] = await Promise.all([
+      const [c, d, v, a, p, e, co, g, rp, tm] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -308,6 +318,7 @@ export default function AdminDashboard() {
         fetch('/api/contact').then(r => r.json()),
         fetch('/api/gallery').then(r => r.json()),
         fetch('/api/reports').then(r => r.json()),
+        fetch('/api/team').then(r => r.json()),
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -321,6 +332,7 @@ export default function AdminDashboard() {
       setActivities(acts); setProjects(projs); setEvents(evts); setContacts(msgs);
       setGallery(g.photos || []);
       setReports(rp.reports || []);
+      setTeamMembers(tm.team_members || []);
 
       setStats({
         totalRaised:     camps.reduce((s: number, x: Campaign) => s + Number(x.amount_raised), 0),
@@ -529,11 +541,42 @@ export default function AdminDashboard() {
   if (!authorized) return null;
 
   // ── Nav items ──
+  // ── Team CRUD ──
+  const openTeamDrawer = (member?: TeamMember) => {
+    setEditTeam(member || null);
+    setTName(member?.name || '');
+    setTPos(member?.position || ''); setTPosMr(member?.position_mr || '');
+    setTImage(member?.image || '');
+    setTDrawer(true);
+  };
+  const saveTeamMember = async () => {
+    if (!tName || !tPos || !tImage) return notify('Name, position and photo required', 'error');
+    setFormBusy(true);
+    try {
+      const body = { name: tName, position: tPos, position_mr: tPosMr, image: tImage };
+      const method = editTeam ? 'PUT' : 'POST';
+      const payload = editTeam ? { id: editTeam.id, ...body } : body;
+      const res = await fetch('/api/team', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify(editTeam ? 'Team Member updated!' : 'Team Member added!');
+      setTDrawer(false); fetchAll();
+    } catch (e: any) { notify(e.message, 'error'); }
+    finally { setFormBusy(false); }
+  };
+  const deleteTeamMember = async (id: string) => {
+    if (!confirm('Delete this team member?')) return;
+    const res = await fetch(`/api/team?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { notify('Member deleted'); fetchAll(); } else notify('Delete failed', 'error');
+  };
+
   const navItems: { id: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
     { id: 'dashboard',  icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
     { id: 'donations',  icon: <HandCoins size={18} />,       label: 'Donations',  badge: stats.totalDonors },
     { id: 'volunteers', icon: <Users size={18} />,           label: 'Volunteers', badge: volunteers.filter(v => v.status === 'pending').length || undefined },
+    { id: 'team',       icon: <UserCheck size={18} />,       label: 'Team Management' },
     { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
     { id: 'gallery',    icon: <ImageIcon size={18} />,       label: 'Gallery',    badge: gallery.length || undefined },
     { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
@@ -842,6 +885,53 @@ export default function AdminDashboard() {
                             </tr>
                           ))}
                           {volunteers.length === 0 && <tr><td colSpan={5} className="text-center py-12 text-white/20">No volunteers yet</td></tr>}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+                            {/* ════ TEAM ════ */}
+              {tab === 'team' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-white font-bold">Team Members ({teamMembers.length})</h2>
+                    <button onClick={() => openTeamDrawer()} className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500 text-amber-950 font-semibold text-xs hover:bg-amber-400 transition-colors">
+                      <Plus size={14} /> Add Member
+                    </button>
+                  </div>
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-white/5">
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Photo & Name</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Position</th>
+                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {teamMembers.map(m => (
+                            <tr key={m.id} className="hover:bg-white/2 transition-colors">
+                              <td className="px-5 py-3.5 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
+                                  <img src={m.image} alt={m.name} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="font-medium text-white">{m.name}</div>
+                              </td>
+                              <td className="px-5 py-3.5 text-white/50">
+                                <span className="px-3 py-1 rounded-full bg-white/5 text-[11px] font-semibold">{m.position}</span>
+                              </td>
+                              <td className="px-5 py-3.5">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button onClick={() => openTeamDrawer(m)} className="p-1.5 text-white/30 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors"><Edit2 size={14} /></button>
+                                  <button onClick={() => deleteTeamMember(m.id)} className="p-1.5 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={14} /></button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          {teamMembers.length === 0 && <tr><td colSpan={3} className="text-center py-12 text-white/20">No team members yet</td></tr>}
                         </tbody>
                       </table>
                     </div>

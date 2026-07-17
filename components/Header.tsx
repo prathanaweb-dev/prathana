@@ -31,7 +31,6 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     `/${lang}/activities`,
     `/${lang}/projects`,
     `/${lang}/events`,
-    `/${lang}/volunteer`,
     '/en', '/mr', '/'
   ];
   const hasDarkHero = darkHeroPages.some(p => pathname === p || pathname?.startsWith(p + '/') === false && pathname === p);
@@ -48,8 +47,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     pathname.startsWith(`/${lang}/gallery`) ||
     pathname.startsWith(`/${lang}/activities`) ||
     pathname.startsWith(`/${lang}/projects`) ||
-    pathname.startsWith(`/${lang}/events`) ||
-    pathname.startsWith(`/${lang}/volunteer`)
+    pathname.startsWith(`/${lang}/events`)
   );
 
   const useLightText = onDarkPage && !isScrolled && !mobileMenuOpen;
@@ -67,8 +65,8 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     { name: t.nav.projects, href: `/${lang}/projects` },
     { name: t.nav.events, href: `/${lang}/events` },
     { name: t.nav.gallery, href: `/${lang}/gallery` },
-    { name: t.nav.volunteer, href: `/${lang}/volunteer` },
-    { name: lang === 'mr' ? 'संपर्क' : 'Contact', href: '#footer' },
+    { name: lang === 'mr' ? 'टीम' : 'Team', href: `/${lang}/team` },
+    { name: lang === 'mr' ? 'संपर्क' : 'Contact', href: `/${lang}/contact` },
   ];
 
   useEffect(() => {

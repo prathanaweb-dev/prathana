@@ -11,7 +11,8 @@ interface FooterProps {
 }
 
 export default function Footer({ lang, onDonateClick }: FooterProps) {
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const isMr = lang === 'mr';
+  const t = translations[isMr ? 'mr' : 'en'] || translations.en;
 
   const isMarathi = lang === 'mr';
 
@@ -97,7 +98,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                   { name: t.nav.projects, href: `/${lang}/projects` },
                   { name: t.nav.events, href: `/${lang}/events` },
                   { name: t.nav.gallery, href: `/${lang}/gallery` },
-                  { name: t.nav.volunteer, href: `/${lang}/volunteer` },
+                  { name: isMr ? 'टीम' : 'Team', href: `/${lang}/team` },
                 ].map((link) => (
                   <a
                     key={link.name}
