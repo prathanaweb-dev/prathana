@@ -1381,6 +1381,29 @@ export default function AdminDashboard() {
         </button>
       </Drawer>
 
+      {/* Team drawer */}
+      <Drawer open={tDrawer} onClose={() => setTDrawer(false)} title={editTeam ? 'Edit Member' : 'Add Team Member'}>
+        <div className="space-y-4">
+          <ImageUpload value={tImage} onChange={setTImage} label="Member Photo (Square)" />
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">Name</label>
+            <input type="text" value={tName} onChange={e => setTName(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" placeholder="e.g. John Doe" />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">Position</label>
+            <input type="text" value={tPos} onChange={e => setTPos(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" placeholder="e.g. Founder" />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">Position (Marathi) [Optional]</label>
+            <input type="text" value={tPosMr} onChange={e => setTPosMr(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" placeholder="e.g. संस्थापक" />
+          </div>
+          <button disabled={formBusy} onClick={saveTeamMember} className="w-full py-2.5 bg-amber-500 text-amber-950 font-bold text-sm rounded-xl hover:bg-amber-400 transition-colors disabled:opacity-50 mt-4 flex justify-center items-center gap-2">
+            {formBusy && <Loader2 size={16} className="animate-spin" />}
+            {formBusy ? 'Saving...' : 'Save Member'}
+          </button>
+        </div>
+      </Drawer>
+
       {/* Gallery drawer */}
       <Drawer open={gDrawer} title="Add Photo to Gallery" onClose={() => setGDrawer(false)}>
         <ImageUpload value={gUrl} onChange={setGUrl} label="Photo" />
