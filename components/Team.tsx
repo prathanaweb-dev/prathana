@@ -114,7 +114,7 @@ export default function Team({ lang }: TeamProps) {
         {/* View All Button */}
         <div className="pt-4">
           <button
-            onClick={() => router.push(`/${lang}/volunteer`)}
+            onClick={() => router.push(`/${lang}/team`)}
             className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-8 py-3.5 text-[13px] tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
             {isMarathi ? 'सर्व स्वयंसेवक पहा' : 'View All Volunteers'}

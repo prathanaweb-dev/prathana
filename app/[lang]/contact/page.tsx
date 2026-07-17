@@ -1,5 +1,6 @@
 import ContactClient from './ContactClient';
 
-export default function ContactPage({ params }: { params: { lang: string } }) {
-  return <ContactClient lang={params.lang} />;
+export default async function ContactPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  return <ContactClient lang={lang} />;
 }
