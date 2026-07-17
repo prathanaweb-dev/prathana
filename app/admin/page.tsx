@@ -34,7 +34,7 @@ import {
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Campaign { id: string; title: string; title_mr?: string; description: string; goal_amount: number; amount_raised: number; image: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
 interface Donation  { id: string; campaign_id: string; donor_name: string; donor_email: string; amount: number; payment_id: string; payment_status: 'pending'|'success'|'failed'; created_at: string; }
-interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
+interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; age?: string; gender?: string; address?: string; availability?: string; experience?: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
 interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
 interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date: string; end_date: string; created_at: string; }
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }

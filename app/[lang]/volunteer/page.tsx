@@ -19,6 +19,11 @@ export default function VolunteerRegistrationPage() {
   const [email, setEmail] = useState('');
   const [city, setCity] = useState('');
   const [occupation, setOccupation] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [address, setAddress] = useState('');
+  const [availability, setAvailability] = useState('');
+  const [experience, setExperience] = useState('');
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [message, setMessage] = useState('');
 
@@ -60,6 +65,11 @@ export default function VolunteerRegistrationPage() {
           email,
           city,
           occupation,
+          age,
+          gender,
+          address,
+          availability,
+          experience,
           interests: selectedInterests.join(', '),
           message,
         }),
@@ -74,6 +84,11 @@ export default function VolunteerRegistrationPage() {
       setEmail('');
       setCity('');
       setOccupation('');
+      setAge('');
+      setGender('');
+      setAddress('');
+      setAvailability('');
+      setExperience('');
       setSelectedInterests([]);
       setMessage('');
     } catch (err: any) {
@@ -230,6 +245,79 @@ export default function VolunteerRegistrationPage() {
                     placeholder="Student / Teacher / Professional"
                     className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
+                      {lang === 'mr' ? 'वय' : 'Age'}
+                    </label>
+                    <input
+                      type="number"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      placeholder="25"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
+                      {lang === 'mr' ? 'लिंग' : 'Gender'}
+                    </label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal appearance-none"
+                    >
+                      <option value="">{lang === 'mr' ? 'निवडा...' : 'Select...'}</option>
+                      <option value="Male">{lang === 'mr' ? 'पुरुष' : 'Male'}</option>
+                      <option value="Female">{lang === 'mr' ? 'स्त्री' : 'Female'}</option>
+                      <option value="Other">{lang === 'mr' ? 'इतर' : 'Other'}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
+                    {lang === 'mr' ? 'पत्ता' : 'Full Address'}
+                  </label>
+                  <input
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Address..."
+                    className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
+                      {lang === 'mr' ? 'उपलब्धता' : 'Availability'}
+                    </label>
+                    <select
+                      value={availability}
+                      onChange={(e) => setAvailability(e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal appearance-none"
+                    >
+                      <option value="">{lang === 'mr' ? 'निवडा...' : 'Select...'}</option>
+                      <option value="Weekends">{lang === 'mr' ? 'शनिवार-रविवार' : 'Weekends'}</option>
+                      <option value="Weekdays">{lang === 'mr' ? 'सोमवार-शुक्रवार' : 'Weekdays'}</option>
+                      <option value="Flexible">{lang === 'mr' ? 'लवचिक' : 'Flexible'}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold mb-1.5">
+                      {lang === 'mr' ? 'मागील अनुभव' : 'Any Prior Experience?'}
+                    </label>
+                    <input
+                      type="text"
+                      value={experience}
+                      onChange={(e) => setExperience(e.target.value)}
+                      placeholder="e.g. Taught kids for 1 year"
+                      className="w-full px-4 py-3 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all text-brand-charcoal"
+                    />
+                  </div>
                 </div>
 
                 <div>

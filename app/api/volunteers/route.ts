@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, city, occupation, interests, message } = body;
+    const { name, phone, email, city, occupation, interests, message, age, gender, address, availability, experience } = body;
 
     if (!name || !phone || !email || !city || !occupation || !interests) {
       return NextResponse.json({ success: false, error: 'All fields are required' }, { status: 400 });
@@ -44,6 +44,11 @@ export async function POST(request: Request) {
       city,
       occupation,
       interests,
+      age,
+      gender,
+      address,
+      availability,
+      experience,
       assigned_activity: body.assigned_activity || '',
     });
 

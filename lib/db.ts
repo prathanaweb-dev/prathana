@@ -67,6 +67,11 @@ export interface Volunteer {
   city: string;
   occupation: string;
   interests: string; // comma separated
+  age?: string;
+  gender?: string;
+  address?: string;
+  availability?: string;
+  experience?: string;
   status: 'pending' | 'approved' | 'rejected';
   assigned_activity?: string;
   created_at: string;
@@ -541,6 +546,11 @@ export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status'
         interests: newVol.interests,
         status: 'pending',
         assigned_activity: newVol.assigned_activity || '',
+        age: newVol.age || '',
+        gender: newVol.gender || '',
+        address: newVol.address || '',
+        availability: newVol.availability || '',
+        experience: newVol.experience || '',
         created_at: newVol.created_at,
       });
       return newVol;
