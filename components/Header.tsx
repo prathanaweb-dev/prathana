@@ -204,10 +204,10 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                 {t.nav.gallery}
               </a>
               <a
-                href={`/${lang}/volunteer`}
+                href={`/${lang}/team`}
                 className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors"
               >
-                {t.nav.volunteer}
+                {lang === 'mr' ? 'टीम' : 'Team'}
               </a>
             </div>
           </div>
@@ -220,9 +220,9 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             {lang === 'mr' ? 'बातम्या' : 'Blog'}
           </a>
 
-          {/* Contact (Footer) */}
+          {/* Contact */}
           <a
-            href="#footer"
+            href={`/${lang}/contact`}
             className={navLinkClass}
           >
             {lang === 'mr' ? 'संपर्क' : 'Contact'}
