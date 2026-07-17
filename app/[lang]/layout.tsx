@@ -43,6 +43,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang?: st
       'Transparent Charity',
     ],
     authors: [{ name: 'Prathana Foundation Solapur' }],
+    icons: {
+      icon: '/logo.png',
+      shortcut: '/logo.png',
+      apple: '/logo.png',
+    },
   };
 }
 
