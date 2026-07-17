@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Project } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Briefcase } from 'lucide-react';
+import Link from 'next/link';
 import { translations } from '@/lib/translations';
 
 interface ProjectsClientProps {
@@ -106,8 +107,8 @@ export default function ProjectsClient({
                   exit={{ opacity: 0, y: 15 }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
                   key={proj.id}
-                  className="bg-white border border-brand-clay/60 rounded-3xl overflow-hidden flex flex-col md:flex-row h-full group premium-card text-left"
                 >
+                  <Link href={`/${lang}/projects/${proj.id}`} className="bg-white border border-brand-clay/60 rounded-3xl overflow-hidden flex flex-col md:flex-row h-full group premium-card text-left cursor-pointer block">
                   {/* Left: Image */}
                   <div className="h-56 md:h-auto md:w-80 relative overflow-hidden bg-brand-sand flex-shrink-0">
                     <img
@@ -147,6 +148,7 @@ export default function ProjectsClient({
                       <span>{t.projects.timeline}: {currentStatus}</span>
                     </div>
                   </div>
+                  </Link>
                 </motion.div>
               );
             })
