@@ -255,9 +255,10 @@ export default function AdminDashboard() {
   const [pStart, setPStart] = useState(''); const [pEnd, setPEnd] = useState('');
 
   // Event form
-  const [eTitle, setETitle] = useState(''); const [eTitleMr, setETitleMr] = useState('');
+  const [eTitle, setETitle]     = useState(''); const [eTitleMr, setETitleMr]   = useState('');
   const [eContent, setEContent] = useState(''); const [eContentMr, setEContentMr] = useState('');
-  const [eImage, setEImage] = useState(''); const [eDate, setEDate] = useState('');
+  const [eExcerpt, setEExcerpt] = useState(''); const [eTag, setETag]           = useState('news');
+  const [eImage, setEImage]     = useState(''); const [eDate, setEDate]         = useState('');
 
   const [formBusy, setFormBusy] = useState(false);
 
@@ -450,22 +451,31 @@ export default function AdminDashboard() {
   // ── Event CRUD ──
   const openEvtDrawer = (evt?: EventItem) => {
     setEditEvt(evt || null);
-    setETitle(evt?.title || ''); setETitleMr('');
-    setEContent(evt?.content || ''); setEContentMr('');
-    setEImage(evt?.featured_image || ''); setEDate(evt?.published_date || '');
+    setETitle(evt?.title || '');   setETitleMr(evt?.title_mr || '');
+    setEContent(evt?.content || ''); setEContentMr(evt?.content_mr || '');
+    setEExcerpt((evt as any)?.excerpt || '');
+    setETag((evt as any)?.tag || 'news');
+    setEImage(evt?.featured_image || ''); setEDate(evt?.published_date || new Date().toISOString().split('T')[0]);
     setEvtDrawer(true);
   };
   const saveEvent = async () => {
-    if (!eTitle) return notify('Title is required', 'error');
+    if (!eTitle || !eContent) return notify('Title and content are required', 'error');
     setFormBusy(true);
     try {
-      const body = { title: eTitle, title_mr: eTitleMr, content: eContent, content_mr: eContentMr, featured_image: eImage, published_date: eDate };
-      const method = editEvt ? 'PUT' : 'POST';
+      const body = {
+        title: eTitle, title_mr: eTitleMr,
+        content: eContent, content_mr: eContentMr,
+        excerpt: eExcerpt || eContent.slice(0, 160),
+        tag: eTag,
+        featured_image: eImage,
+        published_date: eDate || new Date().toISOString().split('T')[0],
+      };
+      const method  = editEvt ? 'PUT' : 'POST';
       const payload = editEvt ? { id: editEvt.id, ...body } : body;
-      const res = await fetch('/api/events', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const res  = await fetch('/api/events', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Failed');
-      notify(editEvt ? 'Event updated!' : 'Event created!');
+      notify(editEvt ? 'Post updated!' : 'Post published!');
       setEvtDrawer(false); fetchAll();
     } catch (e: any) { notify(e.message, 'error'); }
     finally { setFormBusy(false); }
@@ -864,29 +874,72 @@ export default function AdminDashboard() {
                     </div>
                   )}
 
-                  {/* Events */}
+                  {/* Blog / Events */}
                   {contentSub === 'events' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="font-semibold text-white">Events & News ({events.length})</h3>
-                        <button onClick={() => openEvtDrawer()} className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"><Plus size={13} /> Add Event</button>
+                        <div>
+                          <h3 className="font-bold text-white">Blog & News ({events.length})</h3>
+                          <p className="text-[11px] text-white/30 mt-0.5">Articles, announcements and event coverage</p>
+                        </div>
+                        <button onClick={() => openEvtDrawer()} className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors">
+                          <Plus size={13} /> Write Post
+                        </button>
                       </div>
-                      <div className="grid md:grid-cols-2 gap-3">
-                        {events.map(e => (
-                          <div key={e.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex gap-3 hover:border-white/10 transition-all">
-                            {e.featured_image && <img src={e.featured_image} alt={e.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-white text-sm">{e.title}</div>
-                              <div className="text-[11px] text-white/25 flex items-center gap-1 mt-1"><Calendar size={10} /> {e.published_date}</div>
-                              <p className="text-[11px] text-white/30 mt-1 line-clamp-2">{e.content}</p>
+
+                      <div className="space-y-3">
+                        {events.map(e => {
+                          const wordCount = e.content?.split(/\s+/).filter(Boolean).length || 0;
+                          const readTime  = Math.max(1, Math.ceil(wordCount / 200));
+                          return (
+                            <div key={e.id} className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group">
+                              <div className="flex gap-0">
+                                {/* Cover image */}
+                                {e.featured_image && (
+                                  <div className="w-32 sm:w-44 flex-shrink-0 relative overflow-hidden">
+                                    <img src={e.featured_image} alt={e.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a1f2e]/60" />
+                                  </div>
+                                )}
+                                {/* Content */}
+                                <div className="flex-1 p-4 min-w-0">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1.5">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">
+                                          {(e as any).tag || 'news'}
+                                        </span>
+                                        <span className="text-[10px] text-white/25 flex items-center gap-1">
+                                          <Calendar size={9} /> {e.published_date}
+                                        </span>
+                                        <span className="text-[10px] text-white/20">{readTime} min read · {wordCount} words</span>
+                                      </div>
+                                      <h4 className="font-bold text-white text-sm leading-snug line-clamp-1">{e.title}</h4>
+                                      <p className="text-[11px] text-white/40 mt-1 line-clamp-2 leading-relaxed">
+                                        {(e as any).excerpt || e.content?.slice(0, 140)}
+                                      </p>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5 flex-shrink-0">
+                                      <button onClick={() => openEvtDrawer(e)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-amber-400 hover:bg-amber-500/10 flex items-center justify-center cursor-pointer transition-colors">
+                                        <Edit2 size={12} />
+                                      </button>
+                                      <button onClick={() => deleteEvent(e.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors">
+                                        <Trash2 size={12} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex flex-col gap-1.5">
-                              <button onClick={() => openEvtDrawer(e)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
-                              <button onClick={() => deleteEvent(e.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
-                            </div>
+                          );
+                        })}
+                        {events.length === 0 && (
+                          <div className="text-center py-16 border border-dashed border-white/8 rounded-2xl">
+                            <FileText size={32} className="text-white/10 mx-auto mb-3" />
+                            <p className="text-white/25 text-sm">No posts yet</p>
+                            <p className="text-white/15 text-xs mt-1">Click "Write Post" to publish your first article</p>
                           </div>
-                        ))}
-                        {events.length === 0 && <div className="col-span-2 text-center py-12 text-white/20 text-sm">No events yet</div>}
+                        )}
                       </div>
                     </div>
                   )}
@@ -1039,16 +1092,89 @@ export default function AdminDashboard() {
         </button>
       </Drawer>
 
-      {/* Event drawer */}
-      <Drawer open={evtDrawer} title={editEvt ? 'Edit Event' : 'New Event / News'} onClose={() => setEvtDrawer(false)}>
-        <Field label="Title (English)"><input value={eTitle} onChange={e => setETitle(e.target.value)} className={inputCls} placeholder="Event title" /></Field>
-        <Field label="Title (Marathi)"><input value={eTitleMr} onChange={e => setETitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
-        <Field label="Content"><textarea value={eContent} onChange={e => setEContent(e.target.value)} className={inputCls + ' resize-none h-28'} placeholder="Event content or news article..." /></Field>
-        <ImageUpload value={eImage} onChange={setEImage} label="Featured Photo" />
-        <Field label="Published Date"><input type="date" value={eDate} onChange={e => setEDate(e.target.value)} className={inputCls} /></Field>
-        <button onClick={saveEvent} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
-          {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}
-          {editEvt ? 'Save Changes' : 'Publish Event'}
+      {/* Blog / Event drawer */}
+      <Drawer open={evtDrawer} title={editEvt ? '✏️ Edit Post' : '✍️ Write New Post'} onClose={() => setEvtDrawer(false)}>
+        {/* Cover image at top */}
+        <ImageUpload value={eImage} onChange={setEImage} label="Cover Photo" />
+
+        {/* Meta row */}
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Tag / Category">
+            <select value={eTag} onChange={e => setETag(e.target.value)} className={selectCls}>
+              {['news','event','announcement','achievement','story','update'].map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase()+t.slice(1)}</option>)}
+            </select>
+          </Field>
+          <Field label="Published Date">
+            <input type="date" value={eDate} onChange={e => setEDate(e.target.value)} className={inputCls} />
+          </Field>
+        </div>
+
+        {/* Titles */}
+        <Field label="Headline (English)">
+          <input
+            value={eTitle}
+            onChange={e => setETitle(e.target.value)}
+            className={inputCls + ' text-base font-semibold'}
+            placeholder="A compelling headline..."
+          />
+        </Field>
+        <Field label="Headline (Marathi)">
+          <input value={eTitleMr} onChange={e => setETitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक..." />
+        </Field>
+
+        {/* Excerpt */}
+        <Field label="Excerpt / Summary">
+          <textarea
+            value={eExcerpt}
+            onChange={e => setEExcerpt(e.target.value)}
+            className={inputCls + ' resize-none h-16 text-xs'}
+            placeholder="A one or two sentence teaser shown on the blog listing page..."
+            maxLength={200}
+          />
+          <p className="text-[10px] text-white/20 text-right mt-1">{eExcerpt.length}/200</p>
+        </Field>
+
+        {/* Body */}
+        <Field label="Article Body">
+          <div className="relative">
+            <textarea
+              value={eContent}
+              onChange={e => setEContent(e.target.value)}
+              className={inputCls + ' resize-none h-56 leading-relaxed text-sm'}
+              placeholder="Write the full article here. Paragraphs, details, quotes — everything goes here."
+            />
+            <div className="flex items-center justify-between mt-1.5">
+              <p className="text-[10px] text-white/20">
+                {eContent.split(/\s+/).filter(Boolean).length} words · ~{Math.max(1, Math.ceil(eContent.split(/\s+/).filter(Boolean).length / 200))} min read
+              </p>
+              <p className="text-[10px] text-white/20">{eContent.length} chars</p>
+            </div>
+          </div>
+        </Field>
+
+        {/* Marathi body (collapsible hint) */}
+        <details className="group">
+          <summary className="text-[10px] text-amber-400/60 uppercase tracking-widest font-bold cursor-pointer select-none hover:text-amber-400 transition-colors list-none flex items-center gap-1">
+            <ChevronDown size={12} className="group-open:rotate-180 transition-transform" /> Add Marathi Body (optional)
+          </summary>
+          <div className="mt-2">
+            <textarea
+              value={eContentMr}
+              onChange={e => setEContentMr(e.target.value)}
+              className={inputCls + ' resize-none h-36 mt-1'}
+              placeholder="मराठी लेखाचा मजकूर..."
+            />
+          </div>
+        </details>
+
+        {/* Publish button */}
+        <button
+          onClick={saveEvent}
+          disabled={formBusy || !eTitle || !eContent}
+          className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm"
+        >
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : <FileText size={15} />}
+          {editEvt ? 'Save Changes' : 'Publish Post'}
         </button>
       </Drawer>
 
