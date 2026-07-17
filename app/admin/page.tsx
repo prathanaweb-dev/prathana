@@ -604,7 +604,10 @@ export default function AdminDashboard() {
             <Menu size={20} />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-bold text-white capitalize">{tab === 'dashboard' ? 'Overview' : tab}</h1>
+            <h1 className="text-base font-bold text-white capitalize flex items-center gap-2">
+              {navItems.find(n => n.id === tab)?.icon}
+              {tab === 'dashboard' ? 'Overview' : tab}
+            </h1>
             <p className="text-[11px] text-white/30">Prathana Foundation Control Panel</p>
           </div>
           <button onClick={fetchAll} className="text-white/30 hover:text-white transition-colors cursor-pointer" title="Refresh">
@@ -642,7 +645,10 @@ export default function AdminDashboard() {
                   {/* Recent donations */}
                   <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
                     <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                      <h3 className="font-semibold text-white text-sm">Recent Donations</h3>
+                      <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+                        <HandCoins size={14} className="text-amber-400" />
+                        Recent Donations
+                      </h3>
                       <button onClick={() => setTab('donations')} className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer">
                         View all <ArrowUpRight size={12} />
                       </button>
@@ -670,7 +676,10 @@ export default function AdminDashboard() {
                   {/* Recent volunteers */}
                   <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
                     <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                      <h3 className="font-semibold text-white text-sm">Pending Volunteers</h3>
+                      <h3 className="font-semibold text-white text-sm flex items-center gap-2">
+                        <Users size={14} className="text-violet-400" />
+                        Pending Volunteers
+                      </h3>
                       <button onClick={() => setTab('volunteers')} className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer">
                         View all <ArrowUpRight size={12} />
                       </button>
