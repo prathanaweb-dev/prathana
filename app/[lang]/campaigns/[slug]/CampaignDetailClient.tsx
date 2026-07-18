@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Heart, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import DonationModal from '@/components/DonationModal';
+import PaymentModal from '@/components/PaymentModal';
 
 interface Props {
   lang: string;
@@ -148,11 +148,12 @@ export default function CampaignDetailClient({ lang, campaign }: Props) {
         </div>
       </main>
 
-      <DonationModal 
+      <PaymentModal 
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
-        campaign={campaign} 
-        lang={lang} 
+        campaigns={[campaign]} 
+        selectedCampaignId={campaign.id} 
+        onSuccess={() => setModalOpen(false)}
       />
     </>
   );
