@@ -120,21 +120,21 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             : 'bg-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-12 flex items-center justify-between">
         {/* Logo — Magazine Masthead */}
         <a href={`/${lang}`} className="flex items-center gap-3 group">
           <img
             src="/logo.png"
             alt="Prathana Foundation Logo"
-            className="w-12 h-12 object-contain transition-all duration-500 group-hover:scale-105 group-hover:rotate-6 drop-shadow-[0_2px_8px_rgba(21,34,27,0.06)]"
+            className="w-9 h-9 md:w-12 md:h-12 object-contain transition-all duration-500 group-hover:scale-105 group-hover:rotate-6 drop-shadow-[0_2px_8px_rgba(21,34,27,0.06)] shrink-0"
           />
-          <div className="flex flex-col">
-            <span className={`font-serif-display text-xl md:text-2xl font-bold tracking-tight leading-none ${
+          <div className="flex flex-col shrink-0">
+            <span className={`font-serif-display text-lg md:text-2xl font-bold tracking-tight leading-none ${
               useLightText ? 'text-white' : 'text-brand-charcoal'
             }`}>
               Prathana
             </span>
-            <span className={`text-[10px] uppercase tracking-widest font-semibold mt-0.5 transition-colors duration-300 ${
+            <span className={`text-[8px] md:text-[10px] uppercase tracking-widest font-semibold mt-0.5 transition-colors duration-300 ${
               useLightText ? 'text-brand-yellow' : 'text-brand-forest'
             }`}>
               Foundation
@@ -308,37 +308,37 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
         </nav>
 
         {/* Mobile Controls */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden shrink-0">
           {/* Mobile Lang Button */}
           <button
             onClick={() => switchLanguage(lang === 'en' ? 'mr' : 'en')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[11px] font-bold ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 sm:px-3 rounded-full border text-[10px] sm:text-[11px] font-bold ${
               useLightText
                 ? 'border-white/30 text-white hover:bg-white/10'
                 : 'border-brand-clay text-brand-charcoal'
             }`}
             title="Switch Language"
           >
-            <Globe className="w-3 h-3" />
-            <span>{lang === 'en' ? 'MR' : 'EN'}</span>
+            <Globe className="w-3 h-3 shrink-0" />
+            <span className="hidden sm:inline">{lang === 'en' ? 'MR' : 'EN'}</span>
           </button>
 
           <button
             onClick={handleDonateTrigger}
-            className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-4 py-2 text-[12px] tracking-wide shadow-[0_4px_10px_rgba(247,195,36,0.2)] transition-all duration-300"
+            className="rounded-full bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-[12px] tracking-wide shadow-[0_4px_10px_rgba(247,195,36,0.2)] transition-all duration-300 shrink-0"
           >
             {lang === 'mr' ? 'मदत करा' : 'Donate'}
           </button>
           
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 transition-colors ${useLightText ? 'text-white' : 'text-brand-charcoal'}`}
+            className={`p-1.5 sm:p-2 transition-colors shrink-0 ${useLightText ? 'text-white' : 'text-brand-charcoal'}`}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
           </button>
         </div>
