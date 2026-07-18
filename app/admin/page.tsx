@@ -262,6 +262,7 @@ export default function AdminDashboard() {
   // Campaign form
   const [cTitle, setCTitle] = useState(''); const [cTitleMr, setCTitleMr] = useState('');
   const [cDesc, setCDesc]   = useState(''); const [cDescMr, setCDescMr]   = useState('');
+  const [cContent, setCContent] = useState(''); const [cContentMr, setCContentMr] = useState('');
   const [cGoal, setCGoal]   = useState(''); const [cImage, setCImage]     = useState('');
   const [cStatus, setCStatus] = useState<'active'|'completed'>('active');
 
@@ -398,7 +399,8 @@ export default function AdminDashboard() {
   const openCampDrawer = (camp?: Campaign) => {
     setEditCamp(camp || null);
     setCTitle(camp?.title || ''); setCTitleMr(camp?.title_mr || '');
-    setCDesc(camp?.description || ''); setCDescMr('');
+    setCDesc(camp?.description || ''); setCDescMr(camp?.description_mr || '');
+    setCContent(camp?.content || ''); setCContentMr(camp?.content_mr || '');
     setCGoal(camp?.goal_amount?.toString() || ''); setCImage(camp?.image || '');
     setCStatus(camp?.status || 'active');
     setCampDrawer(true);
@@ -407,7 +409,7 @@ export default function AdminDashboard() {
     if (!cTitle || !cGoal) return notify('Title and goal are required', 'error');
     setFormBusy(true);
     try {
-      const body = { title: cTitle, title_mr: cTitleMr, description: cDesc, description_mr: cDescMr, goal_amount: Number(cGoal), amount_raised: editCamp?.amount_raised || 0, image: cImage, is_completed: cStatus === 'completed', status: cStatus, slug: cTitle.toLowerCase().replace(/\s+/g, '-') };
+      const body = { title: cTitle, title_mr: cTitleMr, description: cDesc, description_mr: cDescMr, content: cContent, content_mr: cContentMr, goal_amount: Number(cGoal), amount_raised: editCamp?.amount_raised || 0, image: cImage, is_completed: cStatus === 'completed', status: cStatus, slug: cTitle.toLowerCase().replace(/\s+/g, '-') };
       const url = '/api/campaigns';
       const method = editCamp ? 'PUT' : 'POST';
       const payload = editCamp ? { id: editCamp.id, ...body } : body;
@@ -1242,7 +1244,9 @@ export default function AdminDashboard() {
       <Drawer open={campDrawer} title={editCamp ? 'Edit Campaign' : 'New Campaign'} onClose={() => setCampDrawer(false)}>
         <Field label="Title (English)"><input value={cTitle} onChange={e => setCTitle(e.target.value)} className={inputCls} placeholder="Campaign title" /></Field>
         <Field label="Title (Marathi)"><input value={cTitleMr} onChange={e => setCTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
-        <Field label="Description"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Campaign description..." /></Field>
+        <Field label="Short Description (English)"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-20'} placeholder="Short excerpt..." /></Field>
+        <Field label="Full Content (English)"><textarea value={cContent} onChange={e => setCContent(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="Full campaign details..." /></Field>
+        <Field label="Full Content (Marathi) [Optional]"><textarea value={cContentMr} onChange={e => setCContentMr(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="संपूर्ण माहिती..." /></Field>
         <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
         <ImageUpload value={cImage} onChange={setCImage} label="Campaign Photo" />
         <Field label="Status">

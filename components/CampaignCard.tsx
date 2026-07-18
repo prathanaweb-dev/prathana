@@ -4,6 +4,7 @@ import { Campaign } from '@/lib/db';
 import { Heart, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { translations } from '@/lib/translations';
+import Link from 'next/link';
 
 interface CampaignCardProps {
   lang: string;
@@ -24,15 +25,16 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
   const description = (lang === 'mr' && campaign.description_mr) ? campaign.description_mr : campaign.description;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.6 }}
-      className={`flex flex-col bg-white border border-brand-clay/35 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group ${
-        isCompleted ? 'opacity-75 saturate-[0.7]' : ''
-      }`}
-    >
+    <Link href={`/${lang}/campaigns/${campaign.slug}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.6 }}
+        className={`flex flex-col h-full bg-white border border-brand-clay/35 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group ${
+          isCompleted ? 'opacity-75 saturate-[0.7]' : ''
+        }`}
+      >
       {/* Cover Image */}
       <div className="h-56 relative overflow-hidden bg-brand-sand">
         <img
@@ -103,7 +105,7 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
 
           {/* Solid Forest Green Action Button */}
           <button
-            onClick={() => onDonateClick(campaign.id)}
+            onClick={(e) => { e.preventDefault(); onDonateClick(campaign.id); }}
             disabled={isCompleted}
             className={`w-full py-3.5 rounded-full font-bold text-[13px] tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
               isCompleted
@@ -116,6 +118,7 @@ export default function CampaignCard({ lang, campaign, onDonateClick }: Campaign
           </button>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }

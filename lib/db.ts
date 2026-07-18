@@ -40,6 +40,8 @@ export interface Campaign {
   slug: string;
   description: string;
   description_mr?: string;
+  content?: string;
+  content_mr?: string;
   goal_amount: number;
   amount_raised: number;
   image: string;

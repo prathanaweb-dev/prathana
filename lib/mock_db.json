@@ -12,7 +12,9 @@
       "image": "/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg",
       "is_completed": false,
       "status": "active",
-      "created_at": "2026-05-17T04:56:33.870Z"
+      "created_at": "2026-05-17T04:56:33.870Z",
+      "content": "This is the detailed content for Sponsor Nutrition & Care at Prathana Balgram. Here we provide full information regarding how the funds are utilized and the impact made. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "content_mr": "हे प्रार्थना बालग्राममधील मुलांचे पोषण आणि संगोपन प्रायोजकत्व बद्दलचे सविस्तर वर्णन आहे. येथे आम्ही निधी कसा वापरला जातो आणि त्याचा काय परिणाम होतो याची संपूर्ण माहिती देतो."
     },
     {
       "id": "campaign-2",
@@ -26,7 +28,9 @@
       "image": "/Vrudhashram/Vrudhashram/486624799_4051683148395140_1808839315720356419_n.jpg",
       "is_completed": false,
       "status": "active",
-      "created_at": "2026-05-27T04:56:33.870Z"
+      "created_at": "2026-05-27T04:56:33.870Z",
+      "content": "This is the detailed content for Support Abandoned Elderly at Prathana Old Age Home. Here we provide full information regarding how the funds are utilized and the impact made. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "content_mr": "हे प्रार्थना वृद्धाश्रमातील निराधार वृद्धांना मदत बद्दलचे सविस्तर वर्णन आहे. येथे आम्ही निधी कसा वापरला जातो आणि त्याचा काय परिणाम होतो याची संपूर्ण माहिती देतो."
     },
     {
       "id": "campaign-3",
@@ -40,7 +44,9 @@
       "image": "/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg",
       "is_completed": false,
       "status": "active",
-      "created_at": "2026-06-06T04:56:33.870Z"
+      "created_at": "2026-06-06T04:56:33.870Z",
+      "content": "This is the detailed content for Empower Marginalized Children via Education Support Program. Here we provide full information regarding how the funds are utilized and the impact made. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "content_mr": "हे शिक्षण मदत उपक्रमाद्वारे गरीब विद्यार्थ्यांना शैक्षणिक साहित्याचे वाटप बद्दलचे सविस्तर वर्णन आहे. येथे आम्ही निधी कसा वापरला जातो आणि त्याचा काय परिणाम होतो याची संपूर्ण माहिती देतो."
     }
   ],
   "donations": [
