@@ -2,13 +2,15 @@ import { getProjects } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import ProjectDetailClient from './ProjectDetailClient';
 
-export default async function ProjectPage({ params }: { params: { lang: string, id: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ lang: string, id: string }> }) {
+  const { lang, id } = await params;
+  
   const projects = await getProjects();
-  const project = projects.find(p => p.id === params.id);
+  const project = projects.find(p => p.id === id);
 
   if (!project) {
     notFound();
   }
 
-  return <ProjectDetailClient lang={params.lang} project={project} />;
+  return <ProjectDetailClient lang={lang} project={project} />;
 }
