@@ -54,18 +54,25 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
   ];
 
   return (
-    <section className="relative bg-brand-forest overflow-hidden pt-36 pb-20 text-white">
-      {/* Background organic paint stroke shape on the left */}
-      <div className="absolute top-1/4 left-0 w-32 h-64 bg-brand-yellow opacity-25 rounded-r-full blur-3xl pointer-events-none" />
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0d1a14] pt-32 pb-20 text-white z-0">
+      {/* Cinematic Background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
+        style={{ backgroundImage: "url('/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg')" }}
+      />
       
-      {/* Top glowing ambient blobs */}
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-yellow/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-green/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* Cinematic Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a130d]/80 via-[#0a130d]/40 to-transparent pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* Cinematic Grain texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col justify-center">
         
-        {/* Left Column - Content */}
-        <div className="lg:col-span-7 space-y-8 text-left z-10">
+        {/* Main Content Area */}
+        <div className="max-w-4xl space-y-8 text-left mt-12 md:mt-0">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -82,7 +89,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif-display text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1]"
+            className="font-serif-display text-5xl sm:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.05]"
           >
             {lang === 'mr' ? (
               <>
@@ -101,7 +108,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-white/80 font-light max-w-xl leading-relaxed"
+            className="text-base sm:text-lg text-white/60 font-light max-w-2xl leading-relaxed"
           >
             {t.hero.subtext}
           </motion.p>
@@ -127,71 +134,48 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
               {lang === 'mr' ? 'अधिक माहिती' : 'Learn More'}
             </button>
           </motion.div>
-        </div>
 
-        {/* Right Column - Child Photo */}
-        <div className="lg:col-span-5 relative flex justify-center z-10">
+          {/* Floating Stats adapted for the cinematic layout */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full max-w-[400px] aspect-[4/5] rounded-[40px_10px_40px_10px] overflow-hidden border-8 border-brand-yellow/20 bg-brand-charcoal shadow-2xl"
-          >
-            <img
-              src="/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg"
-              alt="Happy smiling children supported by Prathana Foundation"
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-            />
-            {/* Visual bottom gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-forest/60 via-transparent to-transparent" />
-          </motion.div>
-
-          {/* Floating kids stats card */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="absolute -bottom-4 right-4 bg-white/95 backdrop-blur-md border border-brand-clay/60 p-4 rounded-2xl shadow-xl flex items-center gap-3 z-20 text-brand-charcoal"
+            className="flex flex-wrap items-center gap-4 pt-8"
           >
-            <div className="w-9 h-9 rounded-xl bg-brand-green/10 flex items-center justify-center text-brand-green">
-              <Heart className="w-5 h-5 fill-current" />
+            {/* Floating kids stats card */}
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-brand-green/20 flex items-center justify-center text-brand-green">
+                <Heart className="w-5 h-5 fill-current" />
+              </div>
+              <div>
+                <span className="block text-xs font-bold text-white">45+ Children</span>
+                <span className="block text-[9px] text-white/50 font-light uppercase tracking-wider">Sponsored at Balgram</span>
+              </div>
             </div>
-            <div>
-              <span className="block text-xs font-bold text-brand-charcoal">45+ Children</span>
-              <span className="block text-[9px] text-brand-muted font-light uppercase tracking-wider">Sponsored at Balgram</span>
+
+            {/* Floating tax exemption card */}
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl flex items-center gap-3 hidden sm:flex">
+              <div className="w-9 h-9 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-yellow font-extrabold text-sm">
+                ✓
+              </div>
+              <div>
+                <span className="block text-[11px] font-bold text-white">80G Tax Exemption</span>
+                <span className="block text-[8px] text-white/50 font-light uppercase tracking-wider">Approved Charity</span>
+              </div>
             </div>
           </motion.div>
 
-          {/* Floating tax exemption card */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="absolute top-8 -left-8 bg-white/95 backdrop-blur-md border border-brand-clay/60 p-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 z-20 text-brand-charcoal hidden sm:flex"
-          >
-            <div className="w-8 h-8 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-yellow font-extrabold text-xs">
-              ✓
-            </div>
-            <div>
-              <span className="block text-[11px] font-bold text-brand-charcoal">80G Tax Exemption</span>
-              <span className="block text-[8px] text-brand-muted font-light uppercase tracking-wider">Approved Charity</span>
-            </div>
-          </motion.div>
-
-          {/* Golden abstract circle highlight decoration */}
-          <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full border-4 border-dashed border-brand-yellow/30 animate-spin" style={{ animationDuration: '30s' }} />
-          <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full border-2 border-brand-green/30" />
         </div>
 
       </div>
 
       {/* Badges Panel directly below Hero */}
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12 mt-16 md:mt-24">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 mt-16 md:mt-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="bg-white rounded-3xl p-6 md:p-8 shadow-xl grid grid-cols-2 md:grid-cols-5 gap-6 text-brand-charcoal border border-brand-clay/30"
+          className="bg-white rounded-3xl p-6 md:p-8 shadow-2xl grid grid-cols-2 md:grid-cols-5 gap-6 text-brand-charcoal border border-brand-clay/30"
         >
           {badgeItems.map((item, idx) => {
             const Icon = item.icon;
