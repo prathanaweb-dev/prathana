@@ -126,12 +126,14 @@ export default function ProjectsClient({
                           {currentStatus}
                         </span>
                         
-                        <div className="flex items-center gap-1.5 text-[10px] text-brand-muted font-mono">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>{formatDate(proj.start_date)}</span>
-                          <span>&ndash;</span>
-                          <span>{formatDate(proj.end_date)}</span>
-                        </div>
+                        {(proj.start_date || proj.end_date) && (
+                          <div className="flex items-center gap-1.5 text-[10px] text-brand-muted font-mono">
+                            <Calendar className="w-3.5 h-3.5" />
+                            {proj.start_date && <span>{formatDate(proj.start_date)}</span>}
+                            {(proj.start_date && proj.end_date) && <span>&ndash;</span>}
+                            {proj.end_date && <span>{formatDate(proj.end_date)}</span>}
+                          </div>
+                        )}
                       </div>
 
                       <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-forest transition-colors">

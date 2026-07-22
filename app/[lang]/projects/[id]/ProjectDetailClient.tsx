@@ -53,12 +53,14 @@ export default function ProjectDetailClient({ lang, project }: { lang: string, p
                 {currentStatus}
               </span>
               
-              <div className="flex items-center gap-2 text-xs text-brand-muted font-mono bg-white px-4 py-1.5 rounded-full border border-brand-clay/60 shadow-sm">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDate(project.start_date)}</span>
-                <span>&ndash;</span>
-                <span>{formatDate(project.end_date)}</span>
-              </div>
+              {(project.start_date || project.end_date) && (
+                <div className="flex items-center gap-2 text-xs text-brand-muted font-mono bg-white px-4 py-1.5 rounded-full border border-brand-clay/60 shadow-sm">
+                  <Calendar className="w-4 h-4" />
+                  {project.start_date && <span>{formatDate(project.start_date)}</span>}
+                  {(project.start_date && project.end_date) && <span>&ndash;</span>}
+                  {project.end_date && <span>{formatDate(project.end_date)}</span>}
+                </div>
+              )}
             </div>
 
             <h1 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-brand-charcoal leading-[1.1]">
