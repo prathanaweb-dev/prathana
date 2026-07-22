@@ -793,6 +793,7 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at'>)
         description: newProj.description,
         description_mr: newProj.description_mr || '',
         image: newProj.image,
+        gallery: newProj.gallery || [],
         status: newProj.status,
         start_date: newProj.start_date,
         end_date: newProj.end_date,
