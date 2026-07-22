@@ -173,7 +173,7 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
     hero: {
       tagline: 'Prathana Foundation · Solapur',
       title: 'Every child deserves a full stomach & an open book.',
-      subtext: 'A grassroots humanitarian collective in Solapur — providing nutrition, education kits, and medical aid to orphaned and low-income families. Every rupee, fully transparent.',
+      subtext: 'Creating a permanent home, quality education, and dignified care for orphaned children and homeless seniors in Solapur. Built on trust, compassion, and complete transparency.',
       donateBtn: 'Donate Securely',
       viewBtn: 'View Campaigns',
       meals: 'Meals Served',
@@ -344,7 +344,7 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
     hero: {
       tagline: 'प्रार्थना फाउंडेशन · सोलापूर',
       title: 'प्रत्येक मुलाला पोटभर जेवण आणि शिक्षणाची संधी मिळायला हवी.',
-      subtext: 'सोलापूरमधील एक तळागाळातील मानवतावादी संस्था - अनाथ आणि अल्प-उत्पन्न कुटुंबांना पोषण, शैक्षणिक संच आणि वैद्यकीय मदत पुरवते. प्रत्येक रुपया पूर्णपणे पारदर्शक.',
+      subtext: 'अनाथ बालकांना हक्काचे घर, दर्जेदार शिक्षण आणि निराधारांना सन्मानाचा आसरा देणारा सोलापूरमधील आपुलकीचा निवारा. पूर्ण पारदर्शकता, निष्ठा आणि मानवतेच्या तत्त्वावर आधारित अविरत सेवाकार्य.',
       donateBtn: 'सुरक्षित देणगी द्या',
       viewBtn: 'मोहिमा पहा',
       meals: 'दिलेले जेवण',
