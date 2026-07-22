@@ -1,8 +1,9 @@
 'use client';
 
 import { Project } from '@/lib/db';
-import { motion } from 'framer-motion';
-import { Calendar, Briefcase, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Briefcase, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 import { translations } from '@/lib/translations';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -23,8 +24,14 @@ export default function ProjectDetailClient({ lang, project }: { lang: string, p
     if (!dateString) return '---';
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
-    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    return date.toLocaleDateString(lang === 'mr' ? 'mr-IN' : 'en-IN', { month: 'short', year: 'numeric' });
   };
+
+  const images = [project.image, ...(project.gallery || [])].filter(Boolean);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
     <div className="min-h-screen bg-brand-sand flex flex-col selection:bg-brand-yellow/30 selection:text-brand-forest">
@@ -72,9 +79,51 @@ export default function ProjectDetailClient({ lang, project }: { lang: string, p
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="w-full aspect-[21/9] bg-brand-clay rounded-3xl overflow-hidden shadow-xl"
+            className="w-full aspect-[21/9] bg-brand-clay rounded-3xl overflow-hidden shadow-xl relative group"
           >
-            <img src={project.image} alt={title} className="w-full h-full object-cover" />
+            {images.length > 1 ? (
+              <>
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    alt={`${title} - image ${currentIndex + 1}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+                
+                {/* Carousel Controls */}
+                <button 
+                  onClick={prevImage}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/30 hover:bg-white backdrop-blur-md text-brand-charcoal rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button 
+                  onClick={nextImage}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/30 hover:bg-white backdrop-blur-md text-brand-charcoal rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+                
+                {/* Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  {images.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentIndex(idx)}
+                      className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/80'}`}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <img src={project.image} alt={title} className="w-full h-full object-cover" />
+            )}
           </motion.div>
 
           <motion.div

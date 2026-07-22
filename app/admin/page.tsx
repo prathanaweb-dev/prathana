@@ -36,7 +36,7 @@ interface Campaign { id: string; title: string; title_mr?: string; description: 
 interface Donation  { id: string; campaign_id: string; donor_name: string; donor_email: string; amount: number; payment_id: string; payment_status: 'pending'|'success'|'failed'; created_at: string; }
 interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; age?: string; gender?: string; address?: string; availability?: string; experience?: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
 interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
-interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date?: string; end_date?: string; created_at: string; }
+interface Project   { id: string; title: string; title_mr?: string; description: string; description_mr?: string; image: string; gallery?: string[]; status: 'planned'|'active'|'completed'; start_date?: string; end_date?: string; created_at: string; }
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
@@ -274,7 +274,8 @@ export default function AdminDashboard() {
   // Project form
   const [pTitle, setPTitle] = useState(''); const [pTitleMr, setPTitleMr] = useState('');
   const [pDesc, setPDesc]   = useState(''); const [pDescMr, setPDescMr]   = useState('');
-  const [pImage, setPImage] = useState(''); const [pStatus, setPStatus] = useState<Project['status']>('active');
+  const [pImage, setPImage] = useState(''); const [pGallery, setPGallery] = useState<string[]>([]);
+  const [pStatus, setPStatus] = useState<Project['status']>('active');
   const [pStart, setPStart] = useState(''); const [pEnd, setPEnd] = useState('');
 
   // Event form
@@ -468,9 +469,10 @@ export default function AdminDashboard() {
   // ── Project CRUD ──
   const openProjDrawer = (proj?: Project) => {
     setEditProj(proj || null);
-    setPTitle(proj?.title || ''); setPTitleMr('');
-    setPDesc(proj?.description || ''); setPDescMr('');
-    setPImage(proj?.image || ''); setPStatus(proj?.status || 'active');
+    setPTitle(proj?.title || ''); setPTitleMr(proj?.title_mr || '');
+    setPDesc(proj?.description || ''); setPDescMr(proj?.description_mr || '');
+    setPImage(proj?.image || ''); setPGallery(proj?.gallery || []);
+    setPStatus(proj?.status || 'active');
     setPStart(proj?.start_date || ''); setPEnd(proj?.end_date || '');
     setProjDrawer(true);
   };
@@ -478,7 +480,7 @@ export default function AdminDashboard() {
     if (!pTitle) return notify('Title is required', 'error');
     setFormBusy(true);
     try {
-      const body = { title: pTitle, title_mr: pTitleMr, description: pDesc, description_mr: pDescMr, image: pImage, status: pStatus, start_date: pStart, end_date: pEnd };
+      const body = { title: pTitle, title_mr: pTitleMr, description: pDesc, description_mr: pDescMr, image: pImage, gallery: pGallery, status: pStatus, start_date: pStart, end_date: pEnd };
       const method = editProj ? 'PUT' : 'POST';
       const payload = editProj ? { id: editProj.id, ...body } : body;
       const res = await fetch('/api/projects', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1283,7 +1285,28 @@ export default function AdminDashboard() {
         <Field label="Title (English)"><input value={pTitle} onChange={e => setPTitle(e.target.value)} className={inputCls} placeholder="Project title" /></Field>
         <Field label="Title (Marathi)"><input value={pTitleMr} onChange={e => setPTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
         <Field label="Description"><textarea value={pDesc} onChange={e => setPDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
-        <ImageUpload value={pImage} onChange={setPImage} label="Project Photo" />
+        <ImageUpload value={pImage} onChange={setPImage} label="Cover Photo" />
+        
+        <div className="space-y-3">
+          <label className="block text-xs font-bold text-gray-700">Project Gallery (Optional)</label>
+          {pGallery.map((img, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <div className="flex-1">
+                <ImageUpload value={img} onChange={(url) => {
+                  const newG = [...pGallery];
+                  newG[idx] = url;
+                  setPGallery(newG);
+                }} label={`Image ${idx + 1}`} />
+              </div>
+              <button onClick={() => setPGallery(pGallery.filter((_, i) => i !== idx))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          ))}
+          <button onClick={() => setPGallery([...pGallery, ''])} className="w-full py-2 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-gray-700 hover:border-gray-400 font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+            <Plus className="w-4 h-4" /> Add Gallery Image
+          </button>
+        </div>
         <Field label="Status">
           <select value={pStatus} onChange={e => setPStatus(e.target.value as any)} className={selectCls}>
             {['planned','active','completed'].map(s => <option key={s} value={s}>{s}</option>)}

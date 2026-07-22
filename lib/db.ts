@@ -97,6 +97,7 @@ export interface Project {
   description: string;
   description_mr?: string;
   image: string;
+  gallery?: string[];
   status: 'planned' | 'active' | 'completed';
   start_date?: string;
   end_date?: string;
