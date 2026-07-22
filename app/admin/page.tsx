@@ -36,7 +36,7 @@ interface Campaign { id: string; title: string; title_mr?: string; description: 
 interface Donation  { id: string; campaign_id: string; donor_name: string; donor_email: string; amount: number; payment_id: string; payment_status: 'pending'|'success'|'failed'; created_at: string; }
 interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; age?: string; gender?: string; address?: string; availability?: string; experience?: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
 interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
-interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date: string; end_date: string; created_at: string; }
+interface Project   { id: string; title: string; description: string; image: string; status: 'planned'|'active'|'completed'; start_date?: string; end_date?: string; created_at: string; }
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
@@ -1290,8 +1290,8 @@ export default function AdminDashboard() {
           </select>
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Start Date"><input type="date" value={pStart} onChange={e => setPStart(e.target.value)} className={inputCls} /></Field>
-          <Field label="End Date"><input type="date" value={pEnd} onChange={e => setPEnd(e.target.value)} className={inputCls} /></Field>
+          <Field label="Start Date (Optional)"><input type="date" value={pStart} onChange={e => setPStart(e.target.value)} className={inputCls} /></Field>
+          <Field label="End Date (Optional)"><input type="date" value={pEnd} onChange={e => setPEnd(e.target.value)} className={inputCls} /></Field>
         </div>
         <button onClick={saveProject} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
           {formBusy ? <Loader2 size={16} className="animate-spin" /> : null}

@@ -98,8 +98,8 @@ export interface Project {
   description_mr?: string;
   image: string;
   status: 'planned' | 'active' | 'completed';
-  start_date: string;
-  end_date: string;
+  start_date?: string;
+  end_date?: string;
   created_at: string;
 }
 
