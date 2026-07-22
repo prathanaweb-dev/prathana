@@ -13,22 +13,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, title_mr, description, description_mr, image, status, start_date, end_date } = body;
+    const { title, description, image, status } = body;
 
-    if (!title || !description || !image || !status || !start_date || !end_date) {
-      return NextResponse.json({ success: false, error: 'All fields are required' }, { status: 400 });
+    if (!title || !description || !image || !status) {
+      return NextResponse.json({ success: false, error: 'Title, description, image, and status are required' }, { status: 400 });
     }
 
-    const newProj = await createProject({
-      title,
-      title_mr: title_mr || '',
-      description,
-      description_mr: description_mr || '',
-      image,
-      status,
-      start_date,
-      end_date,
-    });
+    const newProj = await createProject(body);
 
     if (!newProj) throw new Error('Creation failed');
 
@@ -41,10 +32,10 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, updates } = body;
+    const { id, ...updates } = body;
 
-    if (!id || !updates) {
-      return NextResponse.json({ success: false, error: 'Id and updates are required' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Id is required' }, { status: 400 });
     }
 
     const updated = await updateProject(id, updates);
