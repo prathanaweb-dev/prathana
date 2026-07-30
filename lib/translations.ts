@@ -10,6 +10,7 @@ export interface TranslationDict {
     donate: string;
     language: string;
     langCode: string;
+    csr: string;
   };
   hero: {
     tagline: string;
@@ -154,6 +155,19 @@ export interface TranslationDict {
     donateBtn: string;
     funded: string;
   };
+  csr: {
+    label: string;
+    title: string;
+    subtitle: string;
+    ctaHeader: string;
+    ctaDesc: string;
+    ctaBtn: string;
+    projects: {
+      title: string;
+      desc: string;
+      tagline?: string;
+    }[];
+  };
 }
 
 export const translations: Record<'en' | 'mr', TranslationDict> = {
@@ -169,6 +183,7 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       donate: 'Donate Now',
       language: 'English',
       langCode: 'EN',
+      csr: 'CSR Partnerships',
     },
     hero: {
       tagline: 'Prathana Foundation · Solapur',
@@ -327,6 +342,51 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       donateBtn: 'Donate to Campaign',
       funded: 'funded',
     },
+    csr: {
+      label: 'Corporate Partnerships',
+      title: 'Empower Through CSR',
+      subtitle: 'Join hands with Prathana Foundation to create lasting social impact. Your CSR funds can directly transform lives across multiple community-driven projects.',
+      ctaHeader: 'Partner for Change',
+      ctaDesc: 'Our dedicated CSR team will work with your organization to align your philanthropic goals with our ground initiatives. We provide full compliance, tax benefits, and transparent impact reports.',
+      ctaBtn: 'Contact Us for CSR',
+      projects: [
+        {
+          title: 'Prathana Balgram',
+          tagline: 'A Home for Children in Need',
+          desc: 'A permanent residential child care project providing shelter, education, healthcare, and holistic development for 45 vulnerable children, including orphans and those affected by farmer suicides.'
+        },
+        {
+          title: 'Prathana Old Age Home',
+          tagline: 'Care, Dignity, and Belonging',
+          desc: 'A sanctuary providing shelter, nutritious meals, healthcare, and companionship to 25 elderly individuals who have been abandoned or left without family support.'
+        },
+        {
+          title: 'Vanchitanchi Shala',
+          tagline: 'School for the Marginalized',
+          desc: 'Our founding initiative that brought children out of begging and substance abuse into mainstream education. Its legacy inspires our ongoing child care efforts.'
+        },
+        {
+          title: 'Natural Farming Project',
+          tagline: 'Growing Food & Responsibility',
+          desc: 'An experiential learning farm within Balgram where children cultivate chemical-free vegetables, learning sustainable practices, self-reliance, and environmental conservation.'
+        },
+        {
+          title: 'Youth Development Project',
+          tagline: 'Empowering Future Leaders',
+          desc: 'Organizing leadership camps, capacity-building workshops, and awareness sessions to equip young people with the skills and values needed to become responsible community leaders.'
+        },
+        {
+          title: 'Disaster Management',
+          tagline: 'Responding with Compassion',
+          desc: 'Providing timely relief, food kits, and rehabilitation support during floods, pandemics, and humanitarian crises to help vulnerable communities recover with dignity.'
+        },
+        {
+          title: 'Education Support Program',
+          tagline: 'Equal Learning Opportunities',
+          desc: 'Distributing school bags, stationery, uniforms, and educational kits to marginalized students, reducing barriers to formal education.'
+        }
+      ]
+    },
   },
   mr: {
     nav: {
@@ -340,6 +400,7 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       donate: 'आता मदत करा',
       language: 'मराठी',
       langCode: 'MR',
+      csr: 'सीएसआर भागीदारी',
     },
     hero: {
       tagline: 'प्रार्थना फाउंडेशन · सोलापूर',
@@ -497,6 +558,51 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       remaining: 'उर्वरित गरज',
       donateBtn: 'मोहिमेला देणगी द्या',
       funded: 'निधी गोळा',
+    },
+    csr: {
+      label: 'कॉर्पोरेट भागीदारी (CSR)',
+      title: 'CSR च्या माध्यमातून सक्षमीकरण',
+      subtitle: 'कायमस्वरूपी सामाजिक प्रभाव निर्माण करण्यासाठी प्रार्थना फाउंडेशनसोबत हातमिळवणी करा. तुमचा CSR निधी अनेक समाज-केंद्रित प्रकल्पांद्वारे थेट लोकांचे जीवन बदलू शकतो.',
+      ctaHeader: 'बदलासाठी भागीदारी करा',
+      ctaDesc: 'आमची CSR टीम तुमच्या संस्थेसोबत काम करून तुमची सामाजिक ध्येये आणि आमचे प्रकल्प यांची सांगड घालेल. आम्ही पूर्ण पारदर्शकता, कर सवलत आणि प्रभाव अहवाल प्रदान करतो.',
+      ctaBtn: 'CSR साठी संपर्क करा',
+      projects: [
+        {
+          title: 'प्रार्थना बालग्राम',
+          tagline: 'निराधारांसाठी हक्काचे घर',
+          desc: 'अनाथ आणि शेतकरी आत्महत्याग्रस्त कुटुंबातील ४५ बालकांसाठी निवारा, शिक्षण, आरोग्य आणि सर्वांगीण विकास देणारा कायमस्वरूपी निवासी बालसंगोपन प्रकल्प.'
+        },
+        {
+          title: 'प्रार्थना वृद्धाश्रम',
+          tagline: 'काळजी, सन्मान आणि आपुलकी',
+          desc: 'कुटुंबाचा आधार नसलेल्या आणि बेघर झालेल्या २५ वृद्धांना निवारा, पौष्टिक आहार, आरोग्य सुविधा आणि आधार देणारा एक सुरक्षित आश्रम.'
+        },
+        {
+          title: 'वंचितांची शाळा',
+          tagline: 'उपेक्षितांसाठी शाळा',
+          desc: 'आमचा पहिला उपक्रम ज्याने मुलांना भिक मागण्यापासून आणि व्यसनापासून दूर करून शिक्षणाच्या प्रवाहात आणले. यातूनच आमच्या बालसंगोपनाच्या कामाला प्रेरणा मिळाली.'
+        },
+        {
+          title: 'नैसर्गिक शेती प्रकल्प',
+          tagline: 'अन्न आणि जबाबदारीची रुजवण',
+          desc: 'बालग्राममधील एक उपक्रम जिथे मुले रसायनमुक्त भाजीपाला पिकवतात, शाश्वत शेती, स्वावलंबन आणि पर्यावरण संवर्धनाचे धडे गिरवतात.'
+        },
+        {
+          title: 'युवा विकास प्रकल्प',
+          tagline: 'भविष्यातील नेतृत्व सक्षमीकरण',
+          desc: 'तरुणांना जबाबदार नागरिक बनवण्यासाठी आवश्यक कौशल्ये आणि मूल्ये रुजवणारी नेतृत्व शिबिरे, कार्यशाळा आणि जनजागृती सत्रे.'
+        },
+        {
+          title: 'आपत्ती व्यवस्थापन',
+          tagline: 'संकटात आपुलकीचा हात',
+          desc: 'पूर, महामारी आणि इतर नैसर्गिक आपत्तीच्या वेळी बाधित कुटुंबांना वेळेवर अन्नधान्य आणि पुनर्वसन मदत पुरवून त्यांना सावरण्यास मदत करणे.'
+        },
+        {
+          title: 'शिक्षण सहाय्य कार्यक्रम',
+          tagline: 'समान शिक्षणाची संधी',
+          desc: 'गरजू विद्यार्थ्यांना शालेय दप्तर, वह्या-पुस्तके, गणवेश आणि शैक्षणिक साहित्य वाटप करून शिक्षणातील अडथळे दूर करणे.'
+        }
+      ]
     },
   },
 };

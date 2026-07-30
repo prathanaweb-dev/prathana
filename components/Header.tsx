@@ -63,6 +63,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     { name: t.nav.vision, href: `/${lang}/vision-mission` },
     { name: t.nav.activities, href: `/${lang}/activities` },
     { name: t.nav.projects, href: `/${lang}/projects` },
+    { name: t.nav.csr, href: `/${lang}/csr` },
     { name: t.nav.events, href: `/${lang}/events` },
     { name: t.nav.gallery, href: `/${lang}/gallery` },
     { name: lang === 'mr' ? 'टीम' : 'Team', href: `/${lang}/team` },
