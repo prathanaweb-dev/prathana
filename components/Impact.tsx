@@ -84,33 +84,76 @@ export default function Impact({ lang, stats }: ImpactProps) {
 
   const metrics = [
     {
-      value: stats.mealsProvided || 4625,
-      label: lang === 'mr' ? 'वितरित जेवण' : 'Meals Served',
-      description: lang === 'mr'
-        ? 'सोलापूरच्या झोपडपट्टी भागातील गरीब आणि अनाथ मुलांना दिलेले सकस अन्न'
-        : 'Hot nutritious meals to orphans & low-income children in Solapur',
+      value: 45,
+      suffix: '',
+      label: lang === 'mr' ? 'प्रार्थना बालग्राम' : 'Prathana Balgram',
+      description: lang === 'mr' 
+        ? 'सध्या निवासी बालग्राममध्ये सुरक्षित असलेली मुले' 
+        : 'Children Currently in Residential Care',
     },
     {
-      value: stats.kidsEducated || 380,
-      label: lang === 'mr' ? 'शिक्षण घेतलेली मुले' : 'Children Educated',
+      value: 120,
+      suffix: '+',
+      label: lang === 'mr' ? 'प्रार्थना वृद्धाश्रम' : 'Prathana Old Age Home',
       description: lang === 'mr'
-        ? 'शालेय साहित्य संच, फी आणि गणवेशाद्वारे मदत मिळालेले विद्यार्थी'
-        : 'Sponsored with school kits, fees, and uniforms',
+        ? 'आतापर्यंत आश्रय दिलेले निराधार वृद्ध (२५ सध्या निवासी)'
+        : 'Elderly Residents Supported Since Inception (25 Current)',
     },
     {
-      value: stats.medicalConsults || 1240,
-      label: lang === 'mr' ? 'वैद्यकीय तपासण्या' : 'Medical Consults',
+      value: 60,
+      suffix: '+',
+      label: lang === 'mr' ? 'प्रार्थना मनोबल प्रकल्प' : 'Prathana Mnobal Project',
       description: lang === 'mr'
-        ? 'मोफत प्राथमिक आरोग्य तपासणी शिबिरे आणि आवश्यक औषधांचे वाटप'
-        : 'Free health checkups & prescription medicines provided',
+        ? 'निराधार वृद्धांवर सन्मानाने केलेले अंत्यसंस्कार'
+        : 'Dignified Last Rites Performed for Destitute Elderly',
     },
     {
-      value: 88,
-      suffix: '%',
-      label: lang === 'mr' ? 'निधीचा थेट वापर' : 'Direct Utilization',
+      value: 110,
+      suffix: '+',
+      label: lang === 'mr' ? 'वंचितांची शाळा' : 'Vanchitanchi Shala',
       description: lang === 'mr'
-        ? 'थेट मदत आणि सेवा कार्यावर खर्च झालेली रक्कम, लेखापरीक्षणाद्वारे प्रमाणित'
-        : 'Funds spent directly on relief, verified by audits',
+        ? 'मुख्य प्रवाहातील शिक्षणाशी जोडलेली मुले'
+        : 'Children Mainstreamed into Formal Education',
+    },
+    {
+      value: 4500,
+      suffix: '+',
+      label: lang === 'mr' ? 'शिक्षण सहाय्य उपक्रम' : 'Education Support Program',
+      description: lang === 'mr'
+        ? 'शालेय साहित्य आणि मदतीद्वारे समर्थित विद्यार्थी'
+        : 'Students Supported with Educational Materials',
+    },
+    {
+      value: 300,
+      suffix: '+',
+      label: lang === 'mr' ? 'युवा विकास प्रकल्प' : 'Youth Development Project',
+      description: lang === 'mr'
+        ? 'निवासी शिबिरे आणि कार्यशाळांद्वारे सक्षम केलेले तरुण'
+        : 'Youth Empowered Through Residential Camps & Workshops',
+    },
+    {
+      value: 45000,
+      suffix: '+',
+      label: lang === 'mr' ? 'कोविड-१९ मदत कार्य' : 'COVID-19 Relief Initiative',
+      description: lang === 'mr'
+        ? 'वाटप केलेले अन्न आणि १०,०००+ कुटुंबांना रेशन किट्स'
+        : 'Meals Served & 10,000+ Families Food/Grocery Kits Distributed',
+    },
+    {
+      value: 2000,
+      suffix: '+',
+      label: lang === 'mr' ? 'पूर मदत व पुनर्वसन' : 'Flood Relief & Rehabilitation',
+      description: lang === 'mr'
+        ? 'वितरित केलेले जेवण, १,०००+ कुटुंबांना मदत किट, ११ घरांची पुनर्बांधणी'
+        : 'Meals Served, 1,000+ Families Relief Kits, 11 Flood-Damaged Homes Rebuilt',
+    },
+    {
+      value: 16,
+      suffix: '+',
+      label: lang === 'mr' ? 'नैसर्गिक शेती प्रकल्प' : 'Natural Farming Project',
+      description: lang === 'mr'
+        ? 'कॅम्पसमध्ये पिकवल्या जाणाऱ्या नैसर्गिक भाज्यांचे प्रकार'
+        : 'Varieties of Naturally Grown Vegetables Cultivated',
     },
   ];
 
@@ -144,8 +187,8 @@ export default function Impact({ lang, stats }: ImpactProps) {
           <div className="w-12 h-[2px] bg-brand-gold mt-2" />
         </motion.div>
 
-        {/* 2×2 Metrics grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* 3-column Metrics grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {metrics.map((metric, idx) => (
             <MetricCard
               key={metric.label}
