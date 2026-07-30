@@ -134,7 +134,7 @@ const content = {
       title: 'Interactive Journey',
       sub: 'From a street school under the open sky to a thriving permanent sanctuary — click any milestone to explore.',
       nodes: [
-        { year: '2006', title: 'Seeds of Purpose', desc: "Following his father's death, a promise was made to build a platform of hope for rural families in crisis.", img: '/awards/Awards/FB_IMG_1541862550370.jpg' },
+        { year: '2006', title: 'Seeds of Purpose', desc: "Following his father's death, a promise was made to build a platform of hope for rural families in crisis.", img: '/awards/Awards/DSC_0350.JPG' },
         { year: '2018', title: 'Foundation Inception', desc: 'Prathana Foundation was officially registered, serving hot meals to street children under bridge platforms.', img: '/vanchitanchishala/Vanchitanchi Shala/20181109_092926.jpg' },
         { year: 'Street School', title: 'Vanchitanchi Shala', desc: 'Regular informal classes started for street children, helping them gain legal identities and enter mainstream schooling.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
         { year: 'Balgram', title: 'Prathana Balgram', desc: 'A permanent home established in Morvanchi for orphaned children and those from farmer suicide families.', img: '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg' },
@@ -237,7 +237,7 @@ const content = {
       title: 'प्रवासाचा नकाशा',
       sub: 'एका छोट्या वंचितांच्या शाळेपासून सुरू झालेली आमची यशोगाथा. कोणत्याही टप्प्यावर क्लिक करा.',
       nodes: [
-        { year: '२००६', title: 'आघातातून ध्येयाची निर्मिती', desc: 'वडिलांच्या आत्महत्येनंतर, वंचितांना आधार देण्याचे स्वप्न पाहिले गेले.', img: '/awards/Awards/FB_IMG_1541862550370.jpg' },
+        { year: '२००६', title: 'आघातातून ध्येयाची निर्मिती', desc: 'वडिलांच्या आत्महत्येनंतर, वंचितांना आधार देण्याचे स्वप्न पाहिले गेले.', img: '/awards/Awards/DSC_0350.JPG' },
         { year: '२०१८', title: 'फाउंडेशनची नोंदणी', desc: 'प्रार्थना फाउंडेशनची अधिकृत नोंदणी झाली आणि रस्त्यावरील बालकांना जेवण देण्यास सुरुवात झाली.', img: '/vanchitanchishala/Vanchitanchi Shala/20181109_092926.jpg' },
         { year: 'वंचितांची शाळा', title: 'वंचितांची शाळा', desc: 'रस्त्यावरील मुलांसाठी अभ्यास वर्ग सुरू केले.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
         { year: 'बालग्राम', title: 'प्रार्थना बालग्राम', desc: 'अनाथ मुलांसाठी मोरवंची येथे हक्काच्या घराची पायाभरणी झाली.', img: '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg' },
