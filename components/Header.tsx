@@ -60,7 +60,6 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     { name: lang === 'mr' ? 'मुख्य पान' : 'Home', href: `/${lang}` },
     { name: t.nav.story, href: `/${lang}/about` },
     { name: lang === 'mr' ? 'मोहिमा' : 'Campaigns', href: `/${lang}/donation` },
-    { name: t.nav.vision, href: `/${lang}/vision-mission` },
     { name: t.nav.activities, href: `/${lang}/activities` },
     { name: t.nav.projects, href: `/${lang}/projects` },
     { name: t.nav.csr, href: `/${lang}/csr` },
@@ -181,10 +180,10 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
             {/* Dropdown Menu Box */}
             <div className="absolute left-0 mt-1 w-44 bg-white border border-brand-clay rounded-2xl shadow-xl overflow-hidden hidden group-hover:block z-30">
               <a
-                href={`/${lang}/vision-mission`}
+                href={`/${lang}/csr`}
                 className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
               >
-                {t.nav.vision}
+                {t.nav.csr}
               </a>
               <a
                 href={`/${lang}/activities`}
