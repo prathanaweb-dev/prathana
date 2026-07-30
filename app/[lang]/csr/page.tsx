@@ -5,26 +5,16 @@ import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Mail, CheckCircle2 } from 'lucide-react';
+import { Mail, CheckCircle2, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { Project } from '@/lib/db';
 
 export default function CSRPage() {
   const params = useParams();
   const lang = (params?.lang as string) || 'en';
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
   const csr = (t as any).csr;
-
-  // Actual images from the foundation's archives
-  const projectImages = [
-    '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg', // Balgram
-    '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg', // Old Age Home
-    '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg', // Vanchitanchi Shala
-    '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg', // Natural Farming
-    '/awards/Awards/DSC_0595.JPG', // Youth Dev
-    '/awards/Awards/20200420_084411.jpg', // Disaster Mgmt
-    '/awards/Awards/FB_IMG_1541862550370.jpg', // Education
-  ];
 
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -33,6 +23,27 @@ export default function CSRPage() {
   });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+        if (data.success) {
+          // Filter to only show ongoing/active projects if needed, or just show all
+          setProjects(data.projects || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch projects', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-brand-paper selection:bg-brand-yellow/30 selection:text-brand-forest">
@@ -86,83 +97,100 @@ export default function CSRPage() {
           </motion.div>
         </section>
 
-        {/* ── PREMIUM ALTERNATING PROJECTS ── */}
-        <section className="py-24 md:py-32 relative bg-brand-paper">
+        {/* ── PREMIUM ALTERNATING PROJECTS (DYNAMIC) ── */}
+        <section className="py-24 md:py-32 relative bg-brand-paper min-h-[50vh]">
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
           
-          <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-32 md:space-y-48">
-            {csr.projects.map((project: any, idx: number) => {
-              const isEven = idx % 2 === 0;
-              return (
-                <div key={idx} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24 relative`}>
-                  
-                  {/* Decorative Background Glows */}
-                  <div className={`absolute top-1/2 -translate-y-1/2 ${isEven ? '-left-20' : '-right-20'} w-96 h-96 bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none`} />
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center h-64 text-brand-muted space-y-4">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
+                <p className="tracking-widest uppercase text-xs font-bold">Loading Projects...</p>
+              </div>
+            ) : projects.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 text-brand-muted text-center space-y-4">
+                <p className="text-xl font-light">No projects available at the moment.</p>
+                <p className="text-sm">Please check back later for our latest CSR proposals.</p>
+              </div>
+            ) : (
+              <div className="space-y-32 md:space-y-48">
+                {projects.map((project, idx) => {
+                  const isEven = idx % 2 === 0;
+                  const title = lang === 'mr' && project.title_mr ? project.title_mr : project.title;
+                  const desc = lang === 'mr' && project.description_mr ? project.description_mr : project.description;
+                  const imageSrc = project.image || '/awards/Awards/FB_IMG_1541862550370.jpg';
 
-                  {/* Image Section */}
-                  <motion.div 
-                    initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="w-full lg:w-1/2 relative group"
-                  >
-                    <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
-                      {/* Image */}
-                      <img 
-                        src={projectImages[idx]} 
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                      />
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-brand-charcoal/10 group-hover:bg-transparent transition-colors duration-700" />
+                  return (
+                    <div key={project.id || idx} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24 relative`}>
                       
-                      {/* Premium Border Ring */}
-                      <div className="absolute inset-4 border border-white/30 rounded-2xl pointer-events-none mix-blend-overlay" />
-                    </div>
-                    
-                    {/* Floating Badge */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.4, duration: 0.6 }}
-                      className={`absolute -bottom-6 ${isEven ? '-right-6' : '-left-6'} bg-white text-brand-charcoal px-6 py-4 rounded-2xl shadow-xl border border-brand-clay/30 flex items-center gap-3 z-20`}
-                    >
-                      <CheckCircle2 className="w-5 h-5 text-brand-green" />
-                      <span className="font-bold text-sm tracking-wide uppercase">{lang === 'mr' ? 'सक्रिय प्रकल्प' : 'Active Initiative'}</span>
-                    </motion.div>
-                  </motion.div>
+                      {/* Decorative Background Glows */}
+                      <div className={`absolute top-1/2 -translate-y-1/2 ${isEven ? '-left-20' : '-right-20'} w-96 h-96 bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none`} />
 
-                  {/* Content Section */}
-                  <motion.div 
-                    initial={{ opacity: 0, x: isEven ? 50 : -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="w-full lg:w-1/2 space-y-8"
-                  >
-                    <div className="space-y-4">
-                      {project.tagline && (
-                        <span className="inline-block text-xs font-bold uppercase tracking-widest text-brand-saffron bg-brand-saffron/10 px-4 py-1.5 rounded-full">
-                          {project.tagline}
-                        </span>
-                      )}
-                      <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-                        {project.title}
-                      </h2>
-                    </div>
-                    
-                    <div className="w-12 h-1 bg-brand-yellow rounded-full" />
-                    
-                    <p className="text-lg text-brand-muted font-light leading-relaxed">
-                      {project.desc}
-                    </p>
-                  </motion.div>
+                      {/* Image Section */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="w-full lg:w-1/2 relative group"
+                      >
+                        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl bg-brand-clay/20">
+                          {/* Image */}
+                          <img 
+                            src={imageSrc} 
+                            alt={title}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                          />
+                          {/* Overlay */}
+                          <div className="absolute inset-0 bg-brand-charcoal/10 group-hover:bg-transparent transition-colors duration-700" />
+                          
+                          {/* Premium Border Ring */}
+                          <div className="absolute inset-4 border border-white/30 rounded-2xl pointer-events-none mix-blend-overlay" />
+                        </div>
+                        
+                        {/* Floating Badge */}
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.4, duration: 0.6 }}
+                          className={`absolute -bottom-6 ${isEven ? '-right-6' : '-left-6'} bg-white text-brand-charcoal px-6 py-4 rounded-2xl shadow-xl border border-brand-clay/30 flex items-center gap-3 z-20`}
+                        >
+                          <CheckCircle2 className="w-5 h-5 text-brand-green" />
+                          <span className="font-bold text-sm tracking-wide uppercase">
+                            {project.status === 'completed' 
+                              ? (lang === 'mr' ? 'पूर्ण प्रकल्प' : 'Completed') 
+                              : (lang === 'mr' ? 'सक्रिय प्रकल्प' : 'Active Initiative')}
+                          </span>
+                        </motion.div>
+                      </motion.div>
 
-                </div>
-              );
-            })}
+                      {/* Content Section */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: isEven ? 50 : -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="w-full lg:w-1/2 space-y-8"
+                      >
+                        <div className="space-y-4">
+                          <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-charcoal leading-[1.1]">
+                            {title}
+                          </h2>
+                        </div>
+                        
+                        <div className="w-12 h-1 bg-brand-yellow rounded-full" />
+                        
+                        <p className="text-lg text-brand-muted font-light leading-relaxed whitespace-pre-wrap">
+                          {desc}
+                        </p>
+                      </motion.div>
+
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
