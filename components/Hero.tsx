@@ -53,6 +53,14 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
     },
   ];
 
+  const heroImages = [
+    '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg',
+    '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg',
+    '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg',
+    '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg',
+    '/awards/Awards/DSC_0595.JPG',
+  ];
+
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0d1a14] pt-32 pb-20 text-white z-0">
       {/* Cinematic Background image */}
@@ -63,16 +71,16 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
       
       {/* Cinematic Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0a130d]/80 via-[#0a130d]/40 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a130d]/90 via-[#0a130d]/60 to-[#0a130d]/10 pointer-events-none" />
 
       {/* Cinematic Grain texture */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col justify-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:flex-row items-center justify-between gap-12">
         
-        {/* Main Content Area */}
-        <div className="max-w-4xl space-y-8 text-left mt-12 md:mt-0">
+        {/* Main Content Area (Left) */}
+        <div className="w-full lg:w-[55%] max-w-2xl space-y-8 text-left mt-12 md:mt-0">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -108,7 +116,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-white/60 font-light max-w-2xl leading-relaxed"
+            className="text-base sm:text-lg text-white/60 font-light max-w-xl leading-relaxed"
           >
             {t.hero.subtext}
           </motion.p>
@@ -164,7 +172,39 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
               </div>
             </div>
           </motion.div>
+        </div>
 
+        {/* Right Photo Scroll - Hidden on mobile/tablet */}
+        <div className="hidden lg:flex w-[45%] h-[600px] overflow-hidden relative rounded-3xl [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+          <div className="flex gap-4 w-full h-[200%]">
+            {/* Column 1 - Scrolling up */}
+            <motion.div 
+              animate={{ y: ["0%", "-50%"] }} 
+              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+              className="w-1/2 flex flex-col gap-4"
+            >
+              {[...heroImages, ...heroImages].map((src, i) => (
+                <div key={`col1-${i}`} className="w-full h-64 rounded-2xl overflow-hidden relative flex-shrink-0">
+                  <img src={src} className="w-full h-full object-cover" alt="" />
+                  <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />
+                </div>
+              ))}
+            </motion.div>
+            
+            {/* Column 2 - Scrolling down */}
+            <motion.div 
+              animate={{ y: ["-50%", "0%"] }} 
+              transition={{ repeat: Infinity, duration: 45, ease: "linear" }}
+              className="w-1/2 flex flex-col gap-4"
+            >
+              {[...[...heroImages].reverse(), ...[...heroImages].reverse()].map((src, i) => (
+                <div key={`col2-${i}`} className="w-full h-80 rounded-2xl overflow-hidden relative flex-shrink-0">
+                  <img src={src} className="w-full h-full object-cover" alt="" />
+                  <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </div>
 
       </div>

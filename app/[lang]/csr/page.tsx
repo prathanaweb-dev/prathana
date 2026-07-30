@@ -4,9 +4,10 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Building2, Handshake, Heart, Target, ChevronRight, Mail } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Mail, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRef } from 'react';
 
 export default function CSRPage() {
   const params = useParams();
@@ -14,134 +15,198 @@ export default function CSRPage() {
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
   const csr = (t as any).csr;
 
-  const projectIcons = [
-    <Heart className="w-6 h-6" key="heart" />,
-    <Handshake className="w-6 h-6" key="handshake" />,
-    <Building2 className="w-6 h-6" key="building" />,
-    <Target className="w-6 h-6" key="target" />,
-    <Target className="w-6 h-6" key="target2" />,
-    <Heart className="w-6 h-6" key="heart2" />,
-    <Building2 className="w-6 h-6" key="building" />,
+  // Actual images from the foundation's archives
+  const projectImages = [
+    '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg', // Balgram
+    '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg', // Old Age Home
+    '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg', // Vanchitanchi Shala
+    '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg', // Natural Farming
+    '/awards/Awards/DSC_0595.JPG', // Youth Dev
+    '/awards/Awards/20200420_084411.jpg', // Disaster Mgmt
+    '/awards/Awards/FB_IMG_1541862550370.jpg', // Education
   ];
 
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
-    <div className="relative min-h-screen bg-[#fbf9f5] overflow-hidden flex flex-col justify-between selection:bg-brand-yellow/30 selection:text-brand-forest">
+    <div className="relative min-h-screen bg-brand-paper selection:bg-brand-yellow/30 selection:text-brand-forest">
       <Header lang={lang} />
 
       <main className="flex-1 z-10 pt-20">
         
-        {/* ── CINEMATIC HERO ── */}
-        <section className="relative bg-[#0d1a14] text-white pt-24 pb-32 md:pb-40 overflow-hidden">
-          {/* Ambient overlays */}
-          <div className="absolute inset-0 bg-[url('/grain.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0d1a14] via-[#0d1a14]/90 to-transparent pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-brand-green/20 rounded-full blur-[150px] pointer-events-none" />
+        {/* ── HIGH-END CINEMATIC HERO ── */}
+        <section ref={heroRef} className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-[#0d1a14] overflow-hidden">
+          {/* Parallax Background */}
+          <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
+            <div className="absolute inset-0 bg-[url('/awards/Awards/FB_IMG_1541862550370.jpg')] bg-cover bg-center opacity-30 mix-blend-luminosity scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0d1a14]/90 via-[#0d1a14]/60 to-[#0d1a14] pointer-events-none" />
+            <div className="absolute inset-0 bg-[url('/grain.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
+            <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-green/20 rounded-full blur-[150px] pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-brand-yellow/10 rounded-full blur-[150px] pointer-events-none" />
+          </motion.div>
 
-          <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 text-center space-y-6">
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <span className="inline-flex items-center gap-2 text-brand-yellow text-xs font-bold tracking-[0.25em] uppercase">
-                <span className="w-6 h-px bg-brand-yellow/60" />
+          <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 text-center space-y-8 mt-10">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: "easeOut" }}>
+              <span className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-brand-yellow/30 bg-brand-yellow/10 backdrop-blur-md text-brand-yellow text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase shadow-[0_0_30px_rgba(240,165,0,0.15)]">
                 {csr.label}
-                <span className="w-6 h-px bg-brand-yellow/60" />
               </span>
             </motion.div>
 
             <motion.h1 
-              initial={{ opacity: 0, y: 20 }} 
+              initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="font-serif-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.1]"
+              transition={{ duration: 0.9, delay: 0.1, ease: "easeOut" }}
+              className="font-serif-display text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-white leading-[1.05]"
             >
               {csr.title}
             </motion.h1>
 
             <motion.p 
-              initial={{ opacity: 0, y: 20 }} 
+              initial={{ opacity: 0, y: 30 }} 
               animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-lg md:text-xl text-white/70 font-light leading-relaxed max-w-3xl mx-auto"
+              transition={{ duration: 0.9, delay: 0.2, ease: "easeOut" }}
+              className="text-lg md:text-2xl text-white/60 font-light leading-relaxed max-w-3xl mx-auto"
             >
               {csr.subtitle}
             </motion.p>
           </div>
+          
+          {/* Scroll Indicator */}
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          >
+            <div className="w-px h-16 bg-gradient-to-b from-brand-yellow/50 to-transparent" />
+          </motion.div>
         </section>
 
-        {/* ── PROJECTS GRID ── */}
-        <section className="py-24 -mt-16 md:-mt-24 relative z-20">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-              {csr.projects.map((project: any, idx: number) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group bg-white p-8 md:p-10 rounded-3xl border border-stone-200/80 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-                >
-                  <div className="space-y-5 text-left">
-                    <div className="w-14 h-14 rounded-2xl bg-[#0d1a14]/5 flex items-center justify-center text-brand-charcoal group-hover:bg-[#0d1a14] group-hover:text-brand-yellow transition-colors duration-300">
-                      {projectIcons[idx % projectIcons.length]}
+        {/* ── PREMIUM ALTERNATING PROJECTS ── */}
+        <section className="py-24 md:py-32 relative bg-brand-paper">
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+          
+          <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-32 md:space-y-48">
+            {csr.projects.map((project: any, idx: number) => {
+              const isEven = idx % 2 === 0;
+              return (
+                <div key={idx} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24 relative`}>
+                  
+                  {/* Decorative Background Glows */}
+                  <div className={`absolute top-1/2 -translate-y-1/2 ${isEven ? '-left-20' : '-right-20'} w-96 h-96 bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none`} />
+
+                  {/* Image Section */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="w-full lg:w-1/2 relative group"
+                  >
+                    <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+                      {/* Image */}
+                      <img 
+                        src={projectImages[idx]} 
+                        alt={project.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      />
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-brand-charcoal/10 group-hover:bg-transparent transition-colors duration-700" />
+                      
+                      {/* Premium Border Ring */}
+                      <div className="absolute inset-4 border border-white/30 rounded-2xl pointer-events-none mix-blend-overlay" />
                     </div>
                     
-                    <div>
-                      <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight">
-                        {project.title}
-                      </h3>
+                    {/* Floating Badge */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.4, duration: 0.6 }}
+                      className={`absolute -bottom-6 ${isEven ? '-right-6' : '-left-6'} bg-white text-brand-charcoal px-6 py-4 rounded-2xl shadow-xl border border-brand-clay/30 flex items-center gap-3 z-20`}
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-brand-green" />
+                      <span className="font-bold text-sm tracking-wide uppercase">{lang === 'mr' ? 'सक्रिय प्रकल्प' : 'Active Initiative'}</span>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Content Section */}
+                  <motion.div 
+                    initial={{ opacity: 0, x: isEven ? 50 : -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="w-full lg:w-1/2 space-y-8"
+                  >
+                    <div className="space-y-4">
                       {project.tagline && (
-                        <p className="text-xs font-bold uppercase tracking-wider text-brand-saffron mt-2">
+                        <span className="inline-block text-xs font-bold uppercase tracking-widest text-brand-saffron bg-brand-saffron/10 px-4 py-1.5 rounded-full">
                           {project.tagline}
-                        </p>
+                        </span>
                       )}
+                      <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-charcoal leading-[1.1]">
+                        {project.title}
+                      </h2>
                     </div>
                     
-                    <p className="text-[15px] text-stone-600 font-light leading-relaxed">
+                    <div className="w-12 h-1 bg-brand-yellow rounded-full" />
+                    
+                    <p className="text-lg text-brand-muted font-light leading-relaxed">
                       {project.desc}
                     </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                  </motion.div>
+
+                </div>
+              );
+            })}
           </div>
         </section>
 
-        {/* ── CALL TO ACTION ── */}
-        <section className="py-20 md:py-32 bg-brand-charcoal relative overflow-hidden">
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
+        {/* ── HIGH-IMPACT CALL TO ACTION ── */}
+        <section className="py-32 relative bg-brand-charcoal overflow-hidden border-t-8 border-brand-yellow">
+          <div className="absolute inset-0 bg-[url('/grain.svg')] opacity-10 mix-blend-overlay pointer-events-none" />
+          <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-brand-charcoal via-brand-forest/40 to-brand-charcoal pointer-events-none" />
           
-          <div className="relative max-w-4xl mx-auto px-6 md:px-12 text-center space-y-8">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }} 
+          <div className="relative max-w-4xl mx-auto px-6 md:px-12 text-center space-y-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }} 
               whileInView={{ opacity: 1, y: 0 }} 
               viewport={{ once: true }}
-              className="font-serif-display text-4xl md:text-5xl font-bold text-white"
+              transition={{ duration: 0.7 }}
             >
-              {csr.ctaHeader}
-            </motion.h2>
+              <h2 className="font-serif-display text-5xl md:text-7xl font-bold text-white leading-tight">
+                {csr.ctaHeader}
+              </h2>
+            </motion.div>
             
             <motion.p 
-              initial={{ opacity: 0, y: 20 }} 
+              initial={{ opacity: 0, y: 30 }} 
               whileInView={{ opacity: 1, y: 0 }} 
               viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-white/70 font-light leading-relaxed"
+              transition={{ delay: 0.1, duration: 0.7 }}
+              className="text-xl md:text-2xl text-white/60 font-light leading-relaxed max-w-2xl mx-auto"
             >
               {csr.ctaDesc}
             </motion.p>
             
             <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
+              initial={{ opacity: 0, y: 30 }} 
               whileInView={{ opacity: 1, y: 0 }} 
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+              className="pt-6"
             >
               <Link
                 href={`/${lang}/contact`}
-                className="inline-flex items-center gap-3 bg-brand-yellow hover:bg-brand-saffron text-brand-charcoal font-bold py-4 px-8 rounded-full text-sm uppercase tracking-wider transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="group relative inline-flex items-center justify-center gap-3 bg-brand-yellow text-brand-charcoal font-bold py-5 px-10 rounded-full text-[15px] uppercase tracking-widest overflow-hidden transition-transform duration-300 hover:scale-105 shadow-[0_0_40px_rgba(240,165,0,0.3)]"
               >
-                <Mail className="w-4 h-4" />
-                {csr.ctaBtn}
+                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <Mail className="w-5 h-5 relative z-10" />
+                <span className="relative z-10">{csr.ctaBtn}</span>
               </Link>
             </motion.div>
           </div>
