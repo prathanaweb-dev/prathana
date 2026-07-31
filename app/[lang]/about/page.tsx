@@ -126,6 +126,13 @@ const content = {
     stats: [
       { num: 45, suffix: '', label: 'Children Living Safely' },
       { num: 25, suffix: '', label: 'Senior Citizens Cared For' },
+      { num: 60, suffix: '+', label: 'Dignified Last Rites Performed' },
+      { num: 110, suffix: '+', label: 'Children Mainstreamed into Schools' },
+      { num: 4500, suffix: '+', label: 'Students Supported with Kits' },
+      { num: 300, suffix: '+', label: 'Youth Empowered' },
+      { num: 45000, suffix: '+', label: 'Relief Meals Served' },
+      { num: 10000, suffix: '+', label: 'Families Provided Grocery Kits' },
+      { num: 11, suffix: '', label: 'Flood-Damaged Homes Rebuilt' },
       { num: 16, suffix: '+', label: 'Vegetables Grown Organically' },
       { num: 2018, suffix: '', label: 'Serving Since' },
     ],
@@ -229,6 +236,13 @@ const content = {
     stats: [
       { num: 45, suffix: '', label: 'सुरक्षित राहणारी मुले' },
       { num: 25, suffix: '', label: 'आश्रित वृद्ध व्यक्ती' },
+      { num: 60, suffix: '+', label: 'निराधारांवर केलेले अंत्यसंस्कार' },
+      { num: 110, suffix: '+', label: 'शिक्षणाच्या प्रवाहात आणलेली मुले' },
+      { num: 4500, suffix: '+', label: 'शैक्षणिक मदत मिळालेले विद्यार्थी' },
+      { num: 300, suffix: '+', label: 'सक्षम केलेले तरुण' },
+      { num: 45000, suffix: '+', label: 'गरजूंना दिलेले जेवण' },
+      { num: 10000, suffix: '+', label: 'कुटुंबांना दिलेले रेशन किट' },
+      { num: 11, suffix: '', label: 'पूरग्रस्तांची पुनर्बांधणी केलेली घरे' },
       { num: 16, suffix: '+', label: 'नैसर्गिक सेंद्रिय भाज्या' },
       { num: 2018, suffix: '', label: 'पासून अविरत सेवा' },
     ],
@@ -777,18 +791,18 @@ export default function AboutPage() {
         <section id="stats" className="py-20 bg-brand-charcoal relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-5" />
           <div className="relative max-w-6xl mx-auto px-6 md:px-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 divide-x divide-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 border-l border-t border-white/10">
               {local.stats.map((s, i) => (
                 <motion.div key={i}
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="text-center px-6 py-12 group"
+                  viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}
+                  className="text-center px-4 py-12 group border-r border-b border-white/10"
                 >
-                  <div className="font-serif-display text-5xl md:text-7xl font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors duration-500">
+                  <div className="font-serif-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors duration-500">
                     <CountUp to={s.num} />{s.suffix}
                   </div>
                   <div className="w-8 h-0.5 bg-brand-yellow/50 rounded-full mx-auto mb-3 group-hover:w-16 transition-all duration-500" />
-                  <p className="text-white/40 text-xs font-sans font-semibold uppercase tracking-widest">{s.label}</p>
+                  <p className="text-white/40 text-[10px] md:text-xs font-sans font-semibold uppercase tracking-widest">{s.label}</p>
                 </motion.div>
               ))}
             </div>
