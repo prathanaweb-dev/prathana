@@ -183,10 +183,24 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
 
         {/* Bottom copyright bar */}
         <div className="border-t border-white/10 bg-brand-charcoal/40">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <span className="text-[10px] text-white/40 uppercase tracking-widest font-light">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span className="text-[10px] text-white/40 uppercase tracking-widest font-light text-center md:text-left">
               &copy; {new Date().getFullYear()} Prathana Foundation Solapur. All rights reserved.
             </span>
+
+            <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] uppercase tracking-widest font-light text-white/50">
+              <a href={`/${lang}/legal/terms`} className="hover:text-white transition-colors">
+                {isMarathi ? 'अटी व शर्ती' : 'Terms & Conditions'}
+              </a>
+              <span className="text-white/20">|</span>
+              <a href={`/${lang}/legal/privacy`} className="hover:text-white transition-colors">
+                {isMarathi ? 'गोपनीयता धोरण' : 'Privacy Policy'}
+              </a>
+              <span className="text-white/20">|</span>
+              <a href={`/${lang}/legal/refund`} className="hover:text-white transition-colors">
+                {isMarathi ? 'परतावा धोरण' : 'Refund Policy'}
+              </a>
+            </div>
 
             <div className="flex items-center gap-6">
               <a
