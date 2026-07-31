@@ -66,6 +66,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
     { name: t.nav.events, href: `/${lang}/events` },
     { name: t.nav.gallery, href: `/${lang}/gallery` },
     { name: lang === 'mr' ? 'टीम' : 'Team', href: `/${lang}/team` },
+    { name: lang === 'mr' ? 'कायदेशीर' : 'Legal', href: `/${lang}/legal/terms` },
     { name: lang === 'mr' ? 'संपर्क' : 'Contact', href: `/${lang}/contact` },
   ];
 
@@ -205,9 +206,15 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
               </a>
               <a
                 href={`/${lang}/team`}
-                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors"
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors border-b border-brand-clay/30"
               >
                 {lang === 'mr' ? 'टीम' : 'Team'}
+              </a>
+              <a
+                href={`/${lang}/legal/terms`}
+                className="block px-4 py-2.5 text-xs font-semibold text-brand-muted hover:text-brand-charcoal hover:bg-brand-sand/40 transition-colors"
+              >
+                {lang === 'mr' ? 'कायदेशीर' : 'Legal'}
               </a>
             </div>
           </div>
