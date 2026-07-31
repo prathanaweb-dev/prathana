@@ -99,6 +99,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                   { name: t.nav.events, href: `/${lang}/events` },
                   { name: t.nav.gallery, href: `/${lang}/gallery` },
                   { name: isMr ? 'टीम' : 'Team', href: `/${lang}/team` },
+                  { name: isMr ? 'कायदेशीर' : 'Legal', href: `/${lang}/legal/terms` },
                 ].map((link) => (
                   <a
                     key={link.name}
