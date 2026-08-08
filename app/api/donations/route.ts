@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { campaign_id, donor_name, donor_email, amount, payment_id, payment_status } = body;
+    const { campaign_id, donor_name, donor_email, amount, payment_id, payment_status, utr, screenshot } = body;
 
     if (!campaign_id || !donor_name || !donor_email || !amount || !payment_id) {
       return NextResponse.json(
@@ -41,6 +41,8 @@ export async function POST(req: Request) {
       amount: Number(amount),
       payment_id,
       payment_status: payment_status || 'pending',
+      utr,
+      screenshot,
     });
 
     if (!donation) {

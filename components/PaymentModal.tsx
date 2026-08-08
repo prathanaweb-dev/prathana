@@ -108,12 +108,33 @@ export default function PaymentModal({
     setError('');
     setLoading(true);
 
-    // Simulate verification API call
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/donations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaign_id: campaignId,
+          donor_name: donorName,
+          donor_email: donorEmail,
+          amount: val,
+          payment_id: 'manual_' + Math.random().toString(36).substring(2, 9),
+          payment_status: 'pending',
+          utr: utrNumber,
+          screenshot: screenshotName
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        onSuccess(val, donorName, campaignId);
+        setStep('success');
+      } else {
+        setError(data.error || 'Failed to submit donation details.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred.');
+    } finally {
       setLoading(false);
-      onSuccess(val, donorName, campaignId);
-      setStep('success');
-    }, 1500);
+    }
   };
 
   const handleClose = () => {

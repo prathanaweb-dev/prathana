@@ -86,7 +86,7 @@ export default function DonationClient({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
-                    {lang === 'mr' ? 'देणगीची पडताळणी झाली' : 'Donation Verified'}
+                    {lang === 'mr' ? 'देणगी जमा केली' : 'Donation Submitted'}
                   </span>
                   <button
                     onClick={() => setToast(null)}
@@ -106,8 +106,8 @@ export default function DonationClient({
                 </p>
 
                 <div className="flex items-center gap-1.5 mt-2 text-[10px] text-white/30 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-green" />
-                  {lang === 'mr' ? 'नोंद अपडेट केली' : 'Ledger updated'}
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow" />
+                  {lang === 'mr' ? 'प्रशासकाच्या मान्यतेच्या प्रतीक्षेत' : 'Pending admin approval'}
                   <ArrowRight className="w-3 h-3" />
                 </div>
               </div>

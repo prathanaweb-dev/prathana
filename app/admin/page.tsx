@@ -605,6 +605,25 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateDonation = async (id: string, status: 'success'|'failed') => {
+    try {
+      const res = await fetch('/api/donations/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ donation_id: id, status })
+      });
+      const data = await res.json();
+      if (data.success) {
+        notify(`Donation marked as ${status}`);
+        fetchAll();
+      } else {
+        notify(data.error || 'Update failed', 'error');
+      }
+    } catch (e: any) {
+      notify(e.message, 'error');
+    }
+  };
+
   const navItems: { id: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
     { id: 'dashboard',  icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
@@ -841,8 +860,10 @@ export default function AdminDashboard() {
                           <tr className="border-b border-white/5">
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Donor</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Amount</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Details</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden md:table-cell">Status</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden lg:table-cell">Date</th>
+                            <th className="text-right px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Actions</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -853,12 +874,28 @@ export default function AdminDashboard() {
                                 <div className="text-[11px] text-white/30">{d.donor_email}</div>
                               </td>
                               <td className="px-5 py-3.5 font-bold text-amber-400">{fmtCurrency(d.amount)}</td>
+                              <td className="px-5 py-3.5">
+                                {d.utr && <div className="text-[11px] text-white/60">UTR: <span className="font-mono text-white/90">{d.utr}</span></div>}
+                                {d.screenshot && <div className="text-[11px] text-amber-400/80 hover:text-amber-400 cursor-pointer flex items-center gap-1 mt-0.5" onClick={() => window.open(d.screenshot, '_blank')}><Eye size={10} /> View Proof</div>}
+                              </td>
                               <td className="px-5 py-3.5 hidden md:table-cell"><Badge status={d.payment_status} /></td>
                               <td className="px-5 py-3.5 text-white/30 text-[12px] hidden lg:table-cell">{fmtDate(d.created_at)}</td>
+                              <td className="px-5 py-3.5 text-right">
+                                {d.payment_status === 'pending' && (
+                                  <div className="flex items-center justify-end gap-2">
+                                    <button onClick={() => handleUpdateDonation(d.id, 'success')} className="p-1.5 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-lg transition-colors cursor-pointer" title="Approve">
+                                      <Check size={14} />
+                                    </button>
+                                    <button onClick={() => handleUpdateDonation(d.id, 'failed')} className="p-1.5 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors cursor-pointer" title="Reject">
+                                      <X size={14} />
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
                             </tr>
                           ))}
                           {filteredDonations.length === 0 && (
-                            <tr><td colSpan={4} className="text-center py-12 text-white/20">No donations found</td></tr>
+                            <tr><td colSpan={6} className="text-center py-12 text-white/20">No donations found</td></tr>
                           )}
                         </tbody>
                       </table>

@@ -58,6 +58,8 @@ export interface Donation {
   amount: number;
   payment_id: string;
   payment_status: 'pending' | 'success' | 'failed';
+  utr?: string;
+  screenshot?: string;
   created_at: string;
 }
 
@@ -436,6 +438,8 @@ export async function recordDonation(donation: Omit<Donation, 'id' | 'created_at
         amount: Number(donation.amount),
         payment_id: donation.payment_id,
         payment_status: donation.payment_status,
+        utr: donation.utr || '',
+        screenshot: donation.screenshot || '',
         created_at: newDonation.created_at,
       });
 
@@ -475,16 +479,25 @@ export async function recordDonation(donation: Omit<Donation, 'id' | 'created_at
   }
 }
 
-export async function updateDonationStatus(orderId: string, status: 'success' | 'failed', razorpayPaymentId?: string): Promise<Donation | null> {
+export async function updateDonationStatus(idOrOrderId: string, status: 'success' | 'failed', razorpayPaymentId?: string): Promise<Donation | null> {
   if (isFirebaseConfigured && firestore) {
     try {
-      const q = query(collection(firestore, 'donations'), where('payment_id', '==', orderId));
-      const snap = await getDocs(q);
-      if (snap.empty) return null;
-      const targetDoc = snap.docs[0];
-      const donation = { id: targetDoc.id, ...targetDoc.data() } as Donation;
+      // First try to find by document ID directly, then fallback to payment_id for legacy
+      let docRef = doc(firestore, 'donations', idOrOrderId);
+      let snap = await getDoc(docRef);
+      let donation: Donation;
       
-      const docRef = doc(firestore, 'donations', donation.id);
+      if (snap.exists()) {
+        donation = { id: snap.id, ...snap.data() } as Donation;
+      } else {
+        const q = query(collection(firestore, 'donations'), where('payment_id', '==', idOrOrderId));
+        const qSnap = await getDocs(q);
+        if (qSnap.empty) return null;
+        const targetDoc = qSnap.docs[0];
+        donation = { id: targetDoc.id, ...targetDoc.data() } as Donation;
+        docRef = doc(firestore, 'donations', donation.id);
+      }
+      
       const updatePayload: any = { payment_status: status };
       if (razorpayPaymentId) {
         updatePayload.payment_id = razorpayPaymentId;
@@ -511,7 +524,7 @@ export async function updateDonationStatus(orderId: string, status: 'success' | 
     }
   } else {
     const db = await getMockDB();
-    const idx = db.donations.findIndex(d => d.payment_id === orderId);
+    const idx = db.donations.findIndex(d => d.id === idOrOrderId || d.payment_id === idOrOrderId);
     if (idx === -1) return null;
     const donation = db.donations[idx];
     const oldStatus = donation.payment_status;
