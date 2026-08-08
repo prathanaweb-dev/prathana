@@ -32,7 +32,7 @@ export default function HomeClient({
   initialStats,
 }: HomeClientProps) {
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
-  const [donations, setDonations] = useState<Donation[]>(initialDonations);
+  const [donations, setDonations] = useState<Donation[]>(initialDonations.filter(d => d.payment_status === 'success'));
   const [stats, setStats] = useState(initialStats);
 
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -52,7 +52,9 @@ export default function HomeClient({
 
       const donationsRes = await fetch('/api/donations');
       const donationsData = await donationsRes.json();
-      if (donationsData.success) setDonations(donationsData.donations);
+      if (donationsData.success) {
+        setDonations(donationsData.donations.filter((d: any) => d.payment_status === 'success'));
+      }
 
       const statsRes = await fetch('/api/donations?stats=true');
       const statsData = await statsRes.json();
