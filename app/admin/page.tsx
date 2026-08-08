@@ -876,7 +876,7 @@ export default function AdminDashboard() {
                               <td className="px-5 py-3.5 font-bold text-amber-400">{fmtCurrency(d.amount)}</td>
                               <td className="px-5 py-3.5">
                                 {d.utr && <div className="text-[11px] text-white/60">UTR: <span className="font-mono text-white/90">{d.utr}</span></div>}
-                                {d.screenshot && <div className="text-[11px] text-amber-400/80 hover:text-amber-400 cursor-pointer flex items-center gap-1 mt-0.5" onClick={() => window.open(d.screenshot, '_blank')}><Eye size={10} /> View Proof</div>}
+                                {d.screenshot && <div className="text-[11px] text-amber-400/80 hover:text-amber-400 cursor-pointer flex items-center gap-1 mt-0.5" onClick={() => d.screenshot?.startsWith('http') ? window.open(d.screenshot, '_blank') : alert('This proof was uploaded before Cloudinary integration and is unavailable. (Raw filename: ' + d.screenshot + ')')}><Eye size={10} /> View Proof</div>}
                               </td>
                               <td className="px-5 py-3.5 hidden md:table-cell"><Badge status={d.payment_status} /></td>
                               <td className="px-5 py-3.5 text-white/30 text-[12px] hidden lg:table-cell">{fmtDate(d.created_at)}</td>
