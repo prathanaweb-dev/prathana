@@ -217,6 +217,7 @@ export default function AdminDashboard() {
   const [reports, setReports]       = useState<Report[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [bankSettings, setBankSettings] = useState<any>(null);
+  const [savingSettings, setSavingSettings] = useState(false);
 
   // Team form
   const [tDrawer, setTDrawer]     = useState(false);
@@ -580,7 +581,6 @@ export default function AdminDashboard() {
     if (data.success) { notify('Member deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
-  const [savingSettings, setSavingSettings] = useState(false);
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bankSettings) return;
