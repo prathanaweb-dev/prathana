@@ -23,6 +23,10 @@ export default function PaymentModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copiedUpi, setCopiedUpi] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'djoklzpse';
+  const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'prathana_admin';
 
   // Form inputs
   const [campaignId, setCampaignId] = useState('');
@@ -75,9 +79,33 @@ export default function PaymentModal({
     setTimeout(() => setCopiedUpi(false), 2000);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setScreenshotName(e.target.files[0].name);
+      const file = e.target.files[0];
+      setScreenshotName('Uploading...');
+      setIsUploading(true);
+      setError('');
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('upload_preset', UPLOAD_PRESET);
+        fd.append('folder', 'prathana/donations');
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: fd,
+        });
+        const data = await res.json();
+        if (data.secure_url) {
+          setScreenshotName(data.secure_url);
+        } else {
+          throw new Error(data.error?.message || 'Upload failed');
+        }
+      } catch (err: any) {
+        setError(err.message || 'Screenshot upload failed');
+        setScreenshotName('');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -352,12 +380,15 @@ export default function PaymentModal({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full py-4 border-2 border-dashed border-brand-clay/70 rounded-xl flex flex-col items-center justify-center gap-2 text-brand-muted hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group"
+                      disabled={isUploading}
+                      className="w-full py-4 border-2 border-dashed border-brand-clay/70 rounded-xl flex flex-col items-center justify-center gap-2 text-brand-muted hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {screenshotName ? (
                         <>
                           <FileImage className="w-6 h-6 text-brand-green" />
-                          <span className="text-xs font-bold text-brand-charcoal">{screenshotName}</span>
+                          <span className="text-xs font-bold text-brand-charcoal overflow-hidden text-ellipsis max-w-[80%] whitespace-nowrap">
+                            {screenshotName === 'Uploading...' ? 'Uploading...' : 'Screenshot Uploaded'}
+                          </span>
                           <span className="text-[10px] text-brand-muted group-hover:text-brand-charcoal transition-colors">Click to change file</span>
                         </>
                       ) : (
@@ -375,8 +406,8 @@ export default function PaymentModal({
               {/* Submit CTA */}
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
+                disabled={loading || isUploading}
+                className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
