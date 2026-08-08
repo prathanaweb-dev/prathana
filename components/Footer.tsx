@@ -177,7 +177,6 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                   </span>
                 </div>
                 </div>
-              </div>
             </motion.div>
 
           </div>
