@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { upiId, bankName, accountName, accountNumber, ifscCode, branch } = body;
+    const { upiId, bankName, accountName, accountNumber, ifscCode, branch, qrCodeUrl } = body;
 
     const updated = await updateSettings({
       upiId,
@@ -24,7 +24,8 @@ export async function POST(req: Request) {
       accountName,
       accountNumber,
       ifscCode,
-      branch
+      branch,
+      qrCodeUrl
     });
 
     if (updated) {

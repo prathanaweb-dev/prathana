@@ -156,6 +156,7 @@ export interface Settings {
   accountNumber: string;
   ifscCode: string;
   branch: string;
+  qrCodeUrl?: string;
   updated_at?: string;
 }
 
