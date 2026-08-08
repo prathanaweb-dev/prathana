@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Heart, Shield, CheckCircle, IndianRupee, Loader2 } from 'lucide-react';
-import { isFirebaseConfigured, Campaign } from '@/lib/db';
+import { useState, useEffect, useRef } from 'react';
+import { X, Heart, Shield, IndianRupee, Loader2, QrCode, UploadCloud, FileImage, Copy, Check } from 'lucide-react';
+import { Campaign } from '@/lib/db';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -19,9 +19,10 @@ export default function PaymentModal({
   selectedCampaignId,
   onSuccess,
 }: PaymentModalProps) {
-  const [step, setStep] = useState<'details' | 'simulating' | 'success'>('details');
+  const [step, setStep] = useState<'details' | 'success'>('details');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copiedUpi, setCopiedUpi] = useState(false);
 
   // Form inputs
   const [campaignId, setCampaignId] = useState('');
@@ -29,13 +30,20 @@ export default function PaymentModal({
   const [customAmount, setCustomAmount] = useState('');
   const [donorName, setDonorName] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
+  const [utrNumber, setUtrNumber] = useState('');
+  const [screenshotName, setScreenshotName] = useState('');
+  const [bankSettings, setBankSettings] = useState<any>(null);
 
-  // Payment mock tracking
-  const [mockPaymentDetails, setMockPaymentDetails] = useState<{
-    orderId: string;
-    amount: number;
-    campaignId: string;
-  } | null>(null);
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) setBankSettings(d.settings);
+      })
+      .catch(console.error);
+  }, []);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync selected campaign id
   useEffect(() => {
@@ -46,22 +54,11 @@ export default function PaymentModal({
     }
   }, [selectedCampaignId, campaigns, campaignId]);
 
-  // Load Razorpay Checkout SDK dynamically
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   if (!isOpen) return null;
 
   const presetAmounts = ['500', '1000', '2500', '5000'];
   const finalAmount = amount === 'custom' ? customAmount : amount;
-  const currentCampaign = campaigns.find((c) => c.id === campaignId);
+  const upiId = bankSettings?.upiId || 'prathanafoundation@sbi';
 
   const handlePresetSelect = (val: string) => {
     setAmount(val);
@@ -72,7 +69,19 @@ export default function PaymentModal({
     setAmount('custom');
   };
 
-  const handlePaymentInit = async (e: React.FormEvent) => {
+  const copyUpiId = () => {
+    navigator.clipboard.writeText(upiId);
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2000);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setScreenshotName(e.target.files[0].name);
+    }
+  };
+
+  const handleSubmitVerification = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!campaignId) {
       setError('Please select a campaign');
@@ -87,133 +96,37 @@ export default function PaymentModal({
       setError('Please fill in your name and email');
       return;
     }
-
-    setError('');
-    setLoading(true);
-
-    try {
-      // 1. Create order on server
-      const res = await fetch('/api/payments/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: val,
-          campaignId,
-          donorName,
-          donorEmail,
-        }),
-      });
-
-      const orderData = await res.json();
-      if (!res.ok) throw new Error(orderData.error || 'Failed to initialize payment');
-
-      // 2. Route based on sandbox/production
-      if (orderData.mock) {
-        // Run mock simulation flow
-        setMockPaymentDetails({
-          orderId: orderData.orderId,
-          amount: val,
-          campaignId,
-        });
-        setLoading(false);
-        setStep('simulating');
-      } else {
-        // Launch real Razorpay checkout
-        const options = {
-          key: orderData.keyId,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: 'Prathana Foundation',
-          description: `Donation: ${currentCampaign?.title || 'NGO campaign'}`,
-          image: '/logo.png',
-          order_id: orderData.orderId,
-          handler: async function (response: any) {
-            setLoading(true);
-            try {
-              // 3. Verify on server
-              const verifyRes = await fetch('/api/payments/verify', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                }),
-              });
-
-              const verifyData = await verifyRes.json();
-              if (!verifyRes.ok) throw new Error(verifyData.error || 'Verification failed');
-
-              // Success
-              onSuccess(val, donorName, campaignId);
-              setStep('success');
-            } catch (err: any) {
-              setError(err.message || 'Payment verification failed');
-            } finally {
-              setLoading(false);
-            }
-          },
-          prefill: {
-            name: donorName,
-            email: donorEmail,
-          },
-          theme: {
-            color: '#0D9488',
-          },
-        };
-
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', function (response: any) {
-          setError(response.error.description || 'Payment failed');
-        });
-        rzp.open();
-        setLoading(false);
-      }
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
-      setLoading(false);
+    if (!utrNumber.trim()) {
+      setError('Please enter the 12-digit UTR/Reference number');
+      return;
     }
-  };
+    if (!screenshotName) {
+      setError('Please upload a screenshot of your successful transaction');
+      return;
+    }
 
-  const handleSimulatedSuccess = async () => {
-    if (!mockPaymentDetails) return;
-    setLoading(true);
     setError('');
+    setLoading(true);
 
-    try {
-      const verifyRes = await fetch('/api/payments/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          razorpay_order_id: mockPaymentDetails.orderId,
-          razorpay_payment_id: `pay_sim_${Math.random().toString(36).substring(2, 9)}`,
-          razorpay_signature: 'simulated_signature_hash',
-        }),
-      });
-
-      const verifyData = await verifyRes.json();
-      if (!verifyRes.ok) throw new Error(verifyData.error || 'Verification failed');
-
-      // Trigger success callback
-      onSuccess(mockPaymentDetails.amount, donorName, mockPaymentDetails.campaignId);
+    // Simulate verification API call
+    setTimeout(() => {
+      setLoading(false);
+      onSuccess(val, donorName, campaignId);
       setStep('success');
-    } catch (err: any) {
-      setError(err.message || 'Failed to complete transaction simulation');
-    } finally {
-      setLoading(false);
-    }
+    }, 1500);
   };
 
   const handleClose = () => {
     // Reset states
     setStep('details');
-    setMockPaymentDetails(null);
     setError('');
+    setUtrNumber('');
+    setScreenshotName('');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-brand-charcoal/80 transition-opacity duration-300"
@@ -248,23 +161,45 @@ export default function PaymentModal({
           )}
 
           {step === 'details' && (
-            <form onSubmit={handlePaymentInit} className="space-y-4">
-              {/* Campaign Dropdown */}
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-brand-muted font-semibold mb-1.5">
-                  Select Campaign
-                </label>
-                <select
-                  value={campaignId}
-                  onChange={(e) => setCampaignId(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm text-brand-charcoal focus:ring-2 focus:ring-brand-yellow/10 focus:border-brand-yellow outline-none transition-all"
-                >
-                  {campaigns.map((camp) => (
-                    <option key={camp.id} value={camp.id}>
-                      {camp.title}
-                    </option>
-                  ))}
-                </select>
+            <form onSubmit={handleSubmitVerification} className="space-y-6">
+              
+              {/* QR Code and UPI Section */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 bg-brand-sand/30 border border-brand-clay/50 rounded-2xl">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-32 h-32 bg-white border-2 border-brand-clay rounded-xl flex items-center justify-center p-2 shadow-sm">
+                    {/* Placeholder for real QR Code image */}
+                    <div className="w-full h-full border-4 border-brand-charcoal border-dashed rounded-lg flex flex-col items-center justify-center text-brand-charcoal/30 relative">
+                      <QrCode className="w-10 h-10 mb-1" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-center">Place QR Here</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-brand-muted">
+                    Scan with any UPI app
+                  </span>
+                </div>
+                
+                <div className="flex-1 space-y-4 w-full text-center md:text-left">
+                  <div>
+                    <h4 className="font-serif-display text-xl font-bold text-brand-charcoal">{bankSettings?.accountName || 'Prathana Foundation'}</h4>
+                    <p className="text-sm text-brand-muted font-light mt-0.5">{bankSettings?.bankName || 'State Bank of India'} - A/C: {bankSettings?.accountNumber || '1234567890'}</p>
+                    <p className="text-xs text-brand-muted font-light mt-0.5">IFSC: {bankSettings?.ifscCode || 'SBIN0001234'} ({bankSettings?.branch || 'Solapur Main'})</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-brand-muted block">Official UPI ID</span>
+                    <button 
+                      type="button"
+                      onClick={copyUpiId}
+                      className="flex items-center justify-center md:justify-start gap-2 text-brand-forest font-bold text-base hover:text-brand-yellow transition-colors group w-full"
+                    >
+                      {upiId}
+                      {copiedUpi ? (
+                        <Check className="w-4 h-4 text-brand-green" />
+                      ) : (
+                        <Copy className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Amount Presets */}
@@ -309,6 +244,24 @@ export default function PaymentModal({
                 </div>
               </div>
 
+              {/* Campaign Dropdown */}
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-brand-muted font-semibold mb-1.5">
+                  Select Campaign
+                </label>
+                <select
+                  value={campaignId}
+                  onChange={(e) => setCampaignId(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm text-brand-charcoal focus:ring-2 focus:ring-brand-yellow/10 focus:border-brand-yellow outline-none transition-all"
+                >
+                  {campaigns.map((camp) => (
+                    <option key={camp.id} value={camp.id}>
+                      {camp.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Donor Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -334,133 +287,108 @@ export default function PaymentModal({
                     value={donorEmail}
                     onChange={(e) => setDonorEmail(e.target.value)}
                     placeholder="e.g. anand@outlook.com"
-                    className="w-full px-4 py-2.5 bg-brand-paper border border-brand-clay rounded-lg text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
+                    className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
                   />
                 </div>
               </div>
 
-              {/* Shield Trust Bar */}
-              <div className="flex items-center gap-3 p-3.5 bg-brand-sand/40 border border-brand-clay/40 rounded-xl text-[11px] text-brand-muted">
-                <Shield className="w-5 h-5 text-brand-green flex-shrink-0" />
-                <p>
-                  Secure payment infrastructure. 100% of your donation is directly recorded and transparently tracked. All contributions qualify for 80G tax benefit receipts.
-                </p>
+              {/* Verification Details: UTR and Screenshot */}
+              <div className="pt-4 border-t border-brand-clay/50 space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-4 h-4 text-brand-green" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-charcoal">Payment Verification</span>
+                </div>
+                
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1.5">
+                    UTR / Transaction Reference Number
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={utrNumber}
+                    onChange={(e) => setUtrNumber(e.target.value)}
+                    placeholder="e.g. 312345678901"
+                    className="w-full px-4 py-2.5 bg-white border border-brand-clay rounded-xl text-sm outline-none focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/10 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1.5">
+                    Transaction Screenshot
+                  </label>
+                  <div className="relative">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      className="hidden" 
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full py-4 border-2 border-dashed border-brand-clay/70 rounded-xl flex flex-col items-center justify-center gap-2 text-brand-muted hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group"
+                    >
+                      {screenshotName ? (
+                        <>
+                          <FileImage className="w-6 h-6 text-brand-green" />
+                          <span className="text-xs font-bold text-brand-charcoal">{screenshotName}</span>
+                          <span className="text-[10px] text-brand-muted group-hover:text-brand-charcoal transition-colors">Click to change file</span>
+                        </>
+                      ) : (
+                        <>
+                          <UploadCloud className="w-6 h-6 group-hover:text-brand-yellow transition-colors" />
+                          <span className="text-xs font-bold group-hover:text-brand-charcoal transition-colors">Upload Screenshot</span>
+                          <span className="text-[10px]">PNG, JPG up to 5MB</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Submit CTA */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 shadow-md"
+                className="w-full py-3.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold rounded-full text-[13px] tracking-wide transition-all flex items-center justify-center gap-2 shadow-md hover:-translate-y-0.5"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Initializing Payment...
+                    Submitting Verification...
                   </>
                 ) : (
-                  `Proceed to Pay ₹${Number(finalAmount).toLocaleString('en-IN')}`
+                  `Verify Payment of ₹${Number(finalAmount).toLocaleString('en-IN')}`
                 )}
               </button>
             </form>
           )}
 
-          {step === 'simulating' && mockPaymentDetails && (
-            <div className="space-y-5 py-2">
-              <div className="p-5 bg-brand-sand/50 border border-brand-yellow/30 rounded-2xl text-center">
-                <span className="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-brand-yellow/15 text-brand-forest rounded-full mb-2">
-                  Simulation Sandbox Mode
-                </span>
-                <h4 className="font-serif-display text-base font-semibold text-brand-charcoal">
-                  Razorpay Checkout Gateway Simulation
-                </h4>
-                <p className="text-brand-muted text-xs mt-1.5 leading-relaxed max-w-sm mx-auto">
-                  Prathana Foundation is running in verification offline simulation. Use this step to test the full live stats update and receipting engine.
-                </p>
-              </div>
-
-              <div className="border border-brand-clay rounded-2xl overflow-hidden bg-white">
-                <div className="px-4 py-3 bg-brand-charcoal text-white text-xs font-semibold tracking-wider uppercase flex justify-between">
-                  <span>Merchant: Prathana Foundation</span>
-                  <span className="text-brand-gold">₹{mockPaymentDetails.amount.toLocaleString('en-IN')}.00</span>
-                </div>
-                
-                <div className="p-4 space-y-3">
-                  <div className="flex justify-between items-center text-xs border-b border-brand-clay/30 pb-2">
-                    <span className="text-brand-muted">Order Ref</span>
-                    <span className="font-mono font-medium text-brand-charcoal">{mockPaymentDetails.orderId}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs border-b border-brand-clay/30 pb-2">
-                    <span className="text-brand-muted">Donor Name</span>
-                    <span className="font-medium text-brand-charcoal">{donorName}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs pb-1">
-                    <span className="text-brand-muted">Donor Email</span>
-                    <span className="font-medium text-brand-charcoal">{donorEmail}</span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-brand-sand/30 border-t border-brand-clay flex flex-col gap-2">
-                  <button
-                    onClick={handleSimulatedSuccess}
-                    disabled={loading}
-                    className="w-full py-2.5 bg-brand-green text-white text-xs font-semibold rounded-xl shadow-sm hover:bg-brand-charcoal transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    {loading ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <>
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        Authorize Successful Checkout
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setError('Simulated transaction cancelled by donor');
-                      setStep('details');
-                    }}
-                    className="w-full py-2 border border-brand-clay text-brand-muted text-xs font-medium rounded-xl hover:bg-brand-sand/30 transition-colors"
-                  >
-                    Cancel Transaction
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {step === 'success' && (
             <div className="text-center py-6 space-y-4">
-              <div className="w-16 h-16 bg-brand-green/10 text-brand-green rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                <Heart className="w-8 h-8 fill-current" />
+              <div className="w-16 h-16 bg-brand-yellow/20 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                <Shield className="w-8 h-8 fill-current" />
               </div>
               <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal">
                 Thank You, {donorName.split(' ')[0]}!
               </h3>
               <p className="text-brand-muted text-sm leading-relaxed max-w-sm mx-auto">
-                Your donation of <span className="font-semibold text-brand-forest">₹{Number(finalAmount).toLocaleString('en-IN')}</span> has been successfully processed. 
-                A verification receipt has been logged. 
+                Your donation verification of <span className="font-semibold text-brand-forest">₹{Number(finalAmount).toLocaleString('en-IN')}</span> has been submitted successfully. 
               </p>
               
-              {/* Handwritten thank you letter accent */}
-              <div className="p-6 bg-brand-sand/40 border border-brand-clay/70 rounded-xl text-left max-w-sm mx-auto shadow-inner relative overflow-hidden">
-                <span className="absolute -right-4 -bottom-4 font-serif text-brand-clay/35 text-7xl select-none font-bold">
-                  Hope
-                </span>
-                <p className="font-serif italic text-sm text-brand-charcoal/80 leading-relaxed">
-                  &ldquo;Every light of hope begins with a single act of kindness. By feeding a child, equipping a student, or aiding a clinic, you have extended a healing hand to Solapur.&rdquo;
+              <div className="p-4 bg-brand-sand/40 border border-brand-clay/70 rounded-xl text-center max-w-sm mx-auto shadow-sm">
+                <p className="text-xs text-brand-charcoal/80 leading-relaxed font-medium">
+                  Our team is reviewing the transaction details. You will receive an official 80G tax receipt on <span className="font-bold text-brand-charcoal">{donorEmail}</span> shortly after verification.
                 </p>
-                <div className="mt-4 border-t border-brand-clay/40 pt-3 flex justify-between items-center text-[10px] uppercase tracking-wider text-brand-muted font-semibold">
-                  <span>Prathana Governing Body</span>
-                  <span>Solapur Office</span>
-                </div>
               </div>
 
               <button
                 onClick={handleClose}
-                className="px-8 py-2.5 bg-brand-yellow hover:bg-brand-yellow/90 text-brand-charcoal font-bold transition-all rounded-full text-xs tracking-wider uppercase mt-4 shadow-md hover:-translate-y-0.5"
+                className="px-8 py-2.5 bg-brand-charcoal hover:bg-brand-yellow hover:text-brand-charcoal text-white font-bold transition-all rounded-full text-xs tracking-wider uppercase mt-4 shadow-md hover:-translate-y-0.5"
               >
-                Close & View Progress
+                Close Window
               </button>
             </div>
           )}

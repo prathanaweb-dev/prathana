@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Mail, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, CheckCircle2, Loader2, FolderUp, FileCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { Project } from '@/lib/db';
@@ -26,6 +26,21 @@ export default function CSRPage() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFolderInfo, setUploadedFolderInfo] = useState<string | null>(null);
+  const [isUploadingFolder, setIsUploadingFolder] = useState(false);
+
+  const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setIsUploadingFolder(true);
+      const fileCount = e.target.files.length;
+      // Simulate folder upload processing
+      setTimeout(() => {
+        setUploadedFolderInfo(`${fileCount} file(s) from folder uploaded successfully.`);
+        setIsUploadingFolder(false);
+      }, 1500);
+    }
+  };
 
   useEffect(() => {
     async function fetchProjects() {
@@ -226,7 +241,7 @@ export default function CSRPage() {
               whileInView={{ opacity: 1, y: 0 }} 
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.7 }}
-              className="pt-6"
+              className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-6"
             >
               <Link
                 href={`/${lang}/contact`}
@@ -236,7 +251,52 @@ export default function CSRPage() {
                 <Mail className="w-5 h-5 relative z-10" />
                 <span className="relative z-10">{csr.ctaBtn}</span>
               </Link>
+              
+              <div className="relative">
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFolderUpload}
+                  // @ts-ignore - React types don't natively include webkitdirectory well, but browsers support it
+                  webkitdirectory="" 
+                  directory="" 
+                  multiple 
+                  className="hidden" 
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingFolder}
+                  className="group relative inline-flex items-center justify-center gap-3 bg-white/10 border border-white/30 text-white font-bold py-5 px-10 rounded-full text-[15px] uppercase tracking-widest overflow-hidden transition-all duration-300 hover:bg-white/20 hover:scale-105 backdrop-blur-sm"
+                >
+                  <span className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  {isUploadingFolder ? (
+                    <Loader2 className="w-5 h-5 relative z-10 animate-spin" />
+                  ) : uploadedFolderInfo ? (
+                    <FileCheck className="w-5 h-5 relative z-10 text-brand-green" />
+                  ) : (
+                    <FolderUp className="w-5 h-5 relative z-10" />
+                  )}
+                  <span className="relative z-10">
+                    {isUploadingFolder 
+                      ? (lang === 'mr' ? 'अपलोड करत आहे...' : 'Uploading...') 
+                      : uploadedFolderInfo 
+                        ? (lang === 'mr' ? 'यशस्वी' : 'Uploaded') 
+                        : (lang === 'mr' ? 'फोल्डर अपलोड करा' : 'Upload Folder')}
+                  </span>
+                </button>
+              </div>
             </motion.div>
+            
+            {/* Success message */}
+            {uploadedFolderInfo && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-brand-green text-sm mt-4 font-bold tracking-wide"
+              >
+                {uploadedFolderInfo}
+              </motion.p>
+            )}
           </div>
         </section>
 

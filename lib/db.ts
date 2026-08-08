@@ -146,6 +146,17 @@ export interface TeamMember {
   created_at: string;
 }
 
+export interface Settings {
+  id?: string;
+  upiId: string;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  ifscCode: string;
+  branch: string;
+  updated_at?: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -156,6 +167,7 @@ interface MockDBSchema {
   gallery: GalleryPhoto[];
   reports: Report[];
   team_members: TeamMember[];
+  settings: Settings;
 }
 
 // Local mock database helpers
@@ -170,6 +182,14 @@ async function getMockDB(): Promise<MockDBSchema> {
     gallery: [],
     reports: [],
     team_members: [],
+    settings: {
+      upiId: 'prathanafoundation@sbi',
+      bankName: 'State Bank of India',
+      accountName: 'Prathana Foundation',
+      accountNumber: '1234567890',
+      ifscCode: 'SBIN0001234',
+      branch: 'Solapur Main'
+    }
   };
 
   if (typeof window !== 'undefined') {
@@ -812,6 +832,62 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at'>)
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SETTINGS METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getSettings(): Promise<Settings> {
+  const defaultSettings: Settings = {
+    upiId: 'prathanafoundation@sbi',
+    bankName: 'State Bank of India',
+    accountName: 'Prathana Foundation',
+    accountNumber: '1234567890',
+    ifscCode: 'SBIN0001234',
+    branch: 'Solapur Main'
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'settings', 'global');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data() as Settings;
+      }
+      return defaultSettings;
+    } catch (err) {
+      console.error('Firebase getSettings error:', err);
+      return defaultSettings;
+    }
+  } else {
+    const db = await getMockDB();
+    return db.settings || defaultSettings;
+  }
+}
+
+export async function updateSettings(updates: Partial<Settings>): Promise<Settings | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'settings', 'global');
+      const cleanUpdates: any = { ...updates, updated_at: new Date().toISOString() };
+      delete cleanUpdates.id;
+      
+      // Since it's a singleton, use setDoc with merge to ensure it exists
+      await setDoc(docRef, cleanUpdates, { merge: true });
+      const snap = await getDoc(docRef);
+      return snap.data() as Settings;
+    } catch (err) {
+      console.error('Firebase updateSettings error:', err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    const current = db.settings || {};
+    const updated = { ...current, ...updates, updated_at: new Date().toISOString() } as Settings;
+    db.settings = updated;
+    await saveMockDB(db);
+    return updated;
+  }
+}
 export async function updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
   if (isFirebaseConfigured && firestore) {
     try {

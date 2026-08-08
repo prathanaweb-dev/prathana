@@ -18,12 +18,13 @@ export default function Contact({ lang }: ContactProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate contact form submission
+    // Trigger mailto link as backend fallback
     setTimeout(() => {
+      window.location.href = `mailto:contact@prathanafoundation.org?subject=Website Contact: ${formState.name}&body=${encodeURIComponent(formState.message)}%0A%0A--%0AFrom: ${formState.name}%0AEmail: ${formState.email}`;
       setSubmitted(true);
       setLoading(false);
       setFormState({ name: '', email: '', message: '' });
-    }, 1200);
+    }, 800);
   };
 
   return (

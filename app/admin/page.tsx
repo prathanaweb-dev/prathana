@@ -28,7 +28,7 @@ import {
   ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
   RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
-  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon
+  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon, Settings as SettingsIcon
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -192,7 +192,7 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery';
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery'|'settings';
 type ContentSub = 'activities'|'projects'|'events'|'reports';
 
 export default function AdminDashboard() {
@@ -216,6 +216,7 @@ export default function AdminDashboard() {
   const [gallery, setGallery]       = useState<{id:string;url:string;title:string;title_mr?:string;desc?:string;category:string;created_at:string}[]>([]);
   const [reports, setReports]       = useState<Report[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [bankSettings, setBankSettings] = useState<any>(null);
 
   // Team form
   const [tDrawer, setTDrawer]     = useState(false);
@@ -310,7 +311,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co, g, rp, tm] = await Promise.all([
+      const [c, d, v, a, p, e, co, g, rp, tm, setRes] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -321,6 +322,7 @@ export default function AdminDashboard() {
         fetch('/api/gallery').then(r => r.json()),
         fetch('/api/reports').then(r => r.json()),
         fetch('/api/team').then(r => r.json()),
+        fetch('/api/settings').then(r => r.json()),
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -335,6 +337,9 @@ export default function AdminDashboard() {
       setGallery(g.photos || []);
       setReports(rp.reports || []);
       setTeamMembers(tm.team_members || []);
+      if (setRes.settings) {
+        setBankSettings(setRes.settings);
+      }
 
       setStats({
         totalRaised:     camps.reduce((s: number, x: Campaign) => s + Number(x.amount_raised), 0),
@@ -575,6 +580,31 @@ export default function AdminDashboard() {
     if (data.success) { notify('Member deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
+  const [savingSettings, setSavingSettings] = useState(false);
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bankSettings) return;
+    setSavingSettings(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bankSettings)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBankSettings(data.settings);
+        notify('Settings saved!');
+      } else {
+        notify(data.error || 'Failed to save', 'error');
+      }
+    } catch (err: any) {
+      notify(err.message || 'Error saving settings', 'error');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   const navItems: { id: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
     { id: 'dashboard',  icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
@@ -584,6 +614,7 @@ export default function AdminDashboard() {
     { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
     { id: 'gallery',    icon: <ImageIcon size={18} />,       label: 'Gallery',    badge: gallery.length || undefined },
     { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
+    { id: 'settings',   icon: <SettingsIcon size={18} />,    label: 'Settings' },
   ];
 
   const fmtCurrency = (n: number) => '₹' + n.toLocaleString('en-IN');
@@ -1233,6 +1264,80 @@ export default function AdminDashboard() {
                     ))}
                     {contacts.length === 0 && <div className="text-center py-16 text-white/20 text-sm">No contact messages yet</div>}
                   </div>
+                </div>
+              )}
+              {/* ════ SETTINGS ════ */}
+              {tab === 'settings' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-white font-bold mb-4">Bank & UPI Settings</h2>
+                  <form onSubmit={handleSaveSettings} className="bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Field label="UPI ID">
+                        <input
+                          value={bankSettings?.upiId || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, upiId: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. prathana@sbi"
+                          required
+                        />
+                      </Field>
+                      <Field label="Bank Name">
+                        <input
+                          value={bankSettings?.bankName || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, bankName: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. State Bank of India"
+                          required
+                        />
+                      </Field>
+                      <Field label="Account Name">
+                        <input
+                          value={bankSettings?.accountName || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, accountName: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. Prathana Foundation"
+                          required
+                        />
+                      </Field>
+                      <Field label="Account Number">
+                        <input
+                          value={bankSettings?.accountNumber || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, accountNumber: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. 1234567890"
+                          required
+                        />
+                      </Field>
+                      <Field label="IFSC Code">
+                        <input
+                          value={bankSettings?.ifscCode || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, ifscCode: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. SBIN0001234"
+                          required
+                        />
+                      </Field>
+                      <Field label="Branch">
+                        <input
+                          value={bankSettings?.branch || ''}
+                          onChange={e => setBankSettings({ ...bankSettings, branch: e.target.value })}
+                          className={inputCls}
+                          placeholder="e.g. Solapur Main"
+                          required
+                        />
+                      </Field>
+                    </div>
+                    <div className="pt-4 border-t border-white/10 flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={savingSettings || !bankSettings}
+                        className="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-[0_4px_16px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {savingSettings ? <Loader2 size={16} className="animate-spin" /> : <SettingsIcon size={16} />}
+                        Save Settings
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
             </>
