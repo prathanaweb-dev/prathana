@@ -187,12 +187,15 @@ export default function PaymentModal({
               {/* QR Code and UPI Section */}
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 bg-brand-sand/30 border border-brand-clay/50 rounded-2xl">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-32 h-32 bg-white border-2 border-brand-clay rounded-xl flex items-center justify-center p-2 shadow-sm">
-                    {/* Placeholder for real QR Code image */}
-                    <div className="w-full h-full border-4 border-brand-charcoal border-dashed rounded-lg flex flex-col items-center justify-center text-brand-charcoal/30 relative">
-                      <QrCode className="w-10 h-10 mb-1" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-center">Place QR Here</span>
-                    </div>
+                  <div className="w-32 h-32 bg-white border-2 border-brand-clay rounded-xl flex items-center justify-center p-2 shadow-sm overflow-hidden">
+                    {bankSettings?.qrCodeUrl ? (
+                      <img src={bankSettings.qrCodeUrl} alt="UPI QR Code" className="w-full h-full object-contain" />
+                    ) : (
+                      <div className="w-full h-full border-4 border-brand-charcoal border-dashed rounded-lg flex flex-col items-center justify-center text-brand-charcoal/30 relative">
+                        <QrCode className="w-10 h-10 mb-1" />
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-center">Place QR Here</span>
+                      </div>
+                    )}
                   </div>
                   <span className="text-[10px] font-bold tracking-widest uppercase text-brand-muted">
                     Scan with any UPI app

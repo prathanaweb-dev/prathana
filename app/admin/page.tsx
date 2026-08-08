@@ -1309,6 +1309,13 @@ export default function AdminDashboard() {
                   <h2 className="text-white font-bold mb-4">Bank & UPI Settings</h2>
                   <form onSubmit={handleSaveSettings} className="bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <ImageUpload
+                          label="UPI QR Code"
+                          value={bankSettings?.qrCodeUrl || ''}
+                          onChange={url => setBankSettings({ ...bankSettings, qrCodeUrl: url })}
+                        />
+                      </div>
                       <Field label="UPI ID">
                         <input
                           value={bankSettings?.upiId || ''}
