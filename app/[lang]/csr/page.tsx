@@ -5,10 +5,10 @@ import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Mail, CheckCircle2, Loader2, FolderUp, FileCheck } from 'lucide-react';
+import { Mail, Loader2, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import type { Project } from '@/lib/db';
+import type { CsrDocument } from '@/lib/db';
 
 export default function CSRPage() {
   const params = useParams();
@@ -24,40 +24,24 @@ export default function CSRPage() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [docs, setDocs] = useState<CsrDocument[]>([]);
   const [loading, setLoading] = useState(true);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFolderInfo, setUploadedFolderInfo] = useState<string | null>(null);
-  const [isUploadingFolder, setIsUploadingFolder] = useState(false);
-
-  const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setIsUploadingFolder(true);
-      const fileCount = e.target.files.length;
-      // Simulate folder upload processing
-      setTimeout(() => {
-        setUploadedFolderInfo(`${fileCount} file(s) from folder uploaded successfully.`);
-        setIsUploadingFolder(false);
-      }, 1500);
-    }
-  };
 
   useEffect(() => {
-    async function fetchProjects() {
+    async function fetchDocs() {
       try {
-        const res = await fetch('/api/projects');
+        const res = await fetch('/api/csr-docs');
         const data = await res.json();
         if (data.success) {
-          // Filter to only show ongoing/active projects if needed, or just show all
-          setProjects(data.projects || []);
+          setDocs(data.documents || []);
         }
       } catch (err) {
-        console.error('Failed to fetch projects', err);
+        console.error('Failed to fetch csr docs', err);
       } finally {
         setLoading(false);
       }
     }
-    fetchProjects();
+    fetchDocs();
   }, []);
 
   return (
@@ -112,96 +96,55 @@ export default function CSRPage() {
           </motion.div>
         </section>
 
-        {/* ── PREMIUM ALTERNATING PROJECTS (DYNAMIC) ── */}
+        {/* ── DOCUMENT LIBRARY (PREMIUM GRID) ── */}
         <section className="py-24 md:py-32 relative bg-brand-paper min-h-[50vh]">
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
           
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 relative">
             {loading ? (
               <div className="flex flex-col items-center justify-center h-64 text-brand-muted space-y-4">
                 <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
-                <p className="tracking-widest uppercase text-xs font-bold">Loading Projects...</p>
+                <p className="tracking-widest uppercase text-xs font-bold">Loading Documents...</p>
               </div>
-            ) : projects.length === 0 ? (
+            ) : docs.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-brand-muted text-center space-y-4">
-                <p className="text-xl font-light">No projects available at the moment.</p>
-                <p className="text-sm">Please check back later for our latest CSR proposals.</p>
+                <FileText className="w-12 h-12 opacity-20" />
+                <p className="text-xl font-light">No CSR documents available at the moment.</p>
               </div>
             ) : (
-              <div className="space-y-32 md:space-y-48">
-                {projects.map((project, idx) => {
-                  const isEven = idx % 2 === 0;
-                  const title = lang === 'mr' && project.title_mr ? project.title_mr : project.title;
-                  const desc = lang === 'mr' && project.description_mr ? project.description_mr : project.description;
-                  const imageSrc = project.image || '/awards/Awards/FB_IMG_1541862550370.jpg';
-
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {docs.map((doc, idx) => {
+                  const title = lang === 'mr' && doc.title_mr ? doc.title_mr : doc.title;
+                  
                   return (
-                    <div key={project.id || idx} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24 relative`}>
+                    <motion.a 
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      key={doc.id || idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1, duration: 0.5 }}
+                      className="group relative bg-white rounded-3xl p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(240,165,0,0.1)] border border-brand-clay/20 hover:border-brand-yellow/30 transition-all duration-500 overflow-hidden flex flex-col h-full"
+                    >
+                      <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                        <FileText className="w-32 h-32 text-brand-yellow rotate-12" />
+                      </div>
                       
-                      {/* Decorative Background Glows */}
-                      <div className={`absolute top-1/2 -translate-y-1/2 ${isEven ? '-left-20' : '-right-20'} w-96 h-96 bg-brand-saffron/10 rounded-full blur-[120px] pointer-events-none`} />
-
-                      {/* Image Section */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="w-full lg:w-1/2 relative group"
-                      >
-                        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl bg-brand-clay/20">
-                          {/* Image */}
-                          <img 
-                            src={imageSrc} 
-                            alt={title}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                          />
-                          {/* Overlay */}
-                          <div className="absolute inset-0 bg-brand-charcoal/10 group-hover:bg-transparent transition-colors duration-700" />
-                          
-                          {/* Premium Border Ring */}
-                          <div className="absolute inset-4 border border-white/30 rounded-2xl pointer-events-none mix-blend-overlay" />
+                      <div className="relative z-10 flex-1">
+                        <div className="w-14 h-14 bg-brand-clay/10 text-brand-forest rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-yellow group-hover:text-white transition-colors duration-500">
+                          <FileText className="w-6 h-6" />
                         </div>
-                        
-                        {/* Floating Badge */}
-                        <motion.div 
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.4, duration: 0.6 }}
-                          className={`absolute -bottom-6 ${isEven ? '-right-6' : '-left-6'} bg-white text-brand-charcoal px-6 py-4 rounded-2xl shadow-xl border border-brand-clay/30 flex items-center gap-3 z-20`}
-                        >
-                          <CheckCircle2 className="w-5 h-5 text-brand-green" />
-                          <span className="font-bold text-sm tracking-wide uppercase">
-                            {project.status === 'completed' 
-                              ? (lang === 'mr' ? 'पूर्ण प्रकल्प' : 'Completed') 
-                              : (lang === 'mr' ? 'सक्रिय प्रकल्प' : 'Active Initiative')}
-                          </span>
-                        </motion.div>
-                      </motion.div>
-
-                      {/* Content Section */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: isEven ? 50 : -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="w-full lg:w-1/2 space-y-8"
-                      >
-                        <div className="space-y-4">
-                          <h2 className="font-serif-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-charcoal leading-[1.1]">
-                            {title}
-                          </h2>
+                        <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal mb-4 group-hover:text-brand-forest transition-colors line-clamp-3">
+                          {title}
+                        </h3>
+                        <div className="text-sm text-brand-muted font-medium uppercase tracking-widest mt-auto pt-6 flex items-center gap-2 group-hover:text-brand-yellow transition-colors">
+                          <Download className="w-4 h-4" />
+                          {lang === 'mr' ? 'डाउनलोड करा' : 'Download Document'}
                         </div>
-                        
-                        <div className="w-12 h-1 bg-brand-yellow rounded-full" />
-                        
-                        <p className="text-lg text-brand-muted font-light leading-relaxed whitespace-pre-wrap">
-                          {desc}
-                        </p>
-                      </motion.div>
-
-                    </div>
+                      </div>
+                    </motion.a>
                   );
                 })}
               </div>
@@ -241,7 +184,7 @@ export default function CSRPage() {
               whileInView={{ opacity: 1, y: 0 }} 
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.7 }}
-              className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-6"
+              className="pt-6 flex justify-center"
             >
               <Link
                 href={`/${lang}/contact`}
@@ -251,52 +194,7 @@ export default function CSRPage() {
                 <Mail className="w-5 h-5 relative z-10" />
                 <span className="relative z-10">{csr.ctaBtn}</span>
               </Link>
-              
-              <div className="relative">
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFolderUpload}
-                  // @ts-ignore - React types don't natively include webkitdirectory well, but browsers support it
-                  webkitdirectory="" 
-                  directory="" 
-                  multiple 
-                  className="hidden" 
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingFolder}
-                  className="group relative inline-flex items-center justify-center gap-3 bg-white/10 border border-white/30 text-white font-bold py-5 px-10 rounded-full text-[15px] uppercase tracking-widest overflow-hidden transition-all duration-300 hover:bg-white/20 hover:scale-105 backdrop-blur-sm"
-                >
-                  <span className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                  {isUploadingFolder ? (
-                    <Loader2 className="w-5 h-5 relative z-10 animate-spin" />
-                  ) : uploadedFolderInfo ? (
-                    <FileCheck className="w-5 h-5 relative z-10 text-brand-green" />
-                  ) : (
-                    <FolderUp className="w-5 h-5 relative z-10" />
-                  )}
-                  <span className="relative z-10">
-                    {isUploadingFolder 
-                      ? (lang === 'mr' ? 'अपलोड करत आहे...' : 'Uploading...') 
-                      : uploadedFolderInfo 
-                        ? (lang === 'mr' ? 'यशस्वी' : 'Uploaded') 
-                        : (lang === 'mr' ? 'फोल्डर अपलोड करा' : 'Upload Folder')}
-                  </span>
-                </button>
-              </div>
             </motion.div>
-            
-            {/* Success message */}
-            {uploadedFolderInfo && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-brand-green text-sm mt-4 font-bold tracking-wide"
-              >
-                {uploadedFolderInfo}
-              </motion.p>
-            )}
           </div>
         </section>
 

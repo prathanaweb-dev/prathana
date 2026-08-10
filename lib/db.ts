@@ -106,6 +106,14 @@ export interface Project {
   created_at: string;
 }
 
+export interface CsrDocument {
+  id: string;
+  title: string;
+  title_mr?: string;
+  url: string;
+  created_at: string;
+}
+
 export interface EventItem {
   id: string;
   title: string;
@@ -166,6 +174,7 @@ interface MockDBSchema {
   volunteers: Volunteer[];
   activities: Activity[];
   projects: Project[];
+  csrDocuments: CsrDocument[];
   events: EventItem[];
   gallery: GalleryPhoto[];
   reports: Report[];
@@ -181,6 +190,7 @@ async function getMockDB(): Promise<MockDBSchema> {
     volunteers: [],
     activities: [],
     projects: [],
+    csrDocuments: [],
     events: [],
     gallery: [],
     reports: [],
@@ -845,6 +855,97 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at'>)
     return newProj;
   }
 }
+
+export async function deleteProject(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      await deleteDoc(doc(firestore, 'projects', id));
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteProject error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    db.projects = db.projects.filter((p: Project) => p.id !== id);
+    await saveMockDB(db);
+    return true;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CSR DOCUMENTS METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getCsrDocuments(): Promise<CsrDocument[]> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const q = query(collection(firestore, 'csr_documents'), orderBy('created_at', 'desc'));
+      const snap = await getDocs(q);
+      const list: CsrDocument[] = [];
+      snap.forEach(docSnap => {
+        list.push({ id: docSnap.id, ...docSnap.data() } as CsrDocument);
+      });
+      return list;
+    } catch (err) {
+      console.error('Firebase getCsrDocuments error:', err);
+      return [];
+    }
+  } else {
+    const db = await getMockDB();
+    return [...(db.csrDocuments || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+}
+
+export async function addCsrDocument(docInfo: Omit<CsrDocument, 'id' | 'created_at'>): Promise<CsrDocument | null> {
+  const newDoc: CsrDocument = {
+    id: 'csr-' + Math.random().toString(36).substring(2, 9),
+    ...docInfo,
+    created_at: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'csr_documents', newDoc.id);
+      await setDoc(docRef, {
+        title: newDoc.title,
+        title_mr: newDoc.title_mr || '',
+        url: newDoc.url,
+        created_at: newDoc.created_at,
+      });
+      return newDoc;
+    } catch (err) {
+      console.error('Firebase addCsrDocument error:', err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.csrDocuments) db.csrDocuments = [];
+    db.csrDocuments.push(newDoc);
+    await saveMockDB(db);
+    return newDoc;
+  }
+}
+
+export async function deleteCsrDocument(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      await deleteDoc(doc(firestore, 'csr_documents', id));
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteCsrDocument error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (db.csrDocuments) {
+      db.csrDocuments = db.csrDocuments.filter((d: CsrDocument) => d.id !== id);
+      await saveMockDB(db);
+    }
+    return true;
+  }
+}
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SETTINGS METHODS

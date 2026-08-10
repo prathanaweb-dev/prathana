@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ArrowRight, Users, Zap, HeartHandshake, Activity, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -61,13 +62,28 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
     '/awards/Awards/DSC_0595.JPG',
   ];
 
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBgIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroImages.length]);
+
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0d1a14] pt-32 pb-20 text-white z-0">
-      {/* Cinematic Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
-        style={{ backgroundImage: "url('/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg')" }}
-      />
+      {/* Cinematic Background Carousel */}
+      {heroImages.map((src, i) => (
+        <motion.div
+          key={src}
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: i === bgIndex ? 0.3 : 0 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          style={{ backgroundImage: `url('${src}')` }}
+        />
+      ))}
       
       {/* Cinematic Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20 pointer-events-none" />

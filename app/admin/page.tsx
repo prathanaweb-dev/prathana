@@ -191,8 +191,73 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
   );
 }
 
+function DocumentUpload({ value, onChange, label = 'Document' }: { value: string; onChange: (url: string) => void; label?: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'prathana/docs');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        onChange(data.secure_url);
+      } else {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">{label}</label>
+      
+      {value && (
+        <div className="flex items-center justify-between p-3 rounded-xl border border-white/10 bg-white/5">
+          <span className="text-xs text-brand-yellow truncate max-w-[200px]">{value.split('/').pop()}</span>
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-red-500/80 transition-colors"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-amber-500/40 hover:text-amber-400 transition-all text-xs font-semibold cursor-pointer disabled:opacity-50"
+      >
+        {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+        {uploading ? 'Uploading…' : value ? 'Replace Document' : 'Upload Document'}
+      </button>
+      {error && <p className="text-red-400 text-[11px]">{error}</p>}
+      <input ref={inputRef} type="file" className="hidden" onChange={handleFile} />
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
-type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery'|'settings';
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery'|'settings'|'csrdocs';
 type ContentSub = 'activities'|'projects'|'events'|'reports';
 
 export default function AdminDashboard() {
@@ -218,6 +283,7 @@ export default function AdminDashboard() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [bankSettings, setBankSettings] = useState<any>(null);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [csrDocs, setCsrDocs]       = useState<any[]>([]);
 
   // Team form
   const [tDrawer, setTDrawer]     = useState(false);
@@ -312,7 +378,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co, g, rp, tm, setRes] = await Promise.all([
+      const [c, d, v, a, p, e, co, g, rp, tm, setRes, csrRes] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -324,6 +390,7 @@ export default function AdminDashboard() {
         fetch('/api/reports').then(r => r.json()),
         fetch('/api/team').then(r => r.json()),
         fetch('/api/settings').then(r => r.json()),
+        fetch('/api/csr-docs').then(r => r.json())
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -340,6 +407,9 @@ export default function AdminDashboard() {
       setTeamMembers(tm.team_members || []);
       if (setRes.settings) {
         setBankSettings(setRes.settings);
+      }
+      if (csrRes.success) {
+        setCsrDocs(csrRes.documents || []);
       }
 
       setStats({
@@ -624,6 +694,51 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSaveCsr = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!csrTitle || !csrUrl) {
+      notify('Title and Document are required', 'error');
+      return;
+    }
+    setFormBusy(true);
+    try {
+      const res = await fetch('/api/csr-docs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: csrTitle, title_mr: csrTitleMr, url: csrUrl }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCsrDocs(prev => [data.document, ...prev]);
+        notify('CSR Document added successfully');
+        setCsrDrawer(false);
+        setCsrTitle(''); setCsrTitleMr(''); setCsrUrl('');
+      } else {
+        notify(data.error || 'Failed to add document', 'error');
+      }
+    } catch (err: any) {
+      notify(err.message, 'error');
+    } finally {
+      setFormBusy(false);
+    }
+  };
+
+  const handleDeleteCsr = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this document?')) return;
+    try {
+      const res = await fetch(`/api/csr-docs/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setCsrDocs(prev => prev.filter((d: any) => d.id !== id));
+        notify('Document deleted');
+      } else {
+        notify(data.error || 'Failed to delete', 'error');
+      }
+    } catch (err: any) {
+      notify(err.message, 'error');
+    }
+  };
+
   const navItems: { id: Tab; icon: React.ReactNode; label: string; badge?: number }[] = [
     { id: 'dashboard',  icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
@@ -631,6 +746,7 @@ export default function AdminDashboard() {
     { id: 'volunteers', icon: <Users size={18} />,           label: 'Volunteers', badge: volunteers.filter(v => v.status === 'pending').length || undefined },
     { id: 'team',       icon: <UserCheck size={18} />,       label: 'Team Management' },
     { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
+    { id: 'csrdocs',    icon: <FileText size={18} />,        label: 'CSR Docs' },
     { id: 'gallery',    icon: <ImageIcon size={18} />,       label: 'Gallery',    badge: gallery.length || undefined },
     { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
     { id: 'settings',   icon: <SettingsIcon size={18} />,    label: 'Settings' },
@@ -1382,6 +1498,98 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                   </form>
+                </div>
+              )}
+
+              {/* ── CSR Docs Tab ── */}
+              {tab === 'csrdocs' && (
+                <div className="space-y-6 max-w-5xl">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-white font-bold">CSR Documents</h2>
+                    <button
+                      onClick={() => {
+                        setCsrTitle('');
+                        setCsrTitleMr('');
+                        setCsrUrl('');
+                        setCsrDrawer(true);
+                      }}
+                      className="bg-brand-yellow hover:bg-amber-400 text-amber-950 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2"
+                    >
+                      <Plus size={16} /> Add Document
+                    </button>
+                  </div>
+                  
+                  {csrDocs.length === 0 ? (
+                    <div className="text-center py-20 text-white/40">
+                      <FileText size={48} className="mx-auto mb-4 opacity-20" />
+                      <p>No CSR documents uploaded yet.</p>
+                    </div>
+                  ) : (
+                    <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                      <table className="w-full text-left text-sm text-white/70">
+                        <thead className="bg-black/20 text-white/40 uppercase tracking-widest text-[10px]">
+                          <tr>
+                            <th className="p-4 font-semibold">Title (En / Mr)</th>
+                            <th className="p-4 font-semibold">File</th>
+                            <th className="p-4 font-semibold">Date</th>
+                            <th className="p-4 font-semibold text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {csrDocs.map((doc: any) => (
+                            <tr key={doc.id} className="hover:bg-white/[0.02]">
+                              <td className="p-4">
+                                <div className="font-medium text-white">{doc.title}</div>
+                                {doc.title_mr && <div className="text-xs opacity-60 mt-0.5">{doc.title_mr}</div>}
+                              </td>
+                              <td className="p-4">
+                                <a href={doc.url} target="_blank" rel="noreferrer" className="text-brand-yellow hover:underline flex items-center gap-1 text-xs">
+                                  <FileText size={14} /> View File
+                                </a>
+                              </td>
+                              <td className="p-4 text-xs">{fmtDate(doc.created_at)}</td>
+                              <td className="p-4 text-right">
+                                <button onClick={() => handleDeleteCsr(doc.id)} className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition-colors ml-auto">
+                                  <Trash2 size={14} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Add Document Drawer */}
+                  {csrDrawer && (
+                    <div className="fixed inset-0 z-[100] flex justify-end">
+                      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setCsrDrawer(false)} />
+                      <div className="relative w-full max-w-md bg-[#131824] h-full border-l border-white/10 p-6 overflow-y-auto">
+                        <div className="flex items-center justify-between mb-8">
+                          <h3 className="text-lg font-bold text-white">Add CSR Document</h3>
+                          <button onClick={() => setCsrDrawer(false)} className="text-white/40 hover:text-white"><X size={20} /></button>
+                        </div>
+                        <form onSubmit={handleSaveCsr} className="space-y-5">
+                          <Field label="Document Title (English)">
+                            <input value={csrTitle} onChange={e=>setCsrTitle(e.target.value)} required className={inputCls} placeholder="e.g. Annual Report 2023-24" />
+                          </Field>
+                          <Field label="Document Title (Marathi) - Optional">
+                            <input value={csrTitleMr} onChange={e=>setCsrTitleMr(e.target.value)} className={inputCls} placeholder="e.g. वार्षिक अहवाल 2023-24" />
+                          </Field>
+                          <DocumentUpload
+                            label="Upload PDF / Document"
+                            value={csrUrl}
+                            onChange={setCsrUrl}
+                          />
+                          <div className="pt-6">
+                            <button disabled={formBusy || !csrTitle || !csrUrl} type="submit" className="w-full bg-brand-yellow text-amber-950 font-bold py-3 rounded-xl disabled:opacity-50">
+                              {formBusy ? 'Saving...' : 'Save Document'}
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </>
