@@ -1,1 +1,2 @@
-export const defaultHomeContent = undefined;
+import { translations } from './translations';
+export const defaultHomeContent = translations;
