@@ -41,7 +41,7 @@ interface Project   { id: string; title: string; title_mr?: string; description:
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
-interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; created_at: string; }
+interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; linkedin?: string; facebook?: string; instagram?: string; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
@@ -357,6 +357,9 @@ export default function AdminDashboard() {
   const [tPos, setTPos]           = useState('');
   const [tPosMr, setTPosMr]       = useState('');
   const [tImage, setTImage]       = useState('');
+  const [tLinkedin, setTLinkedin] = useState('');
+  const [tFacebook, setTFacebook] = useState('');
+  const [tInstagram, setTInstagram] = useState('');
 
   // Gallery form
   const [gDrawer, setGDrawer]   = useState(false);
@@ -722,13 +725,24 @@ export default function AdminDashboard() {
     setTName(member?.name || '');
     setTPos(member?.position || ''); setTPosMr(member?.position_mr || '');
     setTImage(member?.image || '');
+    setTLinkedin(member?.linkedin || '');
+    setTFacebook(member?.facebook || '');
+    setTInstagram(member?.instagram || '');
     setTDrawer(true);
   };
   const saveTeamMember = async () => {
     if (!tName || !tPos || !tImage) return notify('Name, position and photo required', 'error');
     setFormBusy(true);
     try {
-      const body = { name: tName, position: tPos, position_mr: tPosMr, image: tImage };
+      const body = { 
+        name: tName, 
+        position: tPos, 
+        position_mr: tPosMr, 
+        image: tImage,
+        linkedin: tLinkedin,
+        facebook: tFacebook,
+        instagram: tInstagram
+      };
       const method = editTeam ? 'PUT' : 'POST';
       const payload = editTeam ? { id: editTeam.id, ...body } : body;
       const res = await fetch('/api/team', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1919,6 +1933,21 @@ export default function AdminDashboard() {
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">Position (Marathi) [Optional]</label>
             <input type="text" value={tPosMr} onChange={e => setTPosMr(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" placeholder="e.g. संस्थापक" />
+          </div>
+          <div className="pt-2 border-t border-white/10 space-y-3">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-amber-400">Social Links [Optional]</span>
+            <div>
+              <label className="block text-[10px] text-white/50 mb-1">LinkedIn Profile URL</label>
+              <input type="url" value={tLinkedin} onChange={e => setTLinkedin(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/50" placeholder="https://linkedin.com/in/username" />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/50 mb-1">Facebook Profile URL</label>
+              <input type="url" value={tFacebook} onChange={e => setTFacebook(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/50" placeholder="https://facebook.com/username" />
+            </div>
+            <div>
+              <label className="block text-[10px] text-white/50 mb-1">Instagram Profile URL</label>
+              <input type="url" value={tInstagram} onChange={e => setTInstagram(e.target.value)} className="w-full bg-[#1a1f2e] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500/50" placeholder="https://instagram.com/username" />
+            </div>
           </div>
           <button disabled={formBusy} onClick={saveTeamMember} className="w-full py-2.5 bg-amber-500 text-amber-950 font-bold text-sm rounded-xl hover:bg-amber-400 transition-colors disabled:opacity-50 mt-4 flex justify-center items-center gap-2">
             {formBusy && <Loader2 size={16} className="animate-spin" />}

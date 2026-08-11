@@ -154,6 +154,9 @@ export interface TeamMember {
   position: string;
   position_mr?: string;
   image: string;
+  linkedin?: string;
+  facebook?: string;
+  instagram?: string;
   created_at: string;
 }
 
