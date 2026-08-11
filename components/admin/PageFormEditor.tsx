@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Save, Code, Layout, Globe, ChevronRight, HelpCircle } from 'lucide-react';
+import { Save, Code, Layout, Globe, ChevronRight, HelpCircle, Plus, Trash2 } from 'lucide-react';
 
 interface PageFormEditorProps {
   selectedPage: 'home' | 'about';
@@ -44,11 +44,10 @@ export default function PageFormEditor({
   }, [pageContentStr]);
 
   // Helper to safely update nested properties
-  const updateField = (path: string[], value: any) => {
+  const updateField = (path: (string | number)[], value: any) => {
     if (!parsedData) return;
     const newData = JSON.parse(JSON.stringify(parsedData)); // Deep clone
 
-    // Ensure language container exists
     if (!newData[activeLang]) {
       newData[activeLang] = {};
     }
@@ -56,8 +55,8 @@ export default function PageFormEditor({
     let curr = newData[activeLang];
     for (let i = 0; i < path.length - 1; i++) {
       const key = path[i];
-      if (!curr[key] || typeof curr[key] !== 'object') {
-        curr[key] = {};
+      if (curr[key] === undefined || curr[key] === null) {
+        curr[key] = typeof path[i + 1] === 'number' ? [] : {};
       }
       curr = curr[key];
     }
@@ -68,7 +67,7 @@ export default function PageFormEditor({
   };
 
   // Safe accessor helper
-  const getVal = (path: string[], fallback = '') => {
+  const getVal = (path: (string | number)[], fallback: any = '') => {
     if (!parsedData || !parsedData[activeLang]) return fallback;
     let curr = parsedData[activeLang];
     for (let i = 0; i < path.length; i++) {
@@ -88,7 +87,12 @@ export default function PageFormEditor({
 
   const sectionsForAbout = [
     { id: 'hero', label: '🚀 Hero Banner' },
-    { id: 'chapters', label: '📖 Story Chapters' },
+    { id: 'chapters', label: '📖 Story Chapters 1, 2 & 3' },
+    { id: 'prathana', label: "🕊️ Prathana's Legacy" },
+    { id: 'timeline', label: '🗓️ Timeline Milestones' },
+    { id: 'founders', label: "👥 Founders' Messages" },
+    { id: 'sacrifice', label: '🌾 Land Sacrifice' },
+    { id: 'values', label: '💎 Vision & Core Values' },
     { id: 'cta', label: '🎯 Call to Action' },
   ];
 
@@ -108,7 +112,7 @@ export default function PageFormEditor({
             Page Content Manager
           </h3>
           <p className="text-xs text-white/40 mt-0.5">
-            Customize all titles, text descriptions, and statistics on your live website
+            Customize all titles, story chapters, quotes, and statistics on your live website
           </p>
         </div>
 
@@ -538,7 +542,7 @@ export default function PageFormEditor({
               {selectedPage === 'about' && activeSection === 'hero' && (
                 <div className="space-y-5">
                   <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
-                    Our Story Hero Section ({activeLang.toUpperCase()})
+                    Our Story Hero Banner ({activeLang.toUpperCase()})
                   </h4>
 
                   <div>
@@ -577,23 +581,34 @@ export default function PageFormEditor({
               {selectedPage === 'about' && activeSection === 'chapters' && (
                 <div className="space-y-6">
                   <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
-                    Story Chapters ({activeLang.toUpperCase()})
+                    Story Chapters 1, 2 & 3 ({activeLang.toUpperCase()})
                   </h4>
 
                   {/* Chapter 1 */}
                   <div className="space-y-3 bg-[#0b0e14] p-4 rounded-xl border border-white/5">
-                    <h5 className="text-xs font-bold text-amber-300">Chapter 01: Tragedy</h5>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Title</label>
-                      <input
-                        type="text"
-                        value={getVal(['chapters', 'c1', 'title'])}
-                        onChange={(e) => updateField(['chapters', 'c1', 'title'], e.target.value)}
-                        className="w-full bg-[#141923] border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
-                      />
+                    <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider">Chapter 01: Tragedy</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Title</label>
+                        <input
+                          type="text"
+                          value={getVal(['chapters', 'c1', 'title'])}
+                          onChange={(e) => updateField(['chapters', 'c1', 'title'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-white/60 mb-1">Year</label>
+                        <input
+                          type="text"
+                          value={getVal(['chapters', 'c1', 'year'])}
+                          onChange={(e) => updateField(['chapters', 'c1', 'year'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Story Body Text</label>
+                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Story Body Text</label>
                       <textarea
                         rows={3}
                         value={getVal(['chapters', 'c1', 'text'])}
@@ -605,9 +620,9 @@ export default function PageFormEditor({
 
                   {/* Chapter 2 */}
                   <div className="space-y-3 bg-[#0b0e14] p-4 rounded-xl border border-white/5">
-                    <h5 className="text-xs font-bold text-amber-300">Chapter 02: A Promise</h5>
+                    <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider">Chapter 02: A Promise</h5>
                     <div>
-                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Quote</label>
+                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Quote</label>
                       <input
                         type="text"
                         value={getVal(['chapters', 'c2', 'quote'])}
@@ -616,13 +631,426 @@ export default function PageFormEditor({
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Story Body Text</label>
+                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Story Body Text</label>
                       <textarea
                         rows={3}
                         value={getVal(['chapters', 'c2', 'text'])}
                         onChange={(e) => updateField(['chapters', 'c2', 'text'], e.target.value)}
                         className="w-full bg-[#141923] border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
                       />
+                    </div>
+                  </div>
+
+                  {/* Chapter 3 */}
+                  <div className="space-y-3 bg-[#0b0e14] p-4 rounded-xl border border-white/5">
+                    <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider">Chapter 03: The Journey Nodes</h5>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-white/60 mb-1">Section Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['chapters', 'c3', 'title'])}
+                        onChange={(e) => updateField(['chapters', 'c3', 'title'], e.target.value)}
+                        className="w-full bg-[#141923] border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                      {(getVal(['chapters', 'c3', 'nodes'], []) || []).map((node: any, idx: number) => (
+                        <div key={idx} className="bg-[#141923] p-3 rounded-lg border border-white/5 space-y-2">
+                          <span className="text-[10px] font-bold text-amber-400">Node #{idx + 1}</span>
+                          <input
+                            type="text"
+                            value={node.label || ''}
+                            onChange={(e) => updateField(['chapters', 'c3', 'nodes', idx, 'label'], e.target.value)}
+                            placeholder="e.g. MSW Studies"
+                            className="w-full bg-[#0b0e14] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white"
+                          />
+                          <input
+                            type="text"
+                            value={node.desc || ''}
+                            onChange={(e) => updateField(['chapters', 'c3', 'nodes', idx, 'desc'], e.target.value)}
+                            placeholder="e.g. Master of Social Work"
+                            className="w-full bg-[#0b0e14] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: PRATHANA LEGACY ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'prathana' && (
+                <div className="space-y-5">
+                  <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
+                    Prathana's Name & Legacy ({activeLang.toUpperCase()})
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Eyebrow Header</label>
+                      <input
+                        type="text"
+                        value={getVal(['prathana', 'eyebrow'])}
+                        onChange={(e) => updateField(['prathana', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Featured Quote</label>
+                      <input
+                        type="text"
+                        value={getVal(['prathana', 'quote'])}
+                        onChange={(e) => updateField(['prathana', 'quote'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Story Paragraph 1</label>
+                    <textarea
+                      rows={2}
+                      value={getVal(['prathana', 'desc1'])}
+                      onChange={(e) => updateField(['prathana', 'desc1'], e.target.value)}
+                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500 resize-y"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Story Paragraph 2</label>
+                    <textarea
+                      rows={2}
+                      value={getVal(['prathana', 'desc2'])}
+                      onChange={(e) => updateField(['prathana', 'desc2'], e.target.value)}
+                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500 resize-y"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Story Paragraph 3</label>
+                    <textarea
+                      rows={2}
+                      value={getVal(['prathana', 'desc3'])}
+                      onChange={(e) => updateField(['prathana', 'desc3'], e.target.value)}
+                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500 resize-y"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Closing Legacy Statement</label>
+                    <input
+                      type="text"
+                      value={getVal(['prathana', 'end'])}
+                      onChange={(e) => updateField(['prathana', 'end'], e.target.value)}
+                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: TIMELINE ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'timeline' && (
+                <div className="space-y-6">
+                  <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
+                    Interactive Timeline Cards ({activeLang.toUpperCase()})
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Eyebrow</label>
+                      <input
+                        type="text"
+                        value={getVal(['timeline', 'eyebrow'])}
+                        onChange={(e) => updateField(['timeline', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['timeline', 'title'])}
+                        onChange={(e) => updateField(['timeline', 'title'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Subtitle</label>
+                      <input
+                        type="text"
+                        value={getVal(['timeline', 'sub'])}
+                        onChange={(e) => updateField(['timeline', 'sub'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-4 border-t border-white/10">
+                    <h5 className="text-xs font-bold text-amber-300">Timeline Milestone Cards</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(getVal(['timeline', 'nodes'], []) || []).map((item: any, idx: number) => (
+                        <div key={idx} className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold text-amber-400">Milestone #{idx + 1}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <input
+                              type="text"
+                              value={item.year || ''}
+                              onChange={(e) => updateField(['timeline', 'nodes', idx, 'year'], e.target.value)}
+                              placeholder="Year / Tag (e.g. 2018)"
+                              className="bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white"
+                            />
+                            <input
+                              type="text"
+                              value={item.title || ''}
+                              onChange={(e) => updateField(['timeline', 'nodes', idx, 'title'], e.target.value)}
+                              placeholder="Card Title"
+                              className="bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white"
+                            />
+                          </div>
+                          <textarea
+                            rows={2}
+                            value={item.desc || ''}
+                            onChange={(e) => updateField(['timeline', 'nodes', idx, 'desc'], e.target.value)}
+                            placeholder="Description story"
+                            className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white resize-y"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: FOUNDERS ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'founders' && (
+                <div className="space-y-6">
+                  <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
+                    Founders' Messages ({activeLang.toUpperCase()})
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Eyebrow</label>
+                      <input
+                        type="text"
+                        value={getVal(['founders', 'eyebrow'])}
+                        onChange={(e) => updateField(['founders', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['founders', 'title'])}
+                        onChange={(e) => updateField(['founders', 'title'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Prasad */}
+                  <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-3">
+                    <h5 className="text-xs font-bold text-amber-300">Prasad Mohite (Founder)</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-white/60 mb-1">Name</label>
+                        <input
+                          type="text"
+                          value={getVal(['founders', 'prasad', 'name'])}
+                          onChange={(e) => updateField(['founders', 'prasad', 'name'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-white/60 mb-1">Role Title</label>
+                        <input
+                          type="text"
+                          value={getVal(['founders', 'prasad', 'role'])}
+                          onChange={(e) => updateField(['founders', 'prasad', 'role'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] text-white/60 mb-1">Personal Quote</label>
+                      <textarea
+                        rows={2}
+                        value={getVal(['founders', 'prasad', 'quote'])}
+                        onChange={(e) => updateField(['founders', 'prasad', 'quote'], e.target.value)}
+                        className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Anu */}
+                  <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-3">
+                    <h5 className="text-xs font-bold text-amber-300">Anu Mohite (Co-Founder)</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] text-white/60 mb-1">Name</label>
+                        <input
+                          type="text"
+                          value={getVal(['founders', 'anu', 'name'])}
+                          onChange={(e) => updateField(['founders', 'anu', 'name'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-white/60 mb-1">Role Title</label>
+                        <input
+                          type="text"
+                          value={getVal(['founders', 'anu', 'role'])}
+                          onChange={(e) => updateField(['founders', 'anu', 'role'], e.target.value)}
+                          className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] text-white/60 mb-1">Personal Quote</label>
+                      <textarea
+                        rows={2}
+                        value={getVal(['founders', 'anu', 'quote'])}
+                        onChange={(e) => updateField(['founders', 'anu', 'quote'], e.target.value)}
+                        className="w-full bg-[#141923] border border-white/10 rounded px-3 py-2 text-xs text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: SACRIFICE ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'sacrifice' && (
+                <div className="space-y-5">
+                  <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
+                    Land Sacrifice Section ({activeLang.toUpperCase()})
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Eyebrow</label>
+                      <input
+                        type="text"
+                        value={getVal(['sacrifice', 'eyebrow'])}
+                        onChange={(e) => updateField(['sacrifice', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Headline Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['sacrifice', 'title'])}
+                        onChange={(e) => updateField(['sacrifice', 'title'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Sacrifice Story Paragraph</label>
+                    <textarea
+                      rows={3}
+                      value={getVal(['sacrifice', 'text'])}
+                      onChange={(e) => updateField(['sacrifice', 'text'], e.target.value)}
+                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500 resize-y"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-white/5">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Before Label</label>
+                      <input
+                        type="text"
+                        value={getVal(['sacrifice', 'before'])}
+                        onChange={(e) => updateField(['sacrifice', 'before'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">After Label</label>
+                      <input
+                        type="text"
+                        value={getVal(['sacrifice', 'after'])}
+                        onChange={(e) => updateField(['sacrifice', 'after'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: VALUES & VISION ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'values' && (
+                <div className="space-y-6">
+                  <h4 className="text-sm font-bold text-amber-400 border-b border-white/10 pb-2">
+                    Vision, Mission & Core Values ({activeLang.toUpperCase()})
+                  </h4>
+
+                  {/* Vision */}
+                  <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-2">
+                    <h5 className="text-xs font-bold text-amber-300">Vision</h5>
+                    <input
+                      type="text"
+                      value={getVal(['vm', 'vision', 'title'])}
+                      onChange={(e) => updateField(['vm', 'vision', 'title'], e.target.value)}
+                      placeholder="Vision Title"
+                      className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white"
+                    />
+                    <textarea
+                      rows={2}
+                      value={getVal(['vm', 'vision', 'desc'])}
+                      onChange={(e) => updateField(['vm', 'vision', 'desc'], e.target.value)}
+                      placeholder="Vision Statement"
+                      className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white resize-y"
+                    />
+                  </div>
+
+                  {/* Mission */}
+                  <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-2">
+                    <h5 className="text-xs font-bold text-amber-300">Mission</h5>
+                    <input
+                      type="text"
+                      value={getVal(['vm', 'mission', 'title'])}
+                      onChange={(e) => updateField(['vm', 'mission', 'title'], e.target.value)}
+                      placeholder="Mission Title"
+                      className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white"
+                    />
+                    <textarea
+                      rows={2}
+                      value={getVal(['vm', 'mission', 'desc'])}
+                      onChange={(e) => updateField(['vm', 'mission', 'desc'], e.target.value)}
+                      placeholder="Mission Statement"
+                      className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white resize-y"
+                    />
+                  </div>
+
+                  {/* Values List */}
+                  <div className="space-y-3 pt-3 border-t border-white/10">
+                    <h5 className="text-xs font-bold text-amber-300">6 Core Principles</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {(getVal(['values', 'list'], []) || []).map((valItem: any, idx: number) => (
+                        <div key={idx} className="bg-[#0b0e14] p-3 rounded-lg border border-white/5 space-y-2">
+                          <span className="text-[10px] font-bold text-amber-400">Value #{idx + 1}</span>
+                          <input
+                            type="text"
+                            value={valItem.title || ''}
+                            onChange={(e) => updateField(['values', 'list', idx, 'title'], e.target.value)}
+                            placeholder="Title (e.g. Compassion)"
+                            className="w-full bg-[#141923] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white"
+                          />
+                          <input
+                            type="text"
+                            value={valItem.desc || ''}
+                            onChange={(e) => updateField(['values', 'list', idx, 'desc'], e.target.value)}
+                            placeholder="Short description"
+                            className="w-full bg-[#141923] border border-white/10 rounded px-2.5 py-1.5 text-xs text-white"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -635,14 +1063,25 @@ export default function PageFormEditor({
                     Call To Action ({activeLang.toUpperCase()})
                   </h4>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Title</label>
-                    <input
-                      type="text"
-                      value={getVal(['cta', 'title'])}
-                      onChange={(e) => updateField(['cta', 'title'], e.target.value)}
-                      className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Eyebrow</label>
+                      <input
+                        type="text"
+                        value={getVal(['cta', 'eyebrow'])}
+                        onChange={(e) => updateField(['cta', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Main Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['cta', 'title'])}
+                        onChange={(e) => updateField(['cta', 'title'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -663,6 +1102,36 @@ export default function PageFormEditor({
                       onChange={(e) => updateField(['cta', 'desc'], e.target.value)}
                       className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500 resize-y"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-white/5">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Donate Button Label</label>
+                      <input
+                        type="text"
+                        value={getVal(['cta', 'donate'])}
+                        onChange={(e) => updateField(['cta', 'donate'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Volunteer Button Label</label>
+                      <input
+                        type="text"
+                        value={getVal(['cta', 'volunteer'])}
+                        onChange={(e) => updateField(['cta', 'volunteer'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Visit Button Label</label>
+                      <input
+                        type="text"
+                        value={getVal(['cta', 'visit'])}
+                        onChange={(e) => updateField(['cta', 'visit'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
