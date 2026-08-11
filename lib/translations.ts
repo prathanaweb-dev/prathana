@@ -343,12 +343,12 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       funded: 'funded',
     },
     csr: {
-      label: 'Corporate Partnerships',
-      title: 'Empower Through CSR',
-      subtitle: 'Join hands with Prathana Foundation to create lasting social impact. Your CSR funds can directly transform lives across multiple community-driven projects.',
-      ctaHeader: 'Partner for Change',
-      ctaDesc: 'Our dedicated CSR team will work with your organization to align your philanthropic goals with our ground initiatives. We provide full compliance, tax benefits, and transparent impact reports.',
-      ctaBtn: 'Contact Us for CSR',
+      label: 'CSR Documentation & Reports',
+      title: 'Corporate Social Responsibility',
+      subtitle: 'Access and download official CSR compliance documents, 80G/12A registration certificates, FCRA filings, and audited financial disclosures.',
+      ctaHeader: 'Request Additional Compliance Docs',
+      ctaDesc: 'Need specific CSR documentation or custom impact reports for your organization? Contact our CSR compliance team directly.',
+      ctaBtn: 'Contact CSR Team',
       projects: [
         {
           title: 'Prathana Balgram',
@@ -560,12 +560,12 @@ export const translations: Record<'en' | 'mr', TranslationDict> = {
       funded: 'निधी गोळा',
     },
     csr: {
-      label: 'कॉर्पोरेट भागीदारी (CSR)',
-      title: 'CSR च्या माध्यमातून सक्षमीकरण',
-      subtitle: 'कायमस्वरूपी सामाजिक प्रभाव निर्माण करण्यासाठी प्रार्थना फाउंडेशनसोबत हातमिळवणी करा. तुमचा CSR निधी अनेक समाज-केंद्रित प्रकल्पांद्वारे थेट लोकांचे जीवन बदलू शकतो.',
-      ctaHeader: 'बदलासाठी भागीदारी करा',
-      ctaDesc: 'आमची CSR टीम तुमच्या संस्थेसोबत काम करून तुमची सामाजिक ध्येये आणि आमचे प्रकल्प यांची सांगड घालेल. आम्ही पूर्ण पारदर्शकता, कर सवलत आणि प्रभाव अहवाल प्रदान करतो.',
-      ctaBtn: 'CSR साठी संपर्क करा',
+      label: 'CSR दस्तऐवज आणि अहवाल',
+      title: 'कॉर्पोरेट सामाजिक जबाबदारी (CSR)',
+      subtitle: 'अधिकृत CSR अनुपालन दस्तऐवज, ८० जी / १२ ए नोंदणी प्रमाणपत्रे, एफसीआरए दाखले आणि ऑडिट केलेले आर्थिक अहवाल डाउनलोड करा.',
+      ctaHeader: 'अधिक दस्तऐवजांसाठी संपर्क करा',
+      ctaDesc: 'तुमच्या संस्थेसाठी विशिष्ट CSR कागदपत्रे किंवा सानुकूलित अहवाल हवे असल्यास, आमच्या CSR टीमशी थेट संपर्क साधा.',
+      ctaBtn: 'CSR टीमशी संपर्क साध',
       projects: [
         {
           title: 'प्रार्थना बालग्राम',
