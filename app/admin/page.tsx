@@ -30,6 +30,7 @@ import {
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
   FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon, Settings as SettingsIcon, Save
 } from 'lucide-react';
+import PageFormEditor from '@/components/admin/PageFormEditor';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Campaign { id: string; title: string; title_mr?: string; description: string; description_mr?: string; content?: string; content_mr?: string; goal_amount: number; amount_raised: number; image: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
@@ -1400,51 +1401,19 @@ export default function AdminDashboard() {
 
                   {/* Pages Editor */}
                   {contentSub === 'pages' && (
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-bold text-white">Pages Content Editor</h3>
-                          <p className="text-[11px] text-white/30 mt-0.5">Edit structured data for the Home and About pages</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <select 
-                            value={selectedPage} 
-                            onChange={(e) => setSelectedPage(e.target.value as 'home'|'about')}
-                            className="bg-[#0f1318] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-500/50"
-                          >
-                            <option value="home">Home Page</option>
-                            <option value="about">Our Story Page</option>
-                          </select>
-                          <button 
-                            onClick={savePageContent}
-                            disabled={pageSaving || pageLoading}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors disabled:opacity-50"
-                          >
-                            <Save size={13} /> {pageSaving ? 'Saving...' : 'Save Changes'}
-                          </button>
-                        </div>
-                      </div>
-                      
-                      {pageError && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl text-xs font-mono">
-                          {pageError}
-                        </div>
-                      )}
-
-                      <div className="relative">
-                        {pageLoading && (
-                          <div className="absolute inset-0 bg-[#1a1f2e]/80 flex items-center justify-center rounded-2xl backdrop-blur-sm z-10">
-                            <span className="text-white/50 text-xs font-semibold animate-pulse">Loading Content...</span>
-                          </div>
-                        )}
-                        <textarea
-                          value={pageContentStr}
-                          onChange={(e) => setPageContentStr(e.target.value)}
-                          className="w-full h-[600px] bg-[#0f1318] border border-white/5 rounded-2xl p-4 text-white/80 font-mono text-[13px] leading-relaxed outline-none focus:border-amber-500/30 transition-colors custom-scrollbar resize-none"
-                          spellCheck={false}
-                        />
-                      </div>
-                    </div>
+                    <PageFormEditor
+                      selectedPage={selectedPage}
+                      pageContentStr={pageContentStr}
+                      onChangePageContentStr={setPageContentStr}
+                      pageLoading={pageLoading}
+                      pageSaving={pageSaving}
+                      pageError={pageError}
+                      onSave={savePageContent}
+                      onPageChange={(p) => {
+                        setSelectedPage(p);
+                        fetchPageContent(p);
+                      }}
+                    />
                   )}
                 </div>
               )}
