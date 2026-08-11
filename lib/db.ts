@@ -103,6 +103,7 @@ export interface Project {
   status: 'planned' | 'active' | 'completed';
   start_date?: string;
   end_date?: string;
+  order?: number;
   created_at: string;
 }
 
@@ -816,22 +817,54 @@ export async function deleteActivity(id: string): Promise<boolean> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function getProjects(): Promise<Project[]> {
+  const sortFn = (a: Project, b: Project) => {
+    if (a.order !== undefined && b.order !== undefined) return a.order - b.order;
+    if (a.order !== undefined) return -1;
+    if (b.order !== undefined) return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  };
+
   if (isFirebaseConfigured && firestore) {
     try {
-      const q = query(collection(firestore, 'projects'), orderBy('created_at', 'desc'));
+      const q = query(collection(firestore, 'projects'));
       const snap = await getDocs(q);
       const list: Project[] = [];
       snap.forEach(docSnap => {
         list.push({ id: docSnap.id, ...docSnap.data() } as Project);
       });
-      return list;
+      return list.sort(sortFn);
     } catch (err) {
       console.error('Firebase getProjects error:', err);
       return [];
     }
   } else {
     const db = await getMockDB();
-    return [...db.projects].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return [...db.projects].sort(sortFn);
+  }
+}
+
+export async function reorderProjects(orderedIds: string[]): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const batchPromises = orderedIds.map((id, index) => {
+        const docRef = doc(firestore!, 'projects', id);
+        return updateDoc(docRef, { order: index });
+      });
+      await Promise.all(batchPromises);
+      return true;
+    } catch (err) {
+      console.error('Firebase reorderProjects error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.projects) return false;
+    orderedIds.forEach((id, index) => {
+      const proj = db.projects.find(p => p.id === id);
+      if (proj) proj.order = index;
+    });
+    await saveMockDB(db);
+    return true;
   }
 }
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProjects, createProject, updateProject, deleteProject } from '@/lib/db';
+import { getProjects, createProject, updateProject, deleteProject, reorderProjects } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -44,6 +44,24 @@ export async function PUT(request: Request) {
     }
 
     return NextResponse.json({ success: true, project: updated });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { orderedIds } = body;
+
+    if (!Array.isArray(orderedIds)) {
+      return NextResponse.json({ success: false, error: 'orderedIds must be an array' }, { status: 400 });
+    }
+
+    const success = await reorderProjects(orderedIds);
+    if (!success) throw new Error('Reordering failed');
+
+    return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

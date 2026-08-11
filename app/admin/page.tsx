@@ -28,7 +28,7 @@ import {
   ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
   RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
-  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon, Settings as SettingsIcon, Save
+  FileText, Layers, Award, BarChart3, ChevronDown, ChevronUp, Upload, ImageIcon, Settings as SettingsIcon, Save
 } from 'lucide-react';
 import PageFormEditor from '@/components/admin/PageFormEditor';
 
@@ -639,6 +639,36 @@ export default function AdminDashboard() {
     if (data.success) { notify('Project deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
+  const handleMoveProject = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= projects.length) return;
+
+    const newProjects = [...projects];
+    const temp = newProjects[index];
+    newProjects[index] = newProjects[targetIndex];
+    newProjects[targetIndex] = temp;
+
+    setProjects(newProjects);
+
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: newProjects.map(p => p.id) })
+      });
+      const json = await res.json();
+      if (!json.success) {
+        notify('Failed to save project order', 'error');
+        fetchAll();
+      } else {
+        notify('Project order updated!', 'success');
+      }
+    } catch (err: any) {
+      notify('Error saving project order', 'error');
+      fetchAll();
+    }
+  };
+
   // ── Event CRUD ──
   const openEvtDrawer = (evt?: EventItem) => {
     setEditEvt(evt || null);
@@ -1237,21 +1267,48 @@ export default function AdminDashboard() {
                   {contentSub === 'projects' && (
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="font-semibold text-white">Projects ({projects.length})</h3>
+                        <div>
+                          <h3 className="font-semibold text-white">Projects ({projects.length})</h3>
+                          <p className="text-[11px] text-white/30 mt-0.5">Use ▲ and ▼ buttons to rearrange the display order on the website</p>
+                        </div>
                         <button onClick={() => openProjDrawer()} className="flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"><Plus size={13} /> Add Project</button>
                       </div>
                       <div className="grid md:grid-cols-2 gap-3">
-                        {projects.map(p => (
-                          <div key={p.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex gap-3 hover:border-white/10 transition-all">
+                        {projects.map((p, idx) => (
+                          <div key={p.id} className="bg-[#1a1f2e] border border-white/5 rounded-xl p-4 flex items-center gap-3 hover:border-white/10 transition-all relative group">
+                            <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-400 font-mono font-bold text-[11px] flex items-center justify-center flex-shrink-0 border border-amber-500/20" title={`Display Rank #${idx + 1}`}>
+                              #{idx + 1}
+                            </span>
                             {p.image && <img src={p.image} alt={p.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
                             <div className="flex-1 min-w-0">
-                              <div className="font-medium text-white text-sm">{p.title}</div>
+                              <div className="font-medium text-white text-sm truncate">{p.title}</div>
                               <Badge status={p.status} />
                               <div className="text-[11px] text-white/25 mt-1">{p.start_date} → {p.end_date}</div>
                             </div>
-                            <div className="flex flex-col gap-1.5">
-                              <button onClick={() => openProjDrawer(p)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
-                              <button onClick={() => deleteProject(p.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
+                            <div className="flex items-center gap-2">
+                              {/* Reorder Buttons */}
+                              <div className="flex flex-col gap-1">
+                                <button
+                                  disabled={idx === 0}
+                                  onClick={() => handleMoveProject(idx, 'up')}
+                                  title="Move Up"
+                                  className="w-6 h-6 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                >
+                                  <ChevronUp size={12} />
+                                </button>
+                                <button
+                                  disabled={idx === projects.length - 1}
+                                  onClick={() => handleMoveProject(idx, 'down')}
+                                  title="Move Down"
+                                  className="w-6 h-6 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                >
+                                  <ChevronDown size={12} />
+                                </button>
+                              </div>
+                              <div className="flex flex-col gap-1 border-l border-white/10 pl-2">
+                                <button onClick={() => openProjDrawer(p)} className="w-7 h-7 rounded-lg bg-white/5 text-white/30 hover:text-white flex items-center justify-center cursor-pointer transition-colors"><Edit2 size={12} /></button>
+                                <button onClick={() => deleteProject(p.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors"><Trash2 size={12} /></button>
+                              </div>
                             </div>
                           </div>
                         ))}
