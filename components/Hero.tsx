@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ArrowRight, Users, Zap, HeartHandshake, Activity, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface HeroProps {
   lang: string;
@@ -19,7 +19,7 @@ interface HeroProps {
 
 export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
   const router = useRouter();
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   const badgeItems = [
     {

@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface GalleryProps {
   lang: string;
 }
 
 export default function Gallery({ lang }: GalleryProps) {
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
   
   const [activeCategory, setActiveCategory] = useState<'all' | 'balgram' | 'farming' | 'vrudhashram' | 'shala' | 'awards'>('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);

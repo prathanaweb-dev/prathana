@@ -3,7 +3,7 @@
 import { Campaign } from '@/lib/db';
 import { Heart, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 import Link from 'next/link';
 
 interface CampaignCardProps {
@@ -13,7 +13,7 @@ interface CampaignCardProps {
 }
 
 export default function CampaignCard({ lang, campaign, onDonateClick }: CampaignCardProps) {
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   const goal = Number(campaign.goal_amount);
   const raised = Number(campaign.amount_raised);

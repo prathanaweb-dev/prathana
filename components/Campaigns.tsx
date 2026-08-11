@@ -3,7 +3,7 @@
 import { Campaign } from '@/lib/db';
 import { motion } from 'framer-motion';
 import CampaignCard from './CampaignCard';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface CampaignsProps {
   lang: string;
@@ -12,7 +12,7 @@ interface CampaignsProps {
 }
 
 export default function Campaigns({ lang, campaigns, onDonateClick }: CampaignsProps) {
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   const activeCampaigns = campaigns.filter((c) => c.status !== 'completed' && !c.is_completed);
   const completedCampaigns = campaigns.filter((c) => c.status === 'completed' || c.is_completed);

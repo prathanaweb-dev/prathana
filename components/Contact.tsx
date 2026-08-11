@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface ContactProps {
   lang: string;
@@ -13,7 +13,7 @@ export default function Contact({ lang }: ContactProps) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface ImpactProps {
   lang: string;
@@ -80,7 +80,7 @@ function MetricCard({
 }
 
 export default function Impact({ lang, stats }: ImpactProps) {
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   const metrics = [
     {

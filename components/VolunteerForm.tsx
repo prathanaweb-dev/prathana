@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Send, HeartHandshake, MapPin, Calendar, Clock, Loader2 } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface VolunteerFormProps {
   lang: string;
@@ -21,7 +21,7 @@ export default function VolunteerForm({ lang }: VolunteerFormProps) {
   const [loading, setLoading] = useState(false);
 
   // Use translations if available, fallback to hardcoded if not entirely mapped
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
   // If t.volunteer doesn't have all these fields, we will just use inline translations for robustness
   
   const handleSubmit = (e: React.FormEvent) => {

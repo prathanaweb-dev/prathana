@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { deleteCsrDocument } from '@/lib/db';
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const success = await deleteCsrDocument(params.id);
+    const { id } = await params;
+    const success = await deleteCsrDocument(id);
     if (!success) throw new Error('Failed to delete document');
     return NextResponse.json({ success: true });
   } catch (error: any) {

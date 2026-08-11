@@ -168,6 +168,12 @@ export interface Settings {
   updated_at?: string;
 }
 
+export interface SiteContent {
+  id: string; // 'home' or 'about'
+  data: any; // Storing the JSON structure
+  updated_at: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -180,7 +186,11 @@ interface MockDBSchema {
   reports: Report[];
   team_members: TeamMember[];
   settings: Settings;
+  site_content: SiteContent[];
 }
+
+import { defaultHomeContent } from './defaultHomeContent';
+import { defaultAboutContent } from './defaultAboutContent';
 
 // Local mock database helpers
 async function getMockDB(): Promise<MockDBSchema> {
@@ -202,7 +212,11 @@ async function getMockDB(): Promise<MockDBSchema> {
       accountNumber: '1234567890',
       ifscCode: 'SBIN0001234',
       branch: 'Solapur Main'
-    }
+    },
+    site_content: [
+      { id: 'home', data: defaultHomeContent, updated_at: new Date().toISOString() },
+      { id: 'about', data: defaultAboutContent, updated_at: new Date().toISOString() }
+    ]
   };
 
   if (typeof window !== 'undefined') {
@@ -1027,24 +1041,6 @@ export async function updateProject(id: string, updates: Partial<Project>): Prom
   }
 }
 
-export async function deleteProject(id: string): Promise<boolean> {
-  if (isFirebaseConfigured && firestore) {
-    try {
-      await deleteDoc(doc(firestore, 'projects', id));
-      return true;
-    } catch (err) {
-      console.error(`Firebase deleteProject(${id}) error:`, err);
-      return false;
-    }
-  } else {
-    const db = await getMockDB();
-    const filtered = db.projects.filter(p => p.id !== id);
-    if (filtered.length === db.projects.length) return false;
-    db.projects = filtered;
-    await saveMockDB(db);
-    return true;
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // EVENTS & NEWS METHODS
@@ -1396,3 +1392,54 @@ export async function deleteTeamMember(id: string): Promise<boolean> {
   return true;
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SITE CONTENT METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function getPageContent(pageId: string): Promise<any> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'site_content', pageId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data().data;
+      }
+      return pageId === 'home' ? defaultHomeContent : defaultAboutContent;
+    } catch (err) {
+      console.error(`Firebase getPageContent(${pageId}) error:`, err);
+      return pageId === 'home' ? defaultHomeContent : defaultAboutContent;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.site_content) db.site_content = [];
+    const content = db.site_content.find((c: any) => c.id === pageId);
+    if (content) return content.data;
+    return pageId === 'home' ? defaultHomeContent : defaultAboutContent;
+  }
+}
+
+export async function updatePageContent(pageId: string, data: any): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'site_content', pageId);
+      await setDoc(docRef, { data, updated_at: new Date().toISOString() }, { merge: true });
+      return true;
+    } catch (err) {
+      console.error(`Firebase updatePageContent(${pageId}) error:`, err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.site_content) db.site_content = [];
+    const idx = db.site_content.findIndex((c: any) => c.id === pageId);
+    if (idx !== -1) {
+      db.site_content[idx].data = data;
+      db.site_content[idx].updated_at = new Date().toISOString();
+    } else {
+      db.site_content.push({ id: pageId, data, updated_at: new Date().toISOString() });
+    }
+    await saveMockDB(db);
+    return true;
+  }
+}

@@ -28,7 +28,7 @@ import {
   ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
   RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
-  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon, Settings as SettingsIcon
+  FileText, Layers, Award, BarChart3, ChevronDown, Upload, ImageIcon, Settings as SettingsIcon, Save
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -258,7 +258,7 @@ function DocumentUpload({ value, onChange, label = 'Document' }: { value: string
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery'|'settings'|'csrdocs';
-type ContentSub = 'activities'|'projects'|'events'|'reports';
+type ContentSub = 'activities'|'projects'|'events'|'reports'|'pages';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -266,9 +266,73 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tab, setTab] = useState<Tab>('dashboard');
   const [contentSub, setContentSub] = useState<ContentSub>('activities');
+  const [csrTitle, setCsrTitle] = useState('');
+  const [csrTitleMr, setCsrTitleMr] = useState('');
+  const [csrUrl, setCsrUrl] = useState('');
+  const [csrDrawer, setCsrDrawer] = useState(false);
+
+    const [toast, setToast] = useState<{msg:string; type:'success'|'error'} | null>(null);
+
+  // Page Content Editor states
+  const [selectedPage, setSelectedPage] = useState<'home'|'about'>('home');
+  const [pageContentStr, setPageContentStr] = useState<string>('');
+  const [pageLoading, setPageLoading] = useState(false);
+  const [pageSaving, setPageSaving] = useState(false);
+  const [pageError, setPageError] = useState<string | null>(null);
+
+  const fetchPageContent = async (pageId: 'home'|'about') => {
+    setPageLoading(true);
+    try {
+      const res = await fetch(`/api/content?pageId=${pageId}`);
+      const json = await res.json();
+      if (json.success && json.data) {
+        setPageContentStr(JSON.stringify(json.data, null, 2));
+      } else {
+        setToast({msg: "Failed to load page content", type: "error"}); setTimeout(() => setToast(null), 4000);
+      }
+    } catch (e) {
+      setToast({msg: "Error loading page content", type: "error"}); setTimeout(() => setToast(null), 4000);
+    }
+    setPageLoading(false);
+  };
+
+  const savePageContent = async () => {
+    setPageError(null);
+    let parsed;
+    try {
+      parsed = JSON.parse(pageContentStr);
+    } catch (e: any) {
+      setPageError(`Invalid JSON: ${e.message}`);
+      return;
+    }
+    setPageSaving(true);
+    try {
+      const res = await fetch(`/api/content?pageId=${selectedPage}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: parsed })
+      });
+      const json = await res.json();
+      if (json.success) {
+        setToast({msg: "Page content saved successfully!", type: "success"}); setTimeout(() => setToast(null), 4000);
+      } else {
+        setToast({msg: "Error saving page content", type: "error"}); setTimeout(() => setToast(null), 4000);
+      }
+    } catch (e) {
+      setToast({msg: "Error saving page content", type: "error"}); setTimeout(() => setToast(null), 4000);
+    }
+    setPageSaving(false);
+  };
+
+  useEffect(() => {
+    if (tab === 'content' && contentSub === 'pages') {
+      fetchPageContent(selectedPage);
+    }
+  }, [tab, contentSub, selectedPage]);
+
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [toast, setToast] = useState<{msg:string; type:'success'|'error'} | null>(null);
+
 
   // Data
   const [campaigns, setCampaigns]   = useState<Campaign[]>([]);
@@ -1132,7 +1196,7 @@ export default function AdminDashboard() {
                 <div className="space-y-4">
                   {/* Sub tabs */}
                   <div className="flex items-center gap-1 bg-[#1a1f2e] border border-white/5 rounded-xl p-1 w-fit flex-wrap">
-                    {(['activities','projects','events','reports'] as ContentSub[]).map(s => (
+                    {(['activities','projects','events','reports','pages'] as ContentSub[]).map(s => (
                       <button key={s} onClick={() => setContentSub(s)}
                         className={`px-4 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer
                           ${contentSub === s ? 'bg-amber-500/20 text-amber-400 border border-amber-500/20' : 'text-white/40 hover:text-white/70'}`}>
@@ -1330,6 +1394,55 @@ export default function AdminDashboard() {
                             <p className="text-white/15 text-xs mt-1">Click "Add Report" to upload your first document</p>
                           </div>
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pages Editor */}
+                  {contentSub === 'pages' && (
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="font-bold text-white">Pages Content Editor</h3>
+                          <p className="text-[11px] text-white/30 mt-0.5">Edit structured data for the Home and About pages</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <select 
+                            value={selectedPage} 
+                            onChange={(e) => setSelectedPage(e.target.value as 'home'|'about')}
+                            className="bg-[#0f1318] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-500/50"
+                          >
+                            <option value="home">Home Page</option>
+                            <option value="about">Our Story Page</option>
+                          </select>
+                          <button 
+                            onClick={savePageContent}
+                            disabled={pageSaving || pageLoading}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors disabled:opacity-50"
+                          >
+                            <Save size={13} /> {pageSaving ? 'Saving...' : 'Save Changes'}
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {pageError && (
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl text-xs font-mono">
+                          {pageError}
+                        </div>
+                      )}
+
+                      <div className="relative">
+                        {pageLoading && (
+                          <div className="absolute inset-0 bg-[#1a1f2e]/80 flex items-center justify-center rounded-2xl backdrop-blur-sm z-10">
+                            <span className="text-white/50 text-xs font-semibold animate-pulse">Loading Content...</span>
+                          </div>
+                        )}
+                        <textarea
+                          value={pageContentStr}
+                          onChange={(e) => setPageContentStr(e.target.value)}
+                          className="w-full h-[600px] bg-[#0f1318] border border-white/5 rounded-2xl p-4 text-white/80 font-mono text-[13px] leading-relaxed outline-none focus:border-amber-500/30 transition-colors custom-scrollbar resize-none"
+                          spellCheck={false}
+                        />
                       </div>
                     </div>
                   )}

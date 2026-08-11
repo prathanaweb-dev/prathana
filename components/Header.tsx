@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Menu, X, Globe, ChevronDown, Phone, Search } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface HeaderProps {
   lang: string;
@@ -18,7 +18,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
   // Pages whose hero section is dark — header should use light text
   const darkHeroPages = [

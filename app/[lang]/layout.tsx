@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Fraunces, DM_Sans } from 'next/font/google';
 import '../globals.css';
+import { getPageContent } from '@/lib/db';
+import { TranslationProvider } from '@/components/TranslationProvider';
 
 const fraunces = Fraunces({
   variable: '--font-serif',
@@ -66,7 +68,9 @@ export default async function RootLayout({
       className={`${fraunces.variable} ${dmSans.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-brand-paper text-brand-charcoal font-sans antialiased">
-        {children}
+        <TranslationProvider translations={await getPageContent('home')}>
+          {children}
+        </TranslationProvider>
       </body>
     </html>
   );

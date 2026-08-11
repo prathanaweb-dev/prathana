@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ArrowUp, Mail, MapPin, Phone, Send } from 'lucide-react';
-import { translations } from '@/lib/translations';
+import { useTranslations } from '@/components/TranslationProvider';
 
 interface FooterProps {
   lang: string;
@@ -12,7 +12,7 @@ interface FooterProps {
 
 export default function Footer({ lang, onDonateClick }: FooterProps) {
   const isMr = lang === 'mr';
-  const t = translations[isMr ? 'mr' : 'en'] || translations.en;
+  const t = useTranslations(isMr ? 'mr' : 'en');
 
   const isMarathi = lang === 'mr';
 
