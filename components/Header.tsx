@@ -301,7 +301,7 @@ export default function Header({ lang, onDonateClick }: HeaderProps) {
                 }`}>Call Us</span>
                 <span className={`text-[11px] font-bold mt-0.5 leading-none ${
                   useLightText ? 'text-white' : 'text-brand-charcoal'
-                }`}>+91 98765 43210</span>
+                }`}>+91 95459 92026</span>
               </div>
             </div>
           </div>

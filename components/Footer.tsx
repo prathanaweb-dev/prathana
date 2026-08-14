@@ -173,7 +173,7 @@ export default function Footer({ lang, onDonateClick }: FooterProps) {
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-brand-yellow shrink-0" />
                   <span className="text-xs text-white/70">
-                    +91 95459 92026 / +91 90490 63829
+                    +91 95459 92026 / +91 90490 63829 / +91 90223 93906
                   </span>
                 </div>
                 </div>

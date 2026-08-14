@@ -22,7 +22,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         title: isMarathi ? 'सकस आहार' : 'Healthy Food',
         desc: isMarathi ? 'सोलापूरमधील गरीब आणि रस्त्यावरील बालकांसाठी रोज पोषक आणि दर्जेदार जेवणाची व्यवस्था.' : 'Providing nutrition-dense meals daily to children in Solapur slums.',
         ctaText: isMarathi ? 'आहार प्रायोजित करा' : 'Sponsor a Meal',
-        statText: isMarathi ? '१,५००+ रोजचे जेवण' : '1,500+ Daily Meals',
         campaignId: 'campaign-1',
         icon: Utensils,
         strokeColor: 'var(--color-brand-green)',
@@ -33,7 +32,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         title: isMarathi ? 'वैद्यकीय सेवा' : 'Medical Care',
         desc: isMarathi ? 'तपासणी शिबिरे, मोफत औषधे आणि बालकांच्या आरोग्याची नियमित काळजी.' : 'Conducting health camps and supplying prescription medicines.',
         ctaText: isMarathi ? 'वैद्यकीय मदत करा' : 'Sponsor Care',
-        statText: isMarathi ? '२५०+ तपासण्या' : '250+ Weekly Audits',
         campaignId: 'campaign-2',
         icon: Stethoscope,
         strokeColor: '#d36d4b',
@@ -44,7 +42,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         title: isMarathi ? 'गुणवत्तापूर्ण शिक्षण' : 'Child Education',
         desc: isMarathi ? 'शैक्षणिक साहित्य वाटप, फी मदत आणि विशेष अभ्यास वर्गांचे संचालन.' : 'Distributing educational kits and coordinating tutoring hubs.',
         ctaText: isMarathi ? 'शैक्षणिक साहित्य द्या' : 'Sponsor a Kit',
-        statText: isMarathi ? '४५+ बालके शाळेत' : '45+ Kids Enrolled',
         campaignId: 'campaign-3',
         icon: BookOpen,
         strokeColor: 'var(--color-brand-yellow)',
@@ -112,14 +109,11 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                   {/* Card body */}
                   <div className="p-7 flex flex-col gap-5 flex-1">
 
-                    {/* Icon + stat row */}
+                    {/* Icon row */}
                     <div className="flex items-start justify-between">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${card.iconBg} shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
                         <Icon className="w-6 h-6" />
                       </div>
-                      <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border ${accentColors.badge}`}>
-                        {card.statText}
-                      </span>
                     </div>
 
                     {/* Text */}
@@ -267,7 +261,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] text-brand-muted font-medium leading-none">{tLocal.callUs}</span>
-                  <span className="text-sm font-bold text-brand-charcoal mt-1 leading-none">+91 98765 43210</span>
+                  <span className="text-sm font-bold text-brand-charcoal mt-1 leading-none">+91 95459 92026 / +91 90490 63829 / +91 90223 93906</span>
                 </div>
               </div>
             </div>

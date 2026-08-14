@@ -189,13 +189,13 @@ export default function Contact({ lang }: ContactProps) {
                     {lang === 'mr' ? 'व्हाट्सएप समन्वयक' : 'WhatsApp Coordinator'}
                   </span>
                   <a
-                    href="https://wa.me/919876543210?text=Hello%20Prathana%20Foundation%20Solapur"
+                    href="https://wa.me/919545992026?text=Hello%20Prathana%20Foundation%20Solapur"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs md:text-sm text-brand-charcoal hover:underline mt-0.5 flex items-center gap-1.5 font-medium"
                   >
                     <MessageSquare className="w-4 h-4 text-green-600 fill-green-600/10" />
-                    +91 98765 43210
+                    +91 95459 92026 / +91 90490 63829 / +91 90223 93906
                   </a>
                 </div>
               </div>
