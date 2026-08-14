@@ -190,18 +190,18 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
           </motion.div>
         </div>
 
-        {/* Right Photo Scroll - Hidden on mobile/tablet */}
-        <div className="hidden lg:flex w-[45%] h-[600px] overflow-hidden relative rounded-3xl [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
-          <div className="flex gap-4 w-full h-[200%]">
+        {/* Right Photo Scroll - Visible on mobile, tablet & desktop */}
+        <div className="flex w-full lg:w-[45%] h-[320px] sm:h-[440px] lg:h-[600px] overflow-hidden relative rounded-3xl mt-6 lg:mt-0 [mask-image:linear-gradient(to_bottom,transparent,black_5%,black_95%,transparent)]">
+          <div className="flex gap-3 sm:gap-4 w-full h-[200%]">
             {/* Column 1 - Scrolling up */}
             <motion.div 
               animate={{ y: ["0%", "-50%"] }} 
-              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
-              className="w-1/2 flex flex-col gap-4"
+              transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
+              className="w-1/2 flex flex-col gap-3 sm:gap-4"
             >
               {[...heroImages, ...heroImages].map((src, i) => (
-                <div key={`col1-${i}`} className="w-full h-64 rounded-2xl overflow-hidden relative flex-shrink-0">
-                  <img src={src} className="w-full h-full object-cover" alt="" />
+                <div key={`col1-${i}`} className="w-full h-44 sm:h-64 rounded-2xl overflow-hidden relative flex-shrink-0">
+                  <img src={src} className="w-full h-full object-cover" alt="Prathana Foundation Solapur" />
                   <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />
                 </div>
               ))}
@@ -210,12 +210,12 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
             {/* Column 2 - Scrolling down */}
             <motion.div 
               animate={{ y: ["-50%", "0%"] }} 
-              transition={{ repeat: Infinity, duration: 45, ease: "linear" }}
-              className="w-1/2 flex flex-col gap-4"
+              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+              className="w-1/2 flex flex-col gap-3 sm:gap-4"
             >
               {[...[...heroImages].reverse(), ...[...heroImages].reverse()].map((src, i) => (
-                <div key={`col2-${i}`} className="w-full h-80 rounded-2xl overflow-hidden relative flex-shrink-0">
-                  <img src={src} className="w-full h-full object-cover" alt="" />
+                <div key={`col2-${i}`} className="w-full h-56 sm:h-80 rounded-2xl overflow-hidden relative flex-shrink-0">
+                  <img src={src} className="w-full h-full object-cover" alt="Prathana Foundation Solapur" />
                   <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />
                 </div>
               ))}
