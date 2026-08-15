@@ -92,11 +92,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 '/balgram/Balgram/WhatsApp%20Image%202026-06-22%20at%201.09.36%20PM.jpeg',
                 '/vanchitanchishala/Vanchitanchi%20Shala/20181109_095902.jpg',
               ];
-              const statLabels = [
-                { num: '45,000+', label: isMarathi ? 'जेवण वाटप' : 'Meals Served' },
-                { num: '45+', label: isMarathi ? 'बालकांची काळजी' : 'Kids Cared For' },
-                { num: '4,500+', label: isMarathi ? 'शिक्षण साहित्य' : 'Kits Distributed' },
-              ];
               const accentColors = [
                 { accent: 'from-brand-green/90 to-brand-green/70', ring: 'ring-brand-green/40', iconBg: 'bg-brand-green', badge: 'bg-brand-green' },
                 { accent: 'from-[#d36d4b]/90 to-[#d36d4b]/70', ring: 'ring-[#d36d4b]/40', iconBg: 'bg-[#d36d4b]', badge: 'bg-[#d36d4b]' },
@@ -128,15 +123,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                     {/* Floating icon badge — top left */}
                     <div className={`absolute top-5 left-5 w-12 h-12 rounded-2xl ${card.iconBg} shadow-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 backdrop-blur-sm ring-2 ring-white/20`}>
                       <Icon className="w-5 h-5" />
-                    </div>
-
-                    {/* Floating stat chip — bottom right */}
-                    <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
-                      <span className={`w-2 h-2 rounded-full ${accentColors.badge} flex-shrink-0`} />
-                      <div className="flex flex-col leading-none">
-                        <span className="font-mono font-black text-sm text-brand-charcoal">{statLabels[idx].num}</span>
-                        <span className="text-[8px] uppercase tracking-widest text-brand-muted font-semibold mt-0.5">{statLabels[idx].label}</span>
-                      </div>
                     </div>
                   </div>
 
