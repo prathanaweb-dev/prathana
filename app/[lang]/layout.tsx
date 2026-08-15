@@ -7,14 +7,13 @@ import { TranslationProvider } from '@/components/TranslationProvider';
 const fraunces = Fraunces({
   variable: '--font-serif',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  style: ['normal', 'italic'],
+  display: 'swap',
 });
 
 const dmSans = DM_Sans({
   variable: '--font-sans',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
 });
 
 export async function generateMetadata({ params }: { params: Promise<{ lang?: string }> }): Promise<Metadata> {
