@@ -73,7 +73,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
       <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-24">
         
         {/* ── SECTION 1: Charity With Difference ── */}
-        <div className="text-center space-y-12">
+        <div className="text-center space-y-14">
           <div className="space-y-3">
             <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
               {tLocal.charityTitle}
@@ -84,59 +84,81 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             <div className="w-16 h-[2px] bg-brand-yellow mx-auto mt-2" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
+              const cardImages = [
+                '/naturalfarming/Natural%20Farming/IMG-20260623-WA0003.jpg',
+                '/balgram/Balgram/WhatsApp%20Image%202026-06-22%20at%201.09.36%20PM.jpeg',
+                '/vanchitanchishala/Vanchitanchi%20Shala/20181109_095902.jpg',
+              ];
+              const statLabels = [
+                { num: '45,000+', label: isMarathi ? 'जेवण वाटप' : 'Meals Served' },
+                { num: '45+', label: isMarathi ? 'बालकांची काळजी' : 'Kids Cared For' },
+                { num: '4,500+', label: isMarathi ? 'शिक्षण साहित्य' : 'Kits Distributed' },
+              ];
               const accentColors = [
-                { bar: 'from-brand-green to-emerald-400', glow: 'rgba(76,140,94,0.15)', ring: 'border-brand-green/30', badge: 'bg-brand-green/10 text-brand-green' },
-                { bar: 'from-[#d36d4b] to-orange-300', glow: 'rgba(211,109,75,0.15)', ring: 'border-[#d36d4b]/30', badge: 'bg-[#d36d4b]/10 text-[#d36d4b]' },
-                { bar: 'from-brand-yellow to-amber-300', glow: 'rgba(230,190,0,0.15)', ring: 'border-brand-yellow/30', badge: 'bg-brand-yellow/10 text-amber-700' },
+                { accent: 'from-brand-green/90 to-brand-green/70', ring: 'ring-brand-green/40', iconBg: 'bg-brand-green', badge: 'bg-brand-green' },
+                { accent: 'from-[#d36d4b]/90 to-[#d36d4b]/70', ring: 'ring-[#d36d4b]/40', iconBg: 'bg-[#d36d4b]', badge: 'bg-[#d36d4b]' },
+                { accent: 'from-brand-yellow/90 to-amber-500/80', ring: 'ring-brand-yellow/40', iconBg: 'bg-brand-yellow', badge: 'bg-brand-yellow' },
               ][idx];
 
               return (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.55, delay: idx * 0.12 }}
+                  transition={{ duration: 0.6, delay: idx * 0.15 }}
                   onClick={() => onDonateClick && onDonateClick(card.campaignId)}
-                  className={`group relative flex flex-col bg-white rounded-3xl border ${accentColors.ring} overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-2`}
-                  style={{ boxShadow: `0 4px 24px ${accentColors.glow}, 0 1px 4px rgba(21,34,27,0.04)` }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 16px 48px ${accentColors.glow}, 0 2px 8px rgba(21,34,27,0.06)`; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 24px ${accentColors.glow}, 0 1px 4px rgba(21,34,27,0.04)`; }}
+                  className="group relative flex flex-col rounded-[28px] overflow-hidden cursor-pointer transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl"
+                  style={{ boxShadow: '0 8px 40px rgba(21,34,27,0.12), 0 2px 8px rgba(21,34,27,0.06)' }}
                 >
-                  {/* Top gradient accent bar */}
-                  <div className={`h-1 w-full bg-gradient-to-r ${accentColors.bar}`} />
-
-                  {/* Card body */}
-                  <div className="p-7 flex flex-col gap-5 flex-1">
-
-                    {/* Icon row */}
-                    <div className="flex items-start justify-between">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${card.iconBg} shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-                        <Icon className="w-6 h-6" />
-                      </div>
+                  {/* Photo section */}
+                  <div className="relative h-[240px] overflow-hidden">
+                    <img
+                      src={cardImages[idx]}
+                      alt={card.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    {/* Dark gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    
+                    {/* Floating icon badge — top left */}
+                    <div className={`absolute top-5 left-5 w-12 h-12 rounded-2xl ${card.iconBg} shadow-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 backdrop-blur-sm ring-2 ring-white/20`}>
+                      <Icon className="w-5 h-5" />
                     </div>
 
-                    {/* Text */}
+                    {/* Floating stat chip — bottom right */}
+                    <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
+                      <span className={`w-2 h-2 rounded-full ${accentColors.badge} flex-shrink-0`} />
+                      <div className="flex flex-col leading-none">
+                        <span className="font-mono font-black text-sm text-brand-charcoal">{statLabels[idx].num}</span>
+                        <span className="text-[8px] uppercase tracking-widest text-brand-muted font-semibold mt-0.5">{statLabels[idx].label}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content section */}
+                  <div className="flex flex-col flex-1 bg-white p-6 gap-4">
                     <div className="space-y-2 flex-1">
-                      <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal leading-tight group-hover:text-brand-forest transition-colors duration-300">
+                      <h3 className="font-serif-display text-xl font-bold text-brand-charcoal leading-snug group-hover:text-brand-forest transition-colors duration-300">
                         {card.title}
                       </h3>
-                      <p className="text-brand-muted text-[13px] leading-relaxed font-light">
+                      <p className="text-brand-muted text-[13px] leading-relaxed font-light line-clamp-3">
                         {card.desc}
                       </p>
                     </div>
 
                     {/* CTA row */}
-                    <div className="flex items-center justify-between pt-4 border-t border-brand-clay/15">
+                    <div className="flex items-center justify-between pt-3 border-t border-brand-clay/15">
                       <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-charcoal group-hover:text-brand-forest transition-colors duration-300">
                         {card.ctaText}
-                        <span className="w-5 h-5 rounded-full bg-brand-charcoal/8 flex items-center justify-center group-hover:bg-brand-forest/10 group-hover:translate-x-1 transition-all duration-300 text-xs">→</span>
+                        <span className="w-6 h-6 rounded-full bg-brand-charcoal/6 flex items-center justify-center group-hover:bg-brand-forest/15 group-hover:translate-x-1.5 transition-all duration-300 text-xs">→</span>
                       </span>
-                      {/* Index number */}
-                      <span className="font-mono text-5xl font-black text-brand-charcoal/5 leading-none select-none group-hover:text-brand-charcoal/8 transition-colors duration-500">
+                      {/* Decorative number */}
+                      <span className="font-mono text-4xl font-black text-brand-charcoal/[0.04] leading-none select-none group-hover:text-brand-charcoal/[0.08] transition-colors duration-500">
                         0{idx + 1}
                       </span>
                     </div>
@@ -144,12 +166,6 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 </motion.div>
               );
             })}
-          </div>
-
-          {/* Dots Indicator under cards */}
-          <div className="flex items-center justify-center gap-2 mt-6">
-            <span className="w-2.5 h-2.5 rounded-full bg-brand-green" />
-            <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow" />
           </div>
         </div>
 
