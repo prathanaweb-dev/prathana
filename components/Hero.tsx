@@ -117,13 +117,13 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
           >
             {lang === 'mr' ? (
               <>
-                गरजू आणि निराधार <br />
-                <span className="text-brand-yellow highlight-stroke font-serif italic">लोकांना मदत</span> करूया
+                अनाथ बालके व <br />
+                निराधार वृद्धांना <span className="text-brand-yellow highlight-stroke font-serif italic">मायेची सावली</span>
               </>
             ) : (
               <>
-                Giving Help <br />
-                To Those <span className="text-brand-yellow highlight-stroke font-serif italic font-semibold">Peoples</span>
+                Transforming Grief <br />
+                Into <span className="text-brand-yellow highlight-stroke font-serif italic font-semibold">Hope & Dignity</span>
               </>
             )}
           </motion.h1>

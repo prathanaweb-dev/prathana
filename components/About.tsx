@@ -49,16 +49,19 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         iconBg: 'bg-brand-yellow text-brand-charcoal',
       },
     ],
-    aboutTitle: isMarathi ? 'एकमेकांना मदत करून जग सुंदर बनवूया' : 'Helping Each Other Can Make World Better',
+    aboutTitle: isMarathi ? 'वैयक्तिक दुःखाचे आशेच्या आणि सेवेच्या कार्यात रूपांतर' : 'From Personal Tragedy to a Mission of Hope',
     aboutSub: isMarathi 
-      ? 'प्रार्थना फाउंडेशन सोलापूरमधील रस्त्यावरील आणि शेतकरी-आत्महत्याग्रस्त कुटुंबातील बालकांना व वृद्धांना हक्काचे घर आणि मायेची सावली देते.' 
-      : 'Prathana Foundation is committed to making a difference in the lives of street children and rural families by providing direct shelter, support, and hope.',
-    feature1Title: isMarathi ? 'वैद्यकीय सेवा' : 'Medical Services',
-    feature1Desc: isMarathi ? 'तळागाळातील कुटुंबांसाठी मोफत प्राथमिक आरोग्य तपासणी शिबिरे.' : 'Free health clinics and check-ups for marginalized families.',
-    feature2Title: isMarathi ? 'आरोग्य आणि पोषण' : 'Health & Nutrition',
-    feature2Desc: isMarathi ? 'बालग्राम आणि वृद्धाश्रमात रोजच्या जेवणात सकस आहाराचा समावेश.' : 'Daily balanced nutrition for all children and elderly residents.',
-    btnText: isMarathi ? 'आमच्याशी जोडा' : 'Join With Us',
-    callUs: isMarathi ? 'आम्हाला कधीही कॉल करा' : 'Call Us Anytime',
+      ? '२०१८ मध्ये प्रसाद मोहिते आणि अनू मोहिते (MSW पदवीधर) यांनी स्थापन केलेल्या प्रार्थना फाउंडेशनने शेतकरी आत्महत्या व वैयक्तिक दुःखाचे रूपांतर समाजसेवेत केले. आज मोरवंची (सोलापूर) येथे ४५ बालकांना प्रार्थना बालग्राम आणि २५ वृद्धांना प्रार्थना वृद्धाश्रमाद्वारे निवारा, शिक्षण व सन्मान दिला जातो.' 
+      : 'Founded in 2018 by Prasad Mohite and Anu Mohite (both MSW graduates), Prathana Foundation transformed personal grief after losing Prasad’s farmer father to suicide into a sacred mission. Today, it provides permanent residential care, education, and dignity to 45 children at Prathana Balgram and 25 senior citizens at Prathana Old Age Home in Morvanchi, Solapur.',
+    motto: isMarathi ? 'मानवता हाच खरा धर्म' : 'Humanity is the True Religion',
+    feature1Title: isMarathi ? 'प्रार्थना बालग्राम आणि वृद्धाश्रम' : 'Prathana Balgram & Old Age Home',
+    feature1Desc: isMarathi ? 'मोरवंची (जि. सोलापूर) येथील स्वतःच्या हक्काच्या कॅम्पसमध्ये ४५ अनाथ/वंचित बालकांना व २५ निराधार वृद्धांना कौटुंबिक वातावरणात मोफत निवारा, शिक्षण आणि मोफत आरोग्य काळजी.' : 'Permanent residential campus on purchased land in Morvanchi, Solapur — providing shelter, education, healthcare, and family-like dignity to 45 vulnerable children and 25 senior citizens.',
+    feature2Title: isMarathi ? 'वंचितांची शाळा आणि सेंद्रिय शेती' : 'Vanchitanchi Shala & Natural Farming',
+    feature2Desc: isMarathi ? 'रस्त्यावरील व भिक्षेकरी मुलांना शिक्षणाच्या मुख्य प्रवाहात आणण्यापासून ते कॅम्पसमध्ये १६+ प्रकारच्या सेंद्रिय भाज्यांची नैसर्गिक शेती करण्यापर्यंत बालकांमध्ये स्वावलंबन निर्माण करणारे उपक्रम.' : 'Mainstreaming street and begging children into formal education, alongside cultivating 16+ varieties of chemical-free organic vegetables on campus for self-reliance.',
+    feature3Title: isMarathi ? 'आपत्ती व्यवस्थापन आणि युवा विकास' : 'Disaster Relief & Youth Leadership',
+    feature3Desc: isMarathi ? 'कोरोना व सोलापूर पूर परिस्थितीत थेट मदत (११ घरांची पुनर्बांधणी), तसेच शाळा-कॉलेजांमधील तरुणांसाठी निवासी नेतृत्व व व्यक्तिमत्त्व विकास शिबिरे.' : 'Active emergency support during COVID-19 & Solapur floods (rebuilding 11 homes), alongside residential youth leadership camps across schools and colleges.',
+    btnText: isMarathi ? 'स्वयंसेवक व्हा' : 'Become a Volunteer',
+    callUs: isMarathi ? 'संपर्क साधण्यासाठी' : 'Contact Us',
   };
 
   return (
@@ -151,7 +154,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
         </div>
 
 
-        {/* ── SECTION 2: Helping Each Other Can Make World Better ── */}
+        {/* ── SECTION 2: Who We Are ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8">
           
           {/* Left Side: Photo Mosaic Collage */}
@@ -210,10 +213,15 @@ export default function About({ lang, onDonateClick }: AboutProps) {
           {/* Right Side: Features Checklist */}
           <div className="lg:col-span-6 space-y-8 text-left">
             <div className="space-y-4">
-              <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
-                {isMarathi ? 'आम्ही कोण आहोत' : 'Who We Are'}
-              </span>
-              <h2 className="font-serif-display text-3xl sm:text-5xl font-bold text-brand-charcoal leading-tight">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-[11px] uppercase tracking-widest font-bold text-brand-forest">
+                  {isMarathi ? 'आम्ही कोण आहोत' : 'Who We Are'}
+                </span>
+                <span className="text-[10px] font-serif italic font-bold px-3 py-1 rounded-full bg-brand-yellow/15 text-brand-charcoal border border-brand-yellow/40">
+                  "{tLocal.motto}"
+                </span>
+              </div>
+              <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-charcoal leading-tight">
                 {tLocal.aboutTitle}
               </h2>
               <div className="w-12 h-[2px] bg-brand-yellow" />
@@ -223,7 +231,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             </div>
 
             {/* Checklist details */}
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Feature 1 */}
               <div className="flex items-start gap-4">
                 <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-forest flex-shrink-0 mt-1">
@@ -245,6 +253,17 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                   <p className="text-brand-muted text-xs font-light leading-relaxed">{tLocal.feature2Desc}</p>
                 </div>
               </div>
+
+              {/* Feature 3 */}
+              <div className="flex items-start gap-4">
+                <div className="w-6 h-6 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-forest flex-shrink-0 mt-1">
+                  <Check className="w-3.5 h-3.5" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-[15px] text-brand-charcoal">{tLocal.feature3Title}</h4>
+                  <p className="text-brand-muted text-xs font-light leading-relaxed">{tLocal.feature3Desc}</p>
+                </div>
+              </div>
             </div>
 
             {/* CTA Button and phone call block */}
@@ -261,7 +280,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] text-brand-muted font-medium leading-none">{tLocal.callUs}</span>
-                  <span className="text-sm font-bold text-brand-charcoal mt-1 leading-none">+91 95459 92026 / +91 90490 63829 / +91 90223 93906</span>
+                  <span className="text-xs font-bold text-brand-charcoal mt-1 leading-tight">+91 95459 92026 / 90490 63829 / 90223 93906</span>
                 </div>
               </div>
             </div>

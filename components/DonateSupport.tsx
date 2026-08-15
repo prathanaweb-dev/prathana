@@ -17,16 +17,16 @@ export default function DonateSupport({ lang, onDonateClick }: DonateSupportProp
   const isMarathi = lang === 'mr';
 
   const tLocal = {
-    title: isMarathi ? 'नवा बदल घडवून आणण्यासाठी मदत करा' : 'Donate Support To Make Difference Way',
+    title: isMarathi ? 'प्रार्थना बालग्राम आणि वृद्धाश्रमास सहाय्य करा' : 'Support Prathana Balgram & Old Age Home',
     sub: isMarathi 
-      ? 'आपली देणगी थेट सोलापूरच्या गरीब मुलांच्या पोषण आणि शिक्षणासाठी वापरली जाईल. प्रत्येक लहान मदत मोलाची आहे.' 
-      : 'Your contributions directly sponsor meals, education kits, and clinics in Solapur. Join our transparency ledger and view the live impact of your gift.',
-    tabMonthly: isMarathi ? 'मासिक' : 'Monthly',
-    tabOnetime: isMarathi ? 'एकदाच' : 'One-Time',
-    btnDonate: isMarathi ? 'आता मदत करा' : 'Donate Now',
+      ? 'आपली देणगी मोरवंची (सोलापूर) येथील ४५ बालके व २५ वृद्धांच्या निवास, पोषण आहार, औषधोपचार व शिक्षणासाठी थेट वापरली जाते. सर्व देणग्यांवर कलम ८०जी कर सवलत पावती मिळते.' 
+      : 'Your contribution directly supports residential care, nutritious meals, healthcare, and education for 45 children and 25 senior citizens in Morvanchi, Solapur. 80G Tax Exemption receipts provided.',
+    tabMonthly: isMarathi ? 'मासिक देणगी' : 'Monthly Support',
+    tabOnetime: isMarathi ? 'एकदाच देणगी' : 'One-Time Donation',
+    btnDonate: isMarathi ? 'आता मदत करा' : 'Donate Securely Now',
     customPlaceholder: isMarathi ? 'इतर रक्कम प्रविष्ट करा' : 'Enter custom amount',
-    feature1: isMarathi ? 'विश्वासू संस्था (नोंदणीकृत १८६०)' : 'Trusted Charity (Registered 1860)',
-    feature2: isMarathi ? 'कलम ८०जी कर सवलत रिसीट' : 'Section 80G Tax Exemption Receipts',
+    feature1: isMarathi ? 'विश्वासू संस्था (नोंदणीकृत २०१८)' : 'Registered Public Trust (Est. 2018)',
+    feature2: isMarathi ? 'कलम ८०जी कर सवलत पावती' : 'Section 80G Tax Exemption Receipts',
   };
 
   const quickAmounts = [500, 1000, 5000];
