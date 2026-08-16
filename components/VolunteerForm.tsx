@@ -19,18 +19,36 @@ export default function VolunteerForm({ lang }: VolunteerFormProps) {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Use translations if available, fallback to hardcoded if not entirely mapped
   const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
-  // If t.volunteer doesn't have all these fields, we will just use inline translations for robustness
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API submission
-    setTimeout(() => {
+    setError('');
+
+    try {
+      const res = await fetch('/api/volunteers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          phone: formState.phone,
+          interests: formState.interest,
+          availability: formState.availability,
+          experience: formState.message,
+        }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to submit application');
+      }
+
       setSubmitted(true);
-      setLoading(false);
       setFormState({
         name: '',
         email: '',
@@ -39,7 +57,11 @@ export default function VolunteerForm({ lang }: VolunteerFormProps) {
         availability: 'weekends',
         message: ''
       });
-    }, 1500);
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -142,6 +164,11 @@ export default function VolunteerForm({ lang }: VolunteerFormProps) {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+                {error && (
+                  <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-600 font-medium">
+                    {error}
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <label className="block text-xs uppercase tracking-wider text-brand-muted font-bold">

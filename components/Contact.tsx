@@ -13,18 +13,33 @@ export default function Contact({ lang }: ContactProps) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [error, setError] = useState('');
   const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Trigger mailto link as backend fallback
-    setTimeout(() => {
-      window.location.href = `mailto:contact@prathanafoundation.org?subject=Website Contact: ${formState.name}&body=${encodeURIComponent(formState.message)}%0A%0A--%0AFrom: ${formState.name}%0AEmail: ${formState.email}`;
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
       setSubmitted(true);
-      setLoading(false);
       setFormState({ name: '', email: '', message: '' });
-    }, 800);
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

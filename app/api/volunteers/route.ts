@@ -25,10 +25,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, city, occupation, interests, message, age, gender, address, availability, experience } = body;
+    const { name, phone, email, city, occupation, interests, interest, message, age, gender, address, availability, experience } = body;
 
-    if (!name || !phone || !email || !city || !occupation || !interests) {
-      return NextResponse.json({ success: false, error: 'All fields are required' }, { status: 400 });
+    if (!name || !phone || !email) {
+      return NextResponse.json({ success: false, error: 'Name, phone and email are required' }, { status: 400 });
     }
 
     // Check if volunteer is already registered
@@ -41,14 +41,14 @@ export async function POST(request: Request) {
       name,
       phone,
       email,
-      city,
-      occupation,
-      interests,
-      age,
-      gender,
-      address,
-      availability,
-      experience,
+      city: city || 'Solapur',
+      occupation: occupation || 'Volunteer',
+      interests: interests || interest || 'Education',
+      age: age || '',
+      gender: gender || '',
+      address: address || '',
+      availability: availability || 'Weekends',
+      experience: experience || message || '',
       assigned_activity: body.assigned_activity || '',
     });
 
