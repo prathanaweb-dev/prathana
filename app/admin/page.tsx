@@ -3,7 +3,7 @@
 // Never statically prerender — requires Firebase Auth (browser-only)
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signOut, Auth } from 'firebase/auth';
@@ -339,6 +339,7 @@ export default function AdminDashboard() {
   const [campaigns, setCampaigns]   = useState<Campaign[]>([]);
   const [donations, setDonations]   = useState<Donation[]>([]);
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [expandedVolId, setExpandedVolId] = useState<string | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [projects, setProjects]     = useState<Project[]>([]);
   const [events, setEvents]         = useState<EventItem[]>([]);
@@ -1133,7 +1134,10 @@ export default function AdminDashboard() {
               {tab === 'volunteers' && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-white font-bold">Volunteers ({volunteers.length})</h2>
+                    <div>
+                      <h2 className="text-white font-bold">Volunteers ({volunteers.length})</h2>
+                      <p className="text-xs text-white/40 mt-0.5">Click any row or the expand button to view full application details.</p>
+                    </div>
                     <div className="flex gap-2 text-[11px]">
                       {['pending','approved','rejected'].map(s => (
                         <span key={s} className="px-3 py-1 rounded-full bg-white/5 text-white/40 font-semibold capitalize">
@@ -1142,46 +1146,268 @@ export default function AdminDashboard() {
                       ))}
                     </div>
                   </div>
-                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden">
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden shadow-xl">
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-white/5">
-                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Name</th>
-                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden md:table-cell">City</th>
+                          <tr className="border-b border-white/5 bg-white/[0.02]">
+                            <th className="w-12 px-4 py-3 text-center"></th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Name & Contact</th>
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden md:table-cell">City & Availability</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 hidden lg:table-cell">Interests</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Status</th>
-                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Actions</th>
+                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 text-right">Actions</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                          {volunteers.map(v => (
-                            <tr key={v.id} className="hover:bg-white/2 transition-colors">
-                              <td className="px-5 py-3.5">
-                                <div className="font-medium text-white">{v.name}</div>
-                                <div className="text-[11px] text-white/30">{v.email}</div>
-                              </td>
-                              <td className="px-5 py-3.5 text-white/50 hidden md:table-cell">{v.city}</td>
-                              <td className="px-5 py-3.5 hidden lg:table-cell">
-                                <div className="flex flex-wrap gap-1">
-                                  {v.interests?.split(',').map(i => (
-                                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/30">{i.trim()}</span>
-                                  ))}
+                          {volunteers.map(v => {
+                            const isExpanded = expandedVolId === v.id;
+                            return (
+                              <Fragment key={v.id}>
+                                <tr
+                                  className={`transition-colors cursor-pointer ${isExpanded ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]'}`}
+                                  onClick={() => setExpandedVolId(isExpanded ? null : v.id)}
+                                >
+                                  {/* Expand Button */}
+                                  <td className="px-4 py-3.5 text-center" onClick={(e) => { e.stopPropagation(); setExpandedVolId(isExpanded ? null : v.id); }}>
+                                    <button
+                                      type="button"
+                                      aria-label={isExpanded ? 'Collapse details' : 'Expand full details'}
+                                      className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-amber-500/20 text-amber-400 rotate-180' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'}`}
+                                    >
+                                      <ChevronDown size={14} />
+                                    </button>
+                                  </td>
+
+                                  {/* Name & Contact */}
+                                  <td className="px-5 py-3.5">
+                                    <div className="font-semibold text-white flex items-center gap-2">
+                                      {v.name}
+                                    </div>
+                                    <div className="text-[11px] text-white/40 flex items-center gap-2 mt-0.5">
+                                      <span>{v.email}</span>
+                                      {v.phone && <span>• {v.phone}</span>}
+                                    </div>
+                                  </td>
+
+                                  {/* City & Availability */}
+                                  <td className="px-5 py-3.5 hidden md:table-cell">
+                                    <div className="text-white/70 font-medium text-xs">{v.city || 'Solapur'}</div>
+                                    <div className="text-[11px] text-amber-400/80 capitalize mt-0.5 font-light">{v.availability || 'Weekends'}</div>
+                                  </td>
+
+                                  {/* Interests */}
+                                  <td className="px-5 py-3.5 hidden lg:table-cell">
+                                    <div className="flex flex-wrap gap-1">
+                                      {v.interests?.split(',').map((i, idx) => (
+                                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/50 border border-white/5 capitalize">
+                                          {i.trim()}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </td>
+
+                                  {/* Status */}
+                                  <td className="px-5 py-3.5">
+                                    <Badge status={v.status} />
+                                  </td>
+
+                                  {/* Actions */}
+                                  <td className="px-5 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
+                                    <div className="flex items-center justify-end gap-2">
+                                      {v.status === 'pending' && (
+                                        <>
+                                          <button
+                                            onClick={() => updateVolStatus(v.id, 'approved')}
+                                            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 cursor-pointer transition-colors"
+                                          >
+                                            <Check size={11} /> Approve
+                                          </button>
+                                          <button
+                                            onClick={() => updateVolStatus(v.id, 'rejected')}
+                                            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 cursor-pointer transition-colors"
+                                          >
+                                            <X size={11} /> Reject
+                                          </button>
+                                        </>
+                                      )}
+                                      <button
+                                        onClick={() => setExpandedVolId(isExpanded ? null : v.id)}
+                                        className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5 transition-colors"
+                                      >
+                                        {isExpanded ? 'Hide' : 'View Full Info'}
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+
+                                {/* ── EXPANDED FULL DATA ROW ── */}
+                                {isExpanded && (
+                                  <tr className="bg-black/40 border-y border-white/10">
+                                    <td colSpan={6} className="p-5 sm:p-7">
+                                      <div className="bg-[#121622] border border-white/10 rounded-2xl p-6 space-y-6 shadow-2xl">
+                                        
+                                        {/* Header */}
+                                        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/5 pb-4">
+                                          <div className="space-y-1">
+                                            <div className="flex items-center gap-3">
+                                              <h3 className="text-lg font-bold text-white tracking-tight">{v.name}</h3>
+                                              <Badge status={v.status} />
+                                            </div>
+                                            <p className="text-xs text-white/40">
+                                              Application ID: <span className="font-mono text-white/60">{v.id}</span>
+                                              {v.created_at && ` • Submitted on ${new Date(v.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
+                                            </p>
+                                          </div>
+
+                                          {/* Status action buttons */}
+                                          <div className="flex items-center gap-2">
+                                            {v.status === 'pending' && (
+                                              <>
+                                                <button
+                                                  onClick={() => updateVolStatus(v.id, 'approved')}
+                                                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-colors shadow-sm cursor-pointer"
+                                                >
+                                                  <Check size={13} /> Approve Volunteer
+                                                </button>
+                                                <button
+                                                  onClick={() => updateVolStatus(v.id, 'rejected')}
+                                                  className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-red-500/15 text-red-400 border border-red-500/25 hover:bg-red-500/25 transition-colors shadow-sm cursor-pointer"
+                                                >
+                                                  <X size={13} /> Reject
+                                                </button>
+                                              </>
+                                            )}
+                                            {v.status === 'approved' && (
+                                              <button
+                                                onClick={() => updateVolStatus(v.id, 'rejected')}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
+                                              >
+                                                <X size={12} /> Change to Rejected
+                                              </button>
+                                            )}
+                                            {v.status === 'rejected' && (
+                                              <button
+                                                onClick={() => updateVolStatus(v.id, 'approved')}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                                              >
+                                                <Check size={12} /> Change to Approved
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        {/* Comprehensive data grid */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                          
+                                          {/* Phone */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Phone Number</span>
+                                            <div className="flex items-center justify-between">
+                                              <span className="text-sm font-semibold text-white font-mono">{v.phone || '—'}</span>
+                                              {v.phone && (
+                                                <a
+                                                  href={`https://wa.me/${v.phone.replace(/[^0-9]/g, '')}`}
+                                                  target="_blank"
+                                                  rel="noreferrer"
+                                                  className="text-[11px] text-emerald-400 hover:text-emerald-300 font-bold underline"
+                                                >
+                                                  WhatsApp ↗
+                                                </a>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Email */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Email Address</span>
+                                            <div className="flex items-center justify-between">
+                                              <span className="text-sm font-medium text-white truncate max-w-[170px]">{v.email || '—'}</span>
+                                              {v.email && (
+                                                <a
+                                                  href={`mailto:${v.email}`}
+                                                  className="text-[11px] text-amber-400 hover:text-amber-300 font-bold underline"
+                                                >
+                                                  Email ↗
+                                                </a>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Location */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">City / Location</span>
+                                            <span className="text-sm font-semibold text-white block">
+                                              {v.city || 'Solapur'}{v.address ? `, ${v.address}` : ''}
+                                            </span>
+                                          </div>
+
+                                          {/* Availability */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Availability</span>
+                                            <span className="text-sm font-semibold text-amber-400 capitalize block">
+                                              {v.availability || 'Weekends'}
+                                            </span>
+                                          </div>
+
+                                          {/* Occupation */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Occupation / Profession</span>
+                                            <span className="text-sm font-medium text-white/80 block">
+                                              {v.occupation || 'Volunteer / Student'}
+                                            </span>
+                                          </div>
+
+                                          {/* Age / Gender */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Age & Gender</span>
+                                            <span className="text-sm font-medium text-white/80 block">
+                                              {v.age ? `${v.age} years old` : 'Not specified'} {v.gender ? `• ${v.gender}` : ''}
+                                            </span>
+                                          </div>
+
+                                          {/* Selected Interests */}
+                                          <div className="p-4 bg-white/[0.03] rounded-xl border border-white/5 space-y-1.5 sm:col-span-2">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Areas of Interest</span>
+                                            <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                              {v.interests?.split(',').map((item, idx) => (
+                                                <span key={idx} className="text-xs px-3 py-1 rounded-lg bg-amber-500/15 text-amber-300 font-medium border border-amber-500/25 capitalize">
+                                                  {item.trim()}
+                                                </span>
+                                              ))}
+                                            </div>
+                                          </div>
+
+                                        </div>
+
+                                        {/* Volunteer Note / Message / Reason */}
+                                        {v.experience && (
+                                          <div className="p-4.5 bg-white/[0.03] rounded-xl border border-white/5 space-y-2">
+                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold block">Applicant Note & Experience</span>
+                                            <p className="text-xs sm:text-sm text-white/90 leading-relaxed whitespace-pre-wrap font-light">
+                                              "{v.experience}"
+                                            </p>
+                                          </div>
+                                        )}
+
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </Fragment>
+                            );
+                          })}
+                          {volunteers.length === 0 && (
+                            <tr>
+                              <td colSpan={6} className="text-center py-16 text-white/30">
+                                <div className="max-w-xs mx-auto space-y-2">
+                                  <Users className="w-8 h-8 mx-auto text-white/20" />
+                                  <p className="text-sm font-medium">No volunteer applications yet</p>
+                                  <p className="text-xs text-white/20">When someone registers on the volunteer form, their full details will appear here.</p>
                                 </div>
                               </td>
-                              <td className="px-5 py-3.5"><Badge status={v.status} /></td>
-                              <td className="px-5 py-3.5">
-                                {v.status === 'pending' && (
-                                  <div className="flex gap-2">
-                                    <button onClick={() => updateVolStatus(v.id, 'approved')} className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25 cursor-pointer transition-colors"><Check size={11} /> Approve</button>
-                                    <button onClick={() => updateVolStatus(v.id, 'rejected')} className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 cursor-pointer transition-colors"><X size={11} /> Reject</button>
-                                  </div>
-                                )}
-                                {v.status !== 'pending' && <span className="text-[11px] text-white/20 italic">—</span>}
-                              </td>
                             </tr>
-                          ))}
-                          {volunteers.length === 0 && <tr><td colSpan={5} className="text-center py-12 text-white/20">No volunteers yet</td></tr>}
+                          )}
                         </tbody>
                       </table>
                     </div>
