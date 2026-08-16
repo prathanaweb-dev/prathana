@@ -54,7 +54,7 @@ export const defaultAboutContent = {
       nodes: [
         { year: '2006', title: 'Seeds of Purpose', desc: "Following his father's death, a promise was made to build a platform of hope for rural families in crisis.", img: '/awards/Awards/DSC_0350.JPG' },
         { year: '2018', title: 'Foundation Inception', desc: 'Prathana Foundation was officially registered, serving hot meals to street children under bridge platforms.', img: '/vanchitanchishala/Vanchitanchi Shala/20181109_092926.jpg' },
-        { year: 'Street School', title: 'Vanchitanchi Shala', desc: 'Regular informal classes started for street children, helping them gain legal identities and enter mainstream schooling.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
+        { year: 'Street School', title: 'Vanchitanchi Shala', desc: 'Informal education and awareness classes started for underprivileged children, bridging them into mainstream schooling through foundational learning and mentorship.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
         { year: 'Balgram', title: 'Prathana Balgram', desc: 'A permanent home established in Morvanchi for orphaned children and those from farmer suicide families.', img: '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg' },
         { year: 'Old Age Home', title: 'Prathana Old Age Home', desc: 'A shelter built for abandoned and destitute seniors — creating an intergenerational home on campus.', img: '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg' },
         { year: 'Natural Farming', title: 'Morvanchi Green Campus', desc: 'Chemical-free agriculture pioneered on campus to grow organic food for children and seniors.', img: '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg' },
@@ -164,7 +164,7 @@ export const defaultAboutContent = {
       nodes: [
         { year: '२००६', title: 'आघातातून ध्येयाची निर्मिती', desc: 'वडिलांच्या आत्महत्येनंतर, वंचितांना आधार देण्याचे स्वप्न पाहिले गेले.', img: '/awards/Awards/DSC_0350.JPG' },
         { year: '२०१८', title: 'फाउंडेशनची नोंदणी', desc: 'प्रार्थना फाउंडेशनची अधिकृत नोंदणी झाली आणि रस्त्यावरील बालकांना जेवण देण्यास सुरुवात झाली.', img: '/vanchitanchishala/Vanchitanchi Shala/20181109_092926.jpg' },
-        { year: 'वंचितांची शाळा', title: 'वंचितांची शाळा', desc: 'रस्त्यावरील मुलांसाठी अभ्यास वर्ग सुरू केले.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
+        { year: 'वंचितांची शाळा', title: 'वंचितांची शाळा', desc: 'वंचित मुलांसाठी शिक्षण आणि जागरूकता वर्ग सुरू करून त्यांना मुख्य प्रवाहातील शिक्षणात सामील करण्याचे प्रयत्न.', img: '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg' },
         { year: 'बालग्राम', title: 'प्रार्थना बालग्राम', desc: 'अनाथ मुलांसाठी मोरवंची येथे हक्काच्या घराची पायाभरणी झाली.', img: '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg' },
         { year: 'वृद्धाश्रम', title: 'प्रार्थना वृद्धाश्रम', desc: 'निराधार वृद्ध व्यक्तींसाठी हक्काचा निवारा बनवला गेला.', img: '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg' },
         { year: 'नैसर्गिक शेती', title: 'सेंद्रिय हरित कॅम्पस', desc: 'बालग्रामच्या जमिनीवर नैसर्गिक विषमुक्त शेती सुरू झाली.', img: '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg' },
