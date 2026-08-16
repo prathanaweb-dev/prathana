@@ -20,7 +20,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
     cards: [
       {
         title: isMarathi ? 'सकस आहार' : 'Healthy Food',
-        desc: isMarathi ? 'सोलापूरमधील गरीब आणि रस्त्यावरील बालकांसाठी रोज पोषक आणि दर्जेदार जेवणाची व्यवस्था.' : 'Providing nutrition-dense meals daily to children in Solapur slums.',
+        desc: isMarathi ? 'मोरवंची बालग्राममधील ४५ बालके आणि वृद्धाश्रमातील २५ वृद्धांसाठी कॅम्पसवरील स्वयंपाकघरात दररोज सकस आणि ताजे जेवण.' : 'Daily nutritious meals prepared in our campus kitchen for 45 children at Balgram and 25 elders at the Old Age Home in Morvanchi.',
         ctaText: isMarathi ? 'आहार प्रायोजित करा' : 'Sponsor a Meal',
         campaignId: 'campaign-1',
         icon: Utensils,

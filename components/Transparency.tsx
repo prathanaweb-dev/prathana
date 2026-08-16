@@ -52,7 +52,7 @@ export default function Transparency({ lang }: TransparencyProps) {
       pct: 7,
       color: 'bg-brand-saffron',
       textColor: 'text-brand-saffron',
-      detail: lang === 'mr' ? 'स्वयंपाकघर कर्मचारी, वस्त्यांमध्ये वाहतूक आणि स्थानिक साठा केंद्र.' : 'Kitchen operations staff, transportation to remote slums, local hubs.',
+      detail: lang === 'mr' ? 'स्वयंपाकघर कर्मचारी, कॅम्पस देखभाल आणि स्थानिक साहित्य वाहतूक.' : 'Campus kitchen staff, facility maintenance, and local supply transportation.',
     },
     {
       label: lang === 'mr' ? 'प्रशासकीय व ट्रान्झॅक्शन फी' : 'Admin & Transaction Fees',

@@ -208,8 +208,8 @@ export default function Contact({ lang }: ContactProps) {
               </h4>
               <p className="text-xs text-brand-muted leading-relaxed font-light">
                 {lang === 'mr'
-                  ? 'आम्ही दर शनिवारी-रविवारी अन्न शिजवणे, पॅकिंग आणि सोलापूरच्या वस्त्यांमध्ये वाटप करण्याचे उपक्रम राबवतो.'
-                  : 'We organize weekend meals preparation, school kit packaging, and community medicine drives in Solapur slums.'}
+                  ? 'आम्ही बालग्राम कॅम्पसवर मुलांसाठी स्वयंपाक, शैक्षणिक साहित्य वाटप आणि आरोग्य तपासणी शिबिरे आयोजित करतो.'
+                  : 'We organize campus meals preparation, school kit distribution, and health check-up camps at Balgram in Morvanchi.'}
               </p>
               <a
                 href={`/${lang}/volunteer`}

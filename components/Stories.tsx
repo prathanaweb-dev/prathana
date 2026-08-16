@@ -29,8 +29,8 @@ export default function Stories({ lang }: StoriesProps) {
         ? 'शिक्षण टिकवून ठेवण्यासाठी पोटभर आहार ही पहिली पायरी आहे' 
         : 'Nutrition and meals are the first step to child education.',
       desc: isMarathi
-        ? 'सोलापूरमधील वस्ती भागातील बालकांमध्ये कुपोषण दूर करण्यासाठी आमच्या स्वयंपाकघराने राबविलेले उपक्रम.'
-        : 'How our community kitchen feeds street and begging children daily to support their school retention.',
+        ? 'बालग्रामच्या कॅम्पसवरील स्वयंपाकघरात मुलांना आणि वृद्धांना दररोज सकस जेवण कसे दिले जाते याची माहिती.'
+        : 'How our Balgram campus kitchen prepares fresh, balanced meals daily for children and senior residents to support their health and education.',
       image: '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
     },
     {
