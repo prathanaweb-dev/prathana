@@ -2152,8 +2152,19 @@ export default function AdminDashboard() {
                             value={csrUrl}
                             onChange={setCsrUrl}
                           />
+
+                          <Field label="Or Paste External PDF Link (Google Drive, Cloudinary, etc.)">
+                            <input
+                              value={csrUrl}
+                              onChange={e => setCsrUrl(e.target.value)}
+                              className={inputCls}
+                              placeholder="https://... (direct PDF or shareable link)"
+                            />
+                            <p className="text-[10px] text-white/20 mt-1">Upload a file directly or paste any direct/shareable PDF link.</p>
+                          </Field>
+
                           <div className="pt-6">
-                            <button disabled={formBusy || !csrTitle || !csrUrl} type="submit" className="w-full bg-brand-yellow text-amber-950 font-bold py-3 rounded-xl disabled:opacity-50">
+                            <button disabled={formBusy || !csrTitle || !csrUrl} type="submit" className="w-full bg-brand-yellow text-amber-950 font-bold py-3 rounded-xl disabled:opacity-50 cursor-pointer hover:bg-amber-400 transition-colors">
                               {formBusy ? 'Saving...' : 'Save Document'}
                             </button>
                           </div>
