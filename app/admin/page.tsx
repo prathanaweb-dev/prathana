@@ -31,6 +31,7 @@ import {
   FileText, Layers, Award, BarChart3, ChevronDown, ChevronUp, Upload, ImageIcon, Settings as SettingsIcon, Save
 } from 'lucide-react';
 import PageFormEditor from '@/components/admin/PageFormEditor';
+import DocumentViewerModal from '@/components/DocumentViewerModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Campaign { id: string; title: string; title_mr?: string; description: string; description_mr?: string; content?: string; content_mr?: string; goal_amount: number; amount_raised: number; image: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
@@ -271,6 +272,7 @@ export default function AdminDashboard() {
   const [csrTitleMr, setCsrTitleMr] = useState('');
   const [csrUrl, setCsrUrl] = useState('');
   const [csrDrawer, setCsrDrawer] = useState(false);
+  const [viewDocModal, setViewDocModal] = useState<{ title: string; url: string } | null>(null);
 
     const [toast, setToast] = useState<{msg:string; type:'success'|'error'} | null>(null);
 
@@ -2106,9 +2108,13 @@ export default function AdminDashboard() {
                                 {doc.title_mr && <div className="text-xs opacity-60 mt-0.5">{doc.title_mr}</div>}
                               </td>
                               <td className="p-4">
-                                <a href={doc.url} target="_blank" rel="noreferrer" className="text-brand-yellow hover:underline flex items-center gap-1 text-xs">
-                                  <FileText size={14} /> View File
-                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => setViewDocModal({ title: doc.title, url: doc.url })}
+                                  className="text-amber-400 hover:text-amber-300 hover:underline flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+                                >
+                                  <Eye size={14} /> View Document
+                                </button>
                               </td>
                               <td className="p-4 text-xs">{fmtDate(doc.created_at)}</td>
                               <td className="p-4 text-right">
@@ -2430,6 +2436,16 @@ export default function AdminDashboard() {
           Publish Report
         </button>
       </Drawer>
+
+      {/* Document In-App Preview Modal */}
+      {viewDocModal && (
+        <DocumentViewerModal
+          isOpen={!!viewDocModal}
+          onClose={() => setViewDocModal(null)}
+          title={viewDocModal.title}
+          url={viewDocModal.url}
+        />
+      )}
 
       {/* Toast */}
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}

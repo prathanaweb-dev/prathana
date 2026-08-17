@@ -5,10 +5,11 @@ import Footer from '@/components/Footer';
 import { translations } from '@/lib/translations';
 import { useParams } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Mail, Loader2, FileText, Download } from 'lucide-react';
+import { Mail, Loader2, FileText, Eye, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import type { CsrDocument } from '@/lib/db';
+import DocumentViewerModal from '@/components/DocumentViewerModal';
 
 export default function CSRPage() {
   const params = useParams();
@@ -26,6 +27,7 @@ export default function CSRPage() {
 
   const [docs, setDocs] = useState<CsrDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDoc, setSelectedDoc] = useState<{ title: string; url: string } | null>(null);
 
   useEffect(() => {
     async function fetchDocs() {
@@ -47,6 +49,17 @@ export default function CSRPage() {
   return (
     <div className="relative min-h-screen bg-brand-paper selection:bg-brand-yellow/30 selection:text-brand-forest">
       <Header lang={lang} />
+
+      {/* Document In-App Preview Modal */}
+      {selectedDoc && (
+        <DocumentViewerModal
+          isOpen={!!selectedDoc}
+          onClose={() => setSelectedDoc(null)}
+          title={selectedDoc.title}
+          url={selectedDoc.url}
+          lang={lang}
+        />
+      )}
 
       <main className="flex-1 z-10 pt-20">
         
@@ -117,34 +130,42 @@ export default function CSRPage() {
                   const title = lang === 'mr' && doc.title_mr ? doc.title_mr : doc.title;
                   
                   return (
-                    <motion.a 
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <motion.div 
                       key={doc.id || idx}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.1, duration: 0.5 }}
-                      className="group relative bg-white rounded-3xl p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(240,165,0,0.1)] border border-brand-clay/20 hover:border-brand-yellow/30 transition-all duration-500 overflow-hidden flex flex-col h-full"
+                      onClick={() => setSelectedDoc({ title, url: doc.url })}
+                      className="group relative bg-white rounded-3xl p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgba(240,165,0,0.15)] border border-brand-clay/20 hover:border-brand-yellow/40 transition-all duration-500 overflow-hidden flex flex-col h-full cursor-pointer"
                     >
                       <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                         <FileText className="w-32 h-32 text-brand-yellow rotate-12" />
                       </div>
                       
-                      <div className="relative z-10 flex-1">
-                        <div className="w-14 h-14 bg-brand-clay/10 text-brand-forest rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-yellow group-hover:text-white transition-colors duration-500">
-                          <FileText className="w-6 h-6" />
+                      <div className="relative z-10 flex-1 flex flex-col">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="w-14 h-14 bg-brand-clay/10 text-brand-forest rounded-2xl flex items-center justify-center group-hover:bg-brand-yellow group-hover:text-amber-950 transition-colors duration-500 shadow-sm">
+                            <FileText className="w-6 h-6" />
+                          </div>
+                          <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-brand-yellow/10 text-amber-900 border border-brand-yellow/20">
+                            {doc.url?.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC'}
+                          </span>
                         </div>
+
                         <h3 className="font-serif-display text-2xl font-bold text-brand-charcoal mb-4 group-hover:text-brand-forest transition-colors line-clamp-3">
                           {title}
                         </h3>
-                        <div className="text-sm text-brand-muted font-medium uppercase tracking-widest mt-auto pt-6 flex items-center gap-2 group-hover:text-brand-yellow transition-colors">
-                          <Download className="w-4 h-4" />
-                          {lang === 'mr' ? 'डाउनलोड करा' : 'Download Document'}
+                        
+                        <div className="text-sm font-semibold uppercase tracking-wider mt-auto pt-6 flex items-center justify-between text-brand-forest group-hover:text-amber-600 transition-colors">
+                          <span className="flex items-center gap-2">
+                            <Eye className="w-4 h-4 text-amber-500" />
+                            {lang === 'mr' ? 'दस्तऐवज पहा' : 'View Document'}
+                          </span>
+                          <ExternalLink className="w-4 h-4 opacity-40 group-hover:opacity-100 transition-opacity" />
                         </div>
                       </div>
-                    </motion.a>
+                    </motion.div>
                   );
                 })}
               </div>

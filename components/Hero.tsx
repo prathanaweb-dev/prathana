@@ -109,25 +109,25 @@ export default function Hero({ lang, onDonateClick, stats, bgImages: propBgImage
   }, [heroBgImages.length]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0d1a14] pt-32 pb-20 text-white z-0">
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0a0d10] pt-32 pb-20 text-white z-0">
       {/* Cinematic Background Carousel */}
       {heroBgImages.map((src, i) => (
         <motion.div
           key={`${src}-${i}`}
           className="absolute inset-0 bg-cover bg-center pointer-events-none"
           initial={{ opacity: 0 }}
-          animate={{ opacity: i === bgIndex ? 0.3 : 0 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
+          animate={{ opacity: i === bgIndex ? 0.8 : 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
           style={{ backgroundImage: `url('${src}')` }}
         />
       ))}
       
-      {/* Cinematic Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0a130d]/90 via-[#0a130d]/60 to-[#0a130d]/10 pointer-events-none" />
+      {/* Clean, Neutral Contrast Overlays for text legibility (no green tint) */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d10] via-transparent to-black/40 pointer-events-none" />
 
       {/* Cinematic Grain texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+      <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col lg:flex-row items-center justify-between gap-12">
