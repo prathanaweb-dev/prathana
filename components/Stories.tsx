@@ -31,7 +31,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'बालग्रामच्या कॅम्पसवरील स्वयंपाकघरात मुलांना आणि वृद्धांना दररोज सकस जेवण कसे दिले जाते याची माहिती.'
         : 'How our Balgram campus kitchen prepares fresh, balanced meals daily for children and senior residents to support their health and education.',
-      image: '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
+      image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
     },
     {
       date: isMarathi ? '१८ जून २०२६' : '18 June 2026',
@@ -42,7 +42,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'ग्रामीण भागातील गरजू विद्यार्थ्यांना वह्या, पुस्तके, दप्तर आणि इतर शैक्षणिक साहित्याचे वाटप.'
         : 'Distributing education bags, writing books, and uniforms to orphaned children at Balgram.',
-      image: '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
+      image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg',
     },
     {
       date: isMarathi ? '१५ जून २०२६' : '15 June 2026',
@@ -53,7 +53,7 @@ export default function Stories({ lang }: StoriesProps) {
       desc: isMarathi
         ? 'भीक मागणाऱ्या बालकांना शिक्षणाची गोडी लावून त्यांना शाळेत दाखल करण्याचे आमचे प्रयत्न.'
         : 'Enrolling children rescued from begging into public schools and tracking their long-term growth.',
-      image: '/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg',
+      image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_g4lenb.jpg',
     },
   ];
 

@@ -61,7 +61,7 @@ export default function CTABanners({ lang, onDonateClick }: CTABannersProps) {
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-8 border-brand-paper bg-brand-sand overflow-hidden hidden md:block z-20 shadow-xl">
         <img
-          src="/balgram/Balgram/486262711_4051383575091764_2412107029084713359_n.jpg"
+          src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_di2elp.jpg"
           alt="Outreach child face"
           className="w-full h-full object-cover"
         />

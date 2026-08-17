@@ -55,11 +55,11 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
   ];
 
   const heroImages = [
-    '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg',
-    '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg',
-    '/vanchitanchishala/Vanchitanchi Shala/20161022_094216.jpg',
-    '/naturalfarming/Natural Farming/IMG-20260329-WA0129.jpg',
-    '/awards/Awards/DSC_0595.JPG',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
   ];
 
   const [bgIndex, setBgIndex] = useState(0);

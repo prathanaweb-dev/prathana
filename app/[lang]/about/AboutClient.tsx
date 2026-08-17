@@ -265,16 +265,16 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const galleryItems = [
-    { img: '/vanchitanchishala/Vanchitanchi Shala/20181111_205214.jpg', category: 'studying', caption: lang === 'mr' ? 'अभ्यास करणारी मुले' : 'Children studying at the centre' },
-    { img: '/vanchitanchishala/Vanchitanchi Shala/20191029_092615.jpg', category: 'studying', caption: lang === 'mr' ? 'वंचितांच्या शाळेतील वर्ग' : 'Vanchitanchi Shala classrooms' },
-    { img: '/naturalfarming/Natural Farming/_MG_0169.JPG', category: 'farming', caption: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural farming in action' },
-    { img: '/naturalfarming/Natural Farming/IMG_9727.JPG', category: 'farming', caption: lang === 'mr' ? 'ताज्या भाज्या' : 'Fresh organic harvest on campus' },
-    { img: '/Vrudhashram/Vrudhashram/WhatsApp Image 2026-06-22 at 1.06.49 PM.jpeg', category: 'seniors', caption: lang === 'mr' ? 'वृद्धाश्रमातील सहजीवन' : 'Living in harmony at Old Age Home' },
-    { img: '/Vrudhashram/Vrudhashram/476569459_4004469246449864_4548442253041631_n.jpg', category: 'seniors', caption: lang === 'mr' ? 'आजी-आजोबांचे स्मित' : 'Dignified care for elderly citizens' },
-    { img: '/balgram/Balgram/WhatsApp Image 2026-06-22 at 1.09.36 PM.jpeg', category: 'celebrations', caption: lang === 'mr' ? 'आनंदाने सण' : 'Celebrating festivals as a family' },
-    { img: '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg', category: 'celebrations', caption: lang === 'mr' ? 'सांस्कृतिक कार्यक्रम' : 'Cultural events at Prathana Balgram' },
-    { img: '/awards/Awards/DSC_0595.JPG', category: 'volunteers', caption: lang === 'mr' ? 'समर्पित स्वयंसेवक' : 'Dedicated volunteers supporting the cause' },
-    { img: '/awards/Awards/DSC_0432.JPG', category: 'volunteers', caption: lang === 'mr' ? 'पोषण आहार वितरण' : 'Community meals outreach' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_bxsdsq.jpg', category: 'studying', caption: lang === 'mr' ? 'अभ्यास करणारी मुले' : 'Children studying at the centre' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951887/prathana/blob_apwasc.jpg', category: 'studying', caption: lang === 'mr' ? 'वंचितांच्या शाळेतील वर्ग' : 'Vanchitanchi Shala classrooms' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg', category: 'farming', caption: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural farming in action' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg', category: 'farming', caption: lang === 'mr' ? 'ताज्या भाज्या' : 'Fresh organic harvest on campus' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ndna0l.jpg', category: 'seniors', caption: lang === 'mr' ? 'वृद्धाश्रमातील सहजीवन' : 'Living in harmony at Old Age Home' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg', category: 'seniors', caption: lang === 'mr' ? 'आजी-आजोबांचे स्मित' : 'Dignified care for elderly citizens' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg', category: 'celebrations', caption: lang === 'mr' ? 'आनंदाने सण' : 'Celebrating festivals as a family' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg', category: 'celebrations', caption: lang === 'mr' ? 'सांस्कृतिक कार्यक्रम' : 'Cultural events at Prathana Balgram' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg', category: 'volunteers', caption: lang === 'mr' ? 'समर्पित स्वयंसेवक' : 'Dedicated volunteers supporting the cause' },
+    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg', category: 'volunteers', caption: lang === 'mr' ? 'पोषण आहार वितरण' : 'Community meals outreach' },
   ];
   const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter(i => i.category === galleryFilter);
 
@@ -313,7 +313,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
           {/* Background image */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: "url('/awards/Awards/FB_IMG_1782107660649.jpg.jpeg')" }}
+            style={{ backgroundImage: "url('https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg')" }}
           />
           {/* Gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20" />
@@ -400,7 +400,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src="/vanchitanchishala/Vanchitanchi Shala/20161022_094159.jpg" alt="2006"
+                <img src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg" alt="2006"
                   className="w-full h-[440px] object-cover editorial-img" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-5 left-5">
@@ -435,7 +435,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="lg:order-2 relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src="/vanchitanchishala/Vanchitanchi Shala/20181111_205243.jpg" alt="Promise"
+                <img src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg" alt="Promise"
                   className="w-full h-[440px] object-cover editorial-img" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               </motion.div>
@@ -604,8 +604,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                { data: local.founders.prasad, img: '/team/Team/Prasad Mohite (Founder & President)).jpg', delay: 0 },
-                { data: local.founders.anu, img: '/team/Team/Anu Mohite (Secretary).jpg', delay: 0.1 },
+                { data: local.founders.prasad, img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg', delay: 0 },
+                { data: local.founders.anu, img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg', delay: 0.1 },
               ].map(({ data, img, delay }) => (
                 <motion.div key={data.name}
                   initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -664,8 +664,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
               <div className="lg:col-span-7">
                 <BeforeAfterSlider
-                  beforeImg="/vanchitanchishala/Vanchitanchi Shala/20160913_094207.jpg"
-                  afterImg="/balgram/Balgram/WhatsApp Image 2026-06-22 at 1.09.36 PM.jpeg"
+                  beforeImg="https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg"
+                  afterImg="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg"
                   beforeLabel={local.sacrifice.before}
                   afterLabel={local.sacrifice.after}
                 />

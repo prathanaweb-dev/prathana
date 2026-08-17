@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 
 export default function GalleryStrip() {
   const images = [
-    '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
-    '/Vrudhashram/Vrudhashram/486624799_4051683148395140_1808839315720356419_n.jpg',
-    '/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg',
-    '/naturalfarming/Natural%20Farming/_MG_0169.JPG',
-    '/Vrudhashram/Vrudhashram/485888831_4051682965061825_6203613217436305161_n.jpg',
-    '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_g4lenb.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951867/prathana/blob_c4tthq.jpg',
+    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
   ];
 
   return (

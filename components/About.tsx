@@ -88,9 +88,9 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
               const cardImages = [
-                '/naturalfarming/Natural%20Farming/IMG-20260623-WA0003.jpg',
-                '/balgram/Balgram/WhatsApp%20Image%202026-06-22%20at%201.09.36%20PM.jpeg',
-                '/vanchitanchishala/Vanchitanchi%20Shala/20181109_095902.jpg',
+                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951858/prathana/blob_ru8oxl.jpg',
+                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg',
+                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_h6qnum.jpg',
               ];
               const accentColors = [
                 { accent: 'from-brand-green/90 to-brand-green/70', ring: 'ring-brand-green/40', iconBg: 'bg-brand-green', badge: 'bg-brand-green' },
@@ -170,7 +170,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
               <div className="relative">
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-xl h-[420px]">
                   <img
-                    src="/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg"
+                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg"
                     alt="Children at Prathana Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -191,7 +191,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Top stacked image — taller */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-lg h-[220px]">
                   <img
-                    src="/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg"
+                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg"
                     alt="Outreach activity at Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -200,7 +200,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Bottom stacked image */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-md h-[180px]">
                   <img
-                    src="/naturalfarming/Natural%20Farming/_MG_0169.JPG"
+                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg"
                     alt="Natural farming at Balgram campus"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"

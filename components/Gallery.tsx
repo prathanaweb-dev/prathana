@@ -1,66 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { useTranslations } from '@/components/TranslationProvider';
 
-interface GalleryProps {
-  lang: string;
+interface GalleryPhotoItem {
+  id?: string;
+  url: string;
+  title: string;
+  title_mr?: string;
+  desc?: string;
+  desc_mr?: string;
+  category: string;
 }
 
-export default function Gallery({ lang }: GalleryProps) {
+interface GalleryProps {
+  lang: string;
+  initialPhotos?: GalleryPhotoItem[];
+}
+
+export default function Gallery({ lang, initialPhotos }: GalleryProps) {
   const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
   
-  const [activeCategory, setActiveCategory] = useState<'all' | 'balgram' | 'farming' | 'vrudhashram' | 'shala' | 'awards'>('all');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const photos = [
+  const defaultPhotos: GalleryPhotoItem[] = [
     // ── Balgram ──
-    { url: '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg', title: lang === 'mr' ? 'बालग्राम मुले' : 'Balgram Children', desc: lang === 'mr' ? 'बालग्राम आवारातील मुले.' : 'Children at Prathana Balgram campus.', category: 'balgram' },
-    { url: '/balgram/Balgram/485616890_4051383675091754_3272242485595725906_n.jpg', title: lang === 'mr' ? 'दैनंदिन दिनक्रम' : 'Daily Routine', desc: lang === 'mr' ? 'मुलांचा रोजचा दिनक्रम.' : 'Children going about their daily routine at Balgram.', category: 'balgram' },
-    { url: '/balgram/Balgram/486262711_4051383575091764_2412107029084713359_n.jpg', title: lang === 'mr' ? 'बालग्राम जीवन' : 'Life at Balgram', desc: lang === 'mr' ? 'बालग्राम आवारात मुलांचे जीवन.' : 'Glimpses of life inside Prathana Balgram.', category: 'balgram' },
-    { url: '/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg', title: lang === 'mr' ? 'बालग्राम कार्यक्रम' : 'Balgram Event', desc: lang === 'mr' ? 'बालग्रामच्या विशेष कार्यक्रमाचा एक क्षण.' : 'A special moment from a Balgram programme.', category: 'balgram' },
-    { url: '/balgram/Balgram/481214496_4027096250853830_8076879962026144513_n.jpg', title: lang === 'mr' ? 'अभ्यास वेळ' : 'Study Time', desc: lang === 'mr' ? 'मुले शाळेनंतर अभ्यास करताना.' : 'Children studying after school at Balgram.', category: 'balgram' },
-    { url: '/balgram/Balgram/WhatsApp Image 2026-06-22 at 1.09.36 PM.jpeg', title: lang === 'mr' ? 'प्रसाद मोहिते' : 'Founder with Children', desc: lang === 'mr' ? 'संस्थापक प्रसाद मोहिते मुलांसोबत.' : 'Founder Prasad Mohite with the children at Balgram.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg', title: 'Balgram Children', title_mr: 'बालग्राम मुले', desc: 'Children at Prathana Balgram campus.', desc_mr: 'बालग्राम आवारातील मुले.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg', title: 'Daily Routine', title_mr: 'दैनंदिन दिनक्रम', desc: 'Children going about their daily routine at Balgram.', desc_mr: 'मुलांचा रोजचा दिनक्रम.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_di2elp.jpg', title: 'Life at Balgram', title_mr: 'बालग्राम जीवन', desc: 'Glimpses of life inside Prathana Balgram.', desc_mr: 'बालग्राम आवारात मुलांचे जीवन.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg', title: 'Balgram Event', title_mr: 'बालग्राम कार्यक्रम', desc: 'A special moment from a Balgram programme.', desc_mr: 'बालग्रामच्या विशेष कार्यक्रमाचा एक क्षण.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_odbniq.jpg', title: 'Study Time', title_mr: 'अभ्यास वेळ', desc: 'Children studying after school at Balgram.', desc_mr: 'मुले शाळेनंतर अभ्यास करताना.', category: 'balgram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg', title: 'Founder with Children', title_mr: 'प्रसाद मोहिते', desc: 'Founder Prasad Mohite with the children at Balgram.', desc_mr: 'संस्थापक प्रसाद मोहिते मुलांसोबत.', category: 'balgram' },
 
     // ── Natural Farming ──
-    { url: '/naturalfarming/Natural%20Farming/_MG_0169.JPG', title: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural Farming', desc: lang === 'mr' ? 'बालग्राम आवारात रासायनिक खतांशिवाय शेती.' : 'Chemical-free crop growing at Balgram campus.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260329-WA0129.jpg', title: lang === 'mr' ? 'भाजीपाला बाग' : 'Vegetable Garden', desc: lang === 'mr' ? 'ताज्या भाज्यांची बाग.' : 'Fresh vegetable garden at the campus.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260329-WA0137.jpg', title: lang === 'mr' ? 'शेत काम' : 'Field Work', desc: lang === 'mr' ? 'बालग्रामातील शेत काम.' : 'Field work at Balgram natural farm.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260329-WA0143.jpg', title: lang === 'mr' ? 'पिकांची देखभाल' : 'Crop Care', desc: lang === 'mr' ? 'पिकांची नियमित देखभाल.' : 'Regular maintenance of crops.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260331-WA0043.jpg', title: lang === 'mr' ? 'शेत कापणी' : 'Harvest', desc: lang === 'mr' ? 'काढणीचा दिवस.' : 'Harvest day at the natural farm.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260623-WA0002.jpg', title: lang === 'mr' ? 'सेंद्रिय भाज्या' : 'Organic Produce', desc: lang === 'mr' ? 'ताजे सेंद्रिय भाजीपाला.' : 'Fresh organic vegetables from the campus farm.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260623-WA0004.jpg', title: lang === 'mr' ? 'हिरवी बाग' : 'Green Garden', desc: lang === 'mr' ? 'हिरव्यागार बागेत काम.' : 'Working in the lush green garden.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260623-WA0008.jpg', title: lang === 'mr' ? 'मुले आणि शेती' : 'Children & Farming', desc: lang === 'mr' ? 'मुले शेतीचे धडे शिकत आहेत.' : 'Children learning farming skills.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG-20260623-WA0014.jpg', title: lang === 'mr' ? 'शाश्वत शेती' : 'Sustainable Farming', desc: lang === 'mr' ? 'शाश्वत आणि पर्यावरणपूरक शेती.' : 'Sustainable and eco-friendly farming practices.', category: 'farming' },
-    { url: '/naturalfarming/Natural%20Farming/IMG_9727.JPG', title: lang === 'mr' ? 'शेत दृश्य' : 'Farm View', desc: lang === 'mr' ? 'बालग्राम शेताचे विहंगम दृश्य.' : 'Aerial view of Balgram farm.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg', title: 'Natural Farming', title_mr: 'नैसर्गिक शेती', desc: 'Chemical-free crop growing at Balgram campus.', desc_mr: 'बालग्राम आवारात रासायनिक खतांशिवाय शेती.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg', title: 'Vegetable Garden', title_mr: 'भाजीपाला बाग', desc: 'Fresh vegetable garden at the campus.', desc_mr: 'ताज्या भाज्यांची बाग.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_mphuhc.jpg', title: 'Field Work', title_mr: 'शेत काम', desc: 'Field work at Balgram natural farm.', desc_mr: 'बालग्रामातील शेत काम.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_th3dy8.jpg', title: 'Crop Care', title_mr: 'पिकांची देखभाल', desc: 'Regular maintenance of crops.', desc_mr: 'पिकांची नियमित देखभाल.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951857/prathana/blob_iflelf.jpg', title: 'Harvest', title_mr: 'शेत कापणी', desc: 'Harvest day at the natural farm.', desc_mr: 'काढणीचा दिवस.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951857/prathana/blob_eyfjs0.jpg', title: 'Organic Produce', title_mr: 'सेंद्रिय भाज्या', desc: 'Fresh organic vegetables from the campus farm.', desc_mr: 'ताजे सेंद्रिय भाजीपाला.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951859/prathana/blob_vno5na.jpg', title: 'Green Garden', title_mr: 'हिरवी बाग', desc: 'Working in the lush green garden.', desc_mr: 'हिरव्यागार बागेत काम.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951860/prathana/blob_vq5dxe.jpg', title: 'Children & Farming', title_mr: 'मुले आणि शेती', desc: 'Children learning farming skills.', desc_mr: 'मुले शेतीचे धडे शिकत आहेत.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951862/prathana/blob_sdhum9.jpg', title: 'Sustainable Farming', title_mr: 'शाश्वत शेती', desc: 'Sustainable and eco-friendly farming practices.', desc_mr: 'शाश्वत आणि पर्यावरणपूरक शेती.', category: 'farming' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg', title: 'Farm View', title_mr: 'शेत दृश्य', desc: 'Aerial view of Balgram farm.', desc_mr: 'बालग्राम शेताचे विहंगम दृश्य.', category: 'farming' },
 
     // ── Vrudhashram ──
-    { url: '/Vrudhashram/Vrudhashram/486624799_4051683148395140_1808839315720356419_n.jpg', title: lang === 'mr' ? 'वृद्धाश्रम सेवा' : 'Old Age Home Care', desc: lang === 'mr' ? 'ज्येष्ठ नागरिकांची काळजी.' : 'Daily care for senior residents at Morvanci campus.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/485888831_4051682965061825_6203613217436305161_n.jpg', title: lang === 'mr' ? 'सन्मानाचे जीवन' : 'Dignified Living', desc: lang === 'mr' ? 'निराधार वृद्धांना सन्मानाचे जीवन.' : 'Warmth and companionship for abandoned elders.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/486493233_4051683115061810_2849420172237744929_n.jpg', title: lang === 'mr' ? 'वृद्ध आनंद' : 'Elders\' Joy', desc: lang === 'mr' ? 'वृद्धाश्रमातील आनंदाचे क्षण.' : 'Joyful moments inside the old age home.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/486082083_4050577441839044_1886977957426859795_n.jpg', title: lang === 'mr' ? 'एकत्र वेळ' : 'Together Time', desc: lang === 'mr' ? 'ज्येष्ठ नागरिक एकत्र वेळ घालवतात.' : 'Senior residents spending time together.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/486627533_4055227254707396_4811101929059682483_n.jpg', title: lang === 'mr' ? 'वृद्ध सेवा' : 'Elder Service', desc: lang === 'mr' ? 'नियमित वैद्यकीय सेवा.' : 'Regular medical care and attention.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/481242447_4030471493849639_7949063453700923126_n.jpg', title: lang === 'mr' ? 'वृद्धाश्रम कार्यक्रम' : 'Ashram Programme', desc: lang === 'mr' ? 'वृद्धाश्रमातील विशेष कार्यक्रम.' : 'Special programme at the old age home.', category: 'vrudhashram' },
-    { url: '/Vrudhashram/Vrudhashram/503761736_4133072476922873_5976244531151698281_n.jpg', title: lang === 'mr' ? 'आपुलकी' : 'Warmth & Love', desc: lang === 'mr' ? 'प्रेम आणि आपुलकीने वृद्धांची सेवा.' : 'Serving elders with love and warmth.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg', title: 'Old Age Home Care', title_mr: 'वृद्धाश्रम सेवा', desc: 'Daily care for senior residents at Morvanci campus.', desc_mr: 'ज्येष्ठ नागरिकांची काळजी.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951867/prathana/blob_c4tthq.jpg', title: 'Dignified Living', title_mr: 'सन्मानाचे जीवन', desc: 'Warmth and companionship for abandoned elders.', desc_mr: 'निराधार वृद्धांना सन्मानाचे जीवन.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951869/prathana/blob_duxfju.jpg', title: 'Elders\' Joy', title_mr: 'वृद्ध आनंद', desc: 'Joyful moments inside the old age home.', desc_mr: 'वृद्धाश्रमातील आनंदाचे क्षण.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951868/prathana/blob_qjg7lz.jpg', title: 'Together Time', title_mr: 'एकत्र वेळ', desc: 'Senior residents spending time together.', desc_mr: 'ज्येष्ठ नागरिक एकत्र वेळ घालवतात.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_dgxofw.jpg', title: 'Elder Service', title_mr: 'वृद्ध सेवा', desc: 'Regular medical care and attention.', desc_mr: 'नियमित वैद्यकीय सेवा.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951867/prathana/blob_cmk7t6.jpg', title: 'Ashram Programme', title_mr: 'वृद्धाश्रम कार्यक्रम', desc: 'Special programme at the old age home.', desc_mr: 'वृद्धाश्रमातील विशेष कार्यक्रम.', category: 'vrudhashram' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951871/prathana/blob_wubsee.jpg', title: 'Warmth & Love', title_mr: 'आपुलकी', desc: 'Serving elders with love and warmth.', desc_mr: 'प्रेम आणि आपुलकीने वृद्धांची सेवा.', category: 'vrudhashram' },
 
     // ── Vanchitanchi Shala ──
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/481773971_4029575357272586_1971485340868554889_n.jpg', title: lang === 'mr' ? 'वंचितांची शाळा' : 'Vanchitanchi Shala', desc: lang === 'mr' ? 'रस्त्यावरील मुलांसाठी शाळा.' : 'School for underprivileged street children.', category: 'shala' },
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/IMG-20180608-WA0096.jpg', title: lang === 'mr' ? 'बाल शिक्षण' : 'Child Literacy', desc: lang === 'mr' ? 'मुलांसाठी अनौपचारिक शिक्षण.' : 'Informal literacy classes for street children.', category: 'shala' },
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/IMG-20180608-WA0171.jpg', title: lang === 'mr' ? 'शिक्षण उपक्रम' : 'Education Drive', desc: lang === 'mr' ? 'मुलांना शिक्षणाच्या प्रवाहात आणणे.' : 'Bringing children into mainstream education.', category: 'shala' },
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/IMG-20180826-WA0282.jpg', title: lang === 'mr' ? 'शिकणारी मुले' : 'Learning Children', desc: lang === 'mr' ? 'उत्साहाने शिकणारी मुले.' : 'Children enthusiastically learning.', category: 'shala' },
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/FB_IMG_1542104496892.jpg', title: lang === 'mr' ? 'शाळा उपक्रम' : 'Shala Outreach', desc: lang === 'mr' ? 'वंचित मुलांसाठी शाळा उपक्रम.' : 'Outreach activity for marginalised children.', category: 'shala' },
-    { url: '/vanchitanchishala/Vanchitanchi%20Shala/20181109_092926.jpg', title: lang === 'mr' ? 'वर्ग खोली' : 'Classroom', desc: lang === 'mr' ? 'अनौपचारिक वर्ग खोलीत शिक्षण.' : 'Learning in an informal classroom setting.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_g4lenb.jpg', title: 'Vanchitanchi Shala', title_mr: 'वंचितांची शाळा', desc: 'School for underprivileged street children.', desc_mr: 'रस्त्यावरील मुलांसाठी शाळा.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_hezvzh.jpg', title: 'Child Literacy', title_mr: 'बाल शिक्षण', desc: 'Informal literacy classes for street children.', desc_mr: 'मुलांसाठी अनौपचारिक शिक्षण.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951902/prathana/blob_fbfemq.jpg', title: 'Education Drive', title_mr: 'शिक्षण उपक्रम', desc: 'Bringing children into mainstream education.', desc_mr: 'मुलांना शिक्षणाच्या प्रवाहात आणणे.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951902/prathana/blob_yxet38.jpg', title: 'Learning Children', title_mr: 'शिकणारी मुले', desc: 'Children enthusiastically learning.', desc_mr: 'उत्साहाने शिकणारी मुले.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_n7gshe.jpg', title: 'Shala Outreach', title_mr: 'शाळा उपक्रम', desc: 'Outreach activity for marginalised children.', desc_mr: 'वंचित मुलांसाठी शाळा उपक्रम.', category: 'shala' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951881/prathana/blob_yb3ast.jpg', title: 'Classroom', title_mr: 'वर्ग खोली', desc: 'Learning in an informal classroom setting.', desc_mr: 'अनौपचारिक वर्ग खोलीत शिक्षण.', category: 'shala' },
 
     // ── Awards & Recognition ──
-    { url: '/awards/Awards/FB_IMG_1782107660649.jpg.jpeg', title: lang === 'mr' ? 'पुरस्कार सोहळा' : 'Award Ceremony', desc: lang === 'mr' ? 'प्रार्थना फाउंडेशनला पुरस्कार.' : 'Prathana Foundation receiving recognition.', category: 'awards' },
-    { url: '/awards/Awards/FB_IMG_1782107621493.jpg.jpeg', title: lang === 'mr' ? 'सामाजिक पुरस्कार' : 'Social Award', desc: lang === 'mr' ? 'सामाजिक कार्याबद्दल पुरस्कार.' : 'Award for outstanding social work.', category: 'awards' },
-    { url: '/awards/Awards/DSC_0350.JPG', title: lang === 'mr' ? 'विशेष सन्मान' : 'Special Honour', desc: lang === 'mr' ? 'विशेष सन्मान समारंभ.' : 'Special felicitation ceremony.', category: 'awards' },
-    { url: '/awards/Awards/DSC_0432.JPG', title: lang === 'mr' ? 'मान्यता' : 'Recognition', desc: lang === 'mr' ? 'कार्याची मान्यता.' : 'Recognition for community service.', category: 'awards' },
-    { url: '/awards/Awards/FB_IMG_1782107830648.jpg.jpeg', title: lang === 'mr' ? 'प्रतिष्ठित पुरस्कार' : 'Prestigious Award', desc: lang === 'mr' ? 'प्रतिष्ठित सामाजिक पुरस्कार.' : 'Prestigious social service award.', category: 'awards' },
-    { url: '/awards/Awards/20200310_125506.jpg', title: lang === 'mr' ? 'समाजसेवा सन्मान' : 'Community Honour', desc: lang === 'mr' ? 'समाजसेवेसाठी सन्मान.' : 'Felicitation for community service.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg', title: 'Award Ceremony', title_mr: 'पुरस्कार सोहळा', desc: 'Prathana Foundation receiving recognition.', desc_mr: 'प्रार्थना फाउंडेशनला पुरस्कार.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951932/prathana/blob_xam3lg.jpg', title: 'Social Award', title_mr: 'सामाजिक पुरस्कार', desc: 'Award for outstanding social work.', desc_mr: 'सामाजिक कार्याबद्दल पुरस्कार.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951922/prathana/blob_zpwyzx.jpg', title: 'Special Honour', title_mr: 'विशेष सन्मान', desc: 'Special felicitation ceremony.', desc_mr: 'विशेष सन्मान समारंभ.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg', title: 'Recognition', title_mr: 'मान्यता', desc: 'Recognition for community service.', desc_mr: 'कार्याची मान्यता.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_v4a9z7.jpg', title: 'Prestigious Award', title_mr: 'प्रतिष्ठित पुरस्कार', desc: 'Prestigious social service award.', desc_mr: 'प्रतिष्ठित सामाजिक पुरस्कार.', category: 'awards' },
+    { url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951917/prathana/blob_bddfz7.jpg', title: 'Community Honour', title_mr: 'समाजसेवा सन्मान', desc: 'Felicitation for community service.', desc_mr: 'समाजसेवेसाठी सन्मान.', category: 'awards' },
   ];
+
+  const [photos, setPhotos] = useState<GalleryPhotoItem[]>(
+    initialPhotos && initialPhotos.length > 0 ? initialPhotos : defaultPhotos
+  );
+
+  useEffect(() => {
+    fetch('/api/gallery')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.photos) && data.photos.length > 0) {
+          setPhotos(data.photos);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredPhotos = activeCategory === 'all'
     ? photos
@@ -73,8 +99,18 @@ export default function Gallery({ lang }: GalleryProps) {
     { id: 'vrudhashram', label: lang === 'mr' ? 'वृद्धाश्रम' : 'Old Age Home' },
     { id: 'shala', label: lang === 'mr' ? 'वंचितांची शाळा' : 'Vanchitanchi Shala' },
     { id: 'awards', label: lang === 'mr' ? 'पुरस्कार' : 'Awards' },
-  ] as const;
+    { id: 'team', label: lang === 'mr' ? 'कार्यकर्ते व टीम' : 'Team' },
+  ];
 
+  const getLocalizedTitle = (photo: GalleryPhotoItem) => {
+    if (lang === 'mr') return photo.title_mr || photo.title;
+    return photo.title || photo.title_mr || '';
+  };
+
+  const getLocalizedDesc = (photo: GalleryPhotoItem) => {
+    if (lang === 'mr') return photo.desc_mr || photo.desc;
+    return photo.desc || photo.desc_mr || '';
+  };
 
   const handlePrev = () => {
     if (lightboxIndex === null) return;
@@ -149,14 +185,14 @@ export default function Gallery({ lang }: GalleryProps) {
               {/* Image */}
               <img
                 src={photo.url}
-                alt={photo.title}
+                alt={getLocalizedTitle(photo)}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                 loading="lazy"
               />
 
               {/* Permanent gradient + title */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-charcoal/70 via-brand-charcoal/20 to-transparent p-4 group-hover:opacity-0 transition-opacity duration-300">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-white/90">{photo.title}</span>
+                <span className="text-[10px] uppercase tracking-widest font-bold text-white/90">{getLocalizedTitle(photo)}</span>
               </div>
 
               {/* Hover overlay */}
@@ -164,8 +200,8 @@ export default function Gallery({ lang }: GalleryProps) {
 
               {/* Hover text — slides up */}
               <div className="absolute inset-x-0 bottom-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-brand-yellow">{photo.title}</span>
-                <p className="text-white/85 text-xs mt-1.5 font-light leading-relaxed line-clamp-2">{photo.desc}</p>
+                <span className="text-[10px] uppercase tracking-widest font-bold text-brand-yellow">{getLocalizedTitle(photo)}</span>
+                <p className="text-white/85 text-xs mt-1.5 font-light leading-relaxed line-clamp-2">{getLocalizedDesc(photo)}</p>
               </div>
 
               {/* Expand icon */}
@@ -230,7 +266,7 @@ export default function Gallery({ lang }: GalleryProps) {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3 }}
                 src={filteredPhotos[lightboxIndex].url}
-                alt={filteredPhotos[lightboxIndex].title}
+                alt={getLocalizedTitle(filteredPhotos[lightboxIndex])}
                 className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-white/5"
               />
             </div>
@@ -238,10 +274,10 @@ export default function Gallery({ lang }: GalleryProps) {
             {/* Image Details Bottom Bar */}
             <div className="absolute bottom-8 text-center max-w-xl z-10 px-4 text-white">
               <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold">
-                {filteredPhotos[lightboxIndex].title}
+                {getLocalizedTitle(filteredPhotos[lightboxIndex])}
               </span>
               <p className="text-white/80 text-sm mt-1.5 font-light leading-relaxed">
-                {filteredPhotos[lightboxIndex].desc}
+                {getLocalizedDesc(filteredPhotos[lightboxIndex])}
               </p>
             </div>
           </motion.div>

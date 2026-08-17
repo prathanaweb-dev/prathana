@@ -57,7 +57,7 @@ export default function DonateSupport({ lang, onDonateClick }: DonateSupportProp
         <div className="lg:col-span-6 relative flex justify-center">
           <div className="relative w-full max-w-[420px] aspect-[4/5] rounded-[40px_10px_40px_10px] overflow-hidden border-8 border-brand-yellow/10 bg-brand-charcoal shadow-xl">
             <img
-              src="/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg"
+              src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg"
               alt="Classroom students learning"
               className="w-full h-full object-cover"
               loading="lazy"
@@ -68,7 +68,7 @@ export default function DonateSupport({ lang, onDonateClick }: DonateSupportProp
           {/* Overlapping small image bottom-right */}
           <div className="absolute -bottom-6 -right-6 w-44 sm:w-52 aspect-square rounded-2xl overflow-hidden border-8 border-brand-paper shadow-2xl z-10 hidden sm:block">
             <img
-              src="/balgram/Balgram/481252295_4027096254187163_273174834482280391_n.jpg"
+              src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg"
               alt="Outreach nutrition drive smile"
               className="w-full h-full object-cover"
               loading="lazy"

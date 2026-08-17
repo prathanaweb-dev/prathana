@@ -1522,8 +1522,14 @@ export default function AdminDashboard() {
                             {p.image && <img src={p.image} alt={p.title} className="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-white/10" />}
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-white text-sm truncate">{p.title}</div>
-                              <Badge status={p.status} />
-                              <div className="text-[11px] text-white/25 mt-1">{p.start_date} → {p.end_date}</div>
+                              {p.title_mr && <div className="text-xs text-amber-400/80 truncate font-marathi">मराठी: {p.title_mr}</div>}
+                              <div className="flex items-center gap-2 mt-1">
+                                <Badge status={p.status} />
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded ${p.description_mr ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-white/5 text-white/40'}`}>
+                                  {p.description_mr ? '✓ MR Desc' : 'No MR Desc'}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-white/25 mt-1">{p.start_date || 'Ongoing'} → {p.end_date || 'Present'}</div>
                             </div>
                             <div className="flex items-center gap-2">
                               {/* Reorder Buttons */}
@@ -2018,9 +2024,10 @@ export default function AdminDashboard() {
 
       {/* Project drawer */}
       <Drawer open={projDrawer} title={editProj ? 'Edit Project' : 'New Project'} onClose={() => setProjDrawer(false)}>
-        <Field label="Title (English)"><input value={pTitle} onChange={e => setPTitle(e.target.value)} className={inputCls} placeholder="Project title" /></Field>
-        <Field label="Title (Marathi)"><input value={pTitleMr} onChange={e => setPTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
-        <Field label="Description"><textarea value={pDesc} onChange={e => setPDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Description..." /></Field>
+        <Field label="Title (English)"><input value={pTitle} onChange={e => setPTitle(e.target.value)} className={inputCls} placeholder="Project title (English)" /></Field>
+        <Field label="Title (Marathi)"><input value={pTitleMr} onChange={e => setPTitleMr(e.target.value)} className={inputCls} placeholder="प्रकल्प शीर्षक (मराठी)" /></Field>
+        <Field label="Description (English)"><textarea value={pDesc} onChange={e => setPDesc(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="Full project description in English..." /></Field>
+        <Field label="Description (Marathi)"><textarea value={pDescMr} onChange={e => setPDescMr(e.target.value)} className={inputCls + ' resize-none h-24'} placeholder="प्रकल्पाची संपूर्ण मराठी माहिती व वर्णन..." /></Field>
         <ImageUpload value={pImage} onChange={setPImage} label="Cover Photo" />
         
         <div className="space-y-3">
