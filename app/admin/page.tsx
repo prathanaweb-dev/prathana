@@ -41,7 +41,7 @@ interface Project   { id: string; title: string; title_mr?: string; description:
 interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
-interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; linkedin?: string; facebook?: string; instagram?: string; created_at: string; }
+interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; linkedin?: string; facebook?: string; instagram?: string; order?: number; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
@@ -761,6 +761,32 @@ export default function AdminDashboard() {
     if (data.success) { notify('Member deleted'); fetchAll(); } else notify('Delete failed', 'error');
   };
 
+  const handleMoveTeamMember = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= teamMembers.length) return;
+
+    const newMembers = [...teamMembers];
+    const [moved] = newMembers.splice(index, 1);
+    newMembers.splice(targetIndex, 0, moved);
+
+    setTeamMembers(newMembers);
+
+    try {
+      const orderedIds = newMembers.map(m => m.id);
+      const res = await fetch('/api/team', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to update order');
+      notify('Team sequence updated!');
+    } catch (err: any) {
+      notify(err.message, 'error');
+      fetchAll();
+    }
+  };
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bankSettings) return;
@@ -1415,11 +1441,14 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-                            {/* ════ TEAM ════ */}
+              {/* ════ TEAM ════ */}
               {tab === 'team' && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-white font-bold">Team Members ({teamMembers.length})</h2>
+                    <div>
+                      <h2 className="text-white font-bold">Team Members ({teamMembers.length})</h2>
+                      <p className="text-[11px] text-white/30 mt-0.5">Use ▲ and ▼ buttons to resequence the order in which team members appear on the website</p>
+                    </div>
                     <button onClick={() => openTeamDrawer()} className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500 text-amber-950 font-semibold text-xs hover:bg-amber-400 transition-colors">
                       <Plus size={14} /> Add Member
                     </button>
@@ -1429,32 +1458,63 @@ export default function AdminDashboard() {
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-white/5">
+                            <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 w-20">Order</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Photo & Name</th>
                             <th className="text-left px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Position</th>
-                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30">Actions</th>
+                            <th className="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-white/30 text-right">Actions</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                          {teamMembers.map(m => (
-                            <tr key={m.id} className="hover:bg-white/2 transition-colors">
-                              <td className="px-5 py-3.5 flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
-                                  <img src={m.image} alt={m.name} className="w-full h-full object-cover" />
+                          {teamMembers.map((m, idx) => (
+                            <tr key={m.id} className="hover:bg-white/2 transition-colors group">
+                              <td className="px-5 py-3.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-400 font-mono font-bold text-[11px] flex items-center justify-center flex-shrink-0 border border-amber-500/20" title={`Sequence #${idx + 1}`}>
+                                    #{idx + 1}
+                                  </span>
+                                  <div className="flex flex-col gap-0.5">
+                                    <button
+                                      disabled={idx === 0}
+                                      onClick={() => handleMoveTeamMember(idx, 'up')}
+                                      title="Move Up"
+                                      className="w-5 h-5 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      <ChevronUp size={11} />
+                                    </button>
+                                    <button
+                                      disabled={idx === teamMembers.length - 1}
+                                      onClick={() => handleMoveTeamMember(idx, 'down')}
+                                      title="Move Down"
+                                      className="w-5 h-5 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      <ChevronDown size={11} />
+                                    </button>
+                                  </div>
                                 </div>
-                                <div className="font-medium text-white">{m.name}</div>
+                              </td>
+                              <td className="px-5 py-3.5">
+                                <div className="flex items-center gap-3.5">
+                                  <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
+                                    <img src={m.image} alt={m.name} className="w-full h-full object-cover" />
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-white text-sm">{m.name}</div>
+                                    {m.position_mr && <div className="text-[11px] text-amber-400/80 font-marathi">मराठी: {m.position_mr}</div>}
+                                  </div>
+                                </div>
                               </td>
                               <td className="px-5 py-3.5 text-white/50">
                                 <span className="px-3 py-1 rounded-full bg-white/5 text-[11px] font-semibold">{m.position}</span>
                               </td>
-                              <td className="px-5 py-3.5">
-                                <div className="flex items-center justify-center gap-2">
-                                  <button onClick={() => openTeamDrawer(m)} className="p-1.5 text-white/30 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors"><Edit2 size={14} /></button>
-                                  <button onClick={() => deleteTeamMember(m.id)} className="p-1.5 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"><Trash2 size={14} /></button>
+                              <td className="px-5 py-3.5 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  <button onClick={() => openTeamDrawer(m)} className="p-1.5 text-white/30 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors" title="Edit Member"><Edit2 size={14} /></button>
+                                  <button onClick={() => deleteTeamMember(m.id)} className="p-1.5 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors" title="Delete Member"><Trash2 size={14} /></button>
                                 </div>
                               </td>
                             </tr>
                           ))}
-                          {teamMembers.length === 0 && <tr><td colSpan={3} className="text-center py-12 text-white/20">No team members yet</td></tr>}
+                          {teamMembers.length === 0 && <tr><td colSpan={4} className="text-center py-12 text-white/20">No team members yet</td></tr>}
                         </tbody>
                       </table>
                     </div>
@@ -1806,10 +1866,134 @@ export default function AdminDashboard() {
               )}
               {/* ════ SETTINGS ════ */}
               {tab === 'settings' && (
-                <div className="max-w-3xl">
-                  <h2 className="text-white font-bold mb-4">Bank & UPI Settings</h2>
+                <div className="max-w-4xl space-y-8">
+                  {/* Homepage Hero Section Images */}
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 space-y-6">
+                    <div>
+                      <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                        <span>🖼️</span> Homepage Hero Images System
+                      </h2>
+                      <p className="text-xs text-white/40 mt-1">
+                        Select and manage the background images and animated scrolling photo stream on the homepage hero section.
+                      </p>
+                    </div>
+
+                    {/* Background Images Carousel Manager */}
+                    <div className="space-y-3 pt-4 border-t border-white/5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-amber-400">1. Hero Background Images (Ambient Carousel)</label>
+                          <p className="text-[11px] text-white/40">These photos cycle with a smooth ambient fade in the background of the hero section</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const cur = bankSettings?.heroBgImages || [];
+                            setBankSettings({ ...bankSettings, heroBgImages: [...cur, ''] });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-semibold cursor-pointer transition-colors"
+                        >
+                          <Plus size={13} /> Add Background Photo
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        {(bankSettings?.heroBgImages || []).map((imgUrl: string, idx: number) => (
+                          <div key={idx} className="bg-black/20 p-3.5 rounded-xl border border-white/5 flex items-start gap-3">
+                            <div className="flex-1 min-w-0">
+                              <ImageUpload
+                                label={`Background Photo #${idx + 1}`}
+                                value={imgUrl}
+                                onChange={(url) => {
+                                  const updated = [...(bankSettings?.heroBgImages || [])];
+                                  updated[idx] = url;
+                                  setBankSettings({ ...bankSettings, heroBgImages: updated });
+                                }}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = (bankSettings?.heroBgImages || []).filter((_: any, i: number) => i !== idx);
+                                setBankSettings({ ...bankSettings, heroBgImages: updated });
+                              }}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-400/60 hover:text-red-400 hover:bg-red-500/20 transition-colors mt-6 flex-shrink-0 cursor-pointer"
+                              title="Delete background image"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        ))}
+                        {(bankSettings?.heroBgImages || []).length === 0 && (
+                          <div className="col-span-2 text-center py-6 border border-dashed border-white/10 rounded-xl text-white/30 text-xs">
+                            No custom background images added yet (default campus gallery photos are being used)
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Scrolling Images Manager */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-amber-400">2. Hero Scrolling Photo Stream (Right Side)</label>
+                          <p className="text-[11px] text-white/40">These photos continuously scroll in the dual-column animation on the right of the homepage hero</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const cur = bankSettings?.heroScrollImages || [];
+                            setBankSettings({ ...bankSettings, heroScrollImages: [...cur, ''] });
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-semibold cursor-pointer transition-colors"
+                        >
+                          <Plus size={13} /> Add Scrolling Photo
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        {(bankSettings?.heroScrollImages || []).map((imgUrl: string, idx: number) => (
+                          <div key={idx} className="bg-black/20 p-3.5 rounded-xl border border-white/5 flex items-start gap-3">
+                            <div className="flex-1 min-w-0">
+                              <ImageUpload
+                                label={`Scroll Photo #${idx + 1}`}
+                                value={imgUrl}
+                                onChange={(url) => {
+                                  const updated = [...(bankSettings?.heroScrollImages || [])];
+                                  updated[idx] = url;
+                                  setBankSettings({ ...bankSettings, heroScrollImages: updated });
+                                }}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = (bankSettings?.heroScrollImages || []).filter((_: any, i: number) => i !== idx);
+                                setBankSettings({ ...bankSettings, heroScrollImages: updated });
+                              }}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-400/60 hover:text-red-400 hover:bg-red-500/20 transition-colors mt-6 flex-shrink-0 cursor-pointer"
+                              title="Delete scrolling image"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        ))}
+                        {(bankSettings?.heroScrollImages || []).length === 0 && (
+                          <div className="col-span-2 text-center py-6 border border-dashed border-white/10 rounded-xl text-white/30 text-xs">
+                            No custom scrolling images added yet (default campus gallery photos are being used)
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bank & UPI Settings */}
                   <form onSubmit={handleSaveSettings} className="bg-[#1a1f2e] border border-white/5 rounded-2xl p-6 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h2 className="text-white font-bold text-lg">Bank & UPI Settings</h2>
+                      <p className="text-xs text-white/40 mt-1">Configure donation receipt and payment transfer credentials</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                       <div className="md:col-span-2">
                         <ImageUpload
                           label="UPI QR Code"
@@ -1823,7 +2007,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, upiId: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. prathana@sbi"
-                          required
                         />
                       </Field>
                       <Field label="Bank Name">
@@ -1832,7 +2015,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, bankName: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. State Bank of India"
-                          required
                         />
                       </Field>
                       <Field label="Account Name">
@@ -1841,7 +2023,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, accountName: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. Prathana Foundation"
-                          required
                         />
                       </Field>
                       <Field label="Account Number">
@@ -1850,7 +2031,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, accountNumber: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. 1234567890"
-                          required
                         />
                       </Field>
                       <Field label="IFSC Code">
@@ -1859,7 +2039,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, ifscCode: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. SBIN0001234"
-                          required
                         />
                       </Field>
                       <Field label="Branch">
@@ -1868,7 +2047,6 @@ export default function AdminDashboard() {
                           onChange={e => setBankSettings({ ...bankSettings, branch: e.target.value })}
                           className={inputCls}
                           placeholder="e.g. Solapur Main"
-                          required
                         />
                       </Field>
                     </div>
@@ -1876,10 +2054,10 @@ export default function AdminDashboard() {
                       <button
                         type="submit"
                         disabled={savingSettings || !bankSettings}
-                        className="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-[0_4px_16px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center gap-2"
+                        className="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-[0_4px_16px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                       >
                         {savingSettings ? <Loader2 size={16} className="animate-spin" /> : <SettingsIcon size={16} />}
-                        Save Settings
+                        Save All Settings & Hero Images
                       </button>
                     </div>
                   </form>

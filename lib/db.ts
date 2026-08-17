@@ -157,6 +157,7 @@ export interface TeamMember {
   linkedin?: string;
   facebook?: string;
   instagram?: string;
+  order?: number;
   created_at: string;
 }
 
@@ -169,6 +170,8 @@ export interface Settings {
   ifscCode: string;
   branch: string;
   qrCodeUrl?: string;
+  heroBgImages?: string[];
+  heroScrollImages?: string[];
   updated_at?: string;
 }
 
@@ -1008,7 +1011,24 @@ export async function getSettings(): Promise<Settings> {
     accountName: 'Prathana Foundation',
     accountNumber: '1234567890',
     ifscCode: 'SBIN0001234',
-    branch: 'Solapur Main'
+    branch: 'Solapur Main',
+    heroBgImages: [
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
+    ],
+    heroScrollImages: [
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg',
+      'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg',
+    ],
   };
 
   if (isFirebaseConfigured && firestore) {
@@ -1016,7 +1036,13 @@ export async function getSettings(): Promise<Settings> {
       const docRef = doc(firestore, 'settings', 'global');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        return docSnap.data() as Settings;
+        const data = docSnap.data() as Settings;
+        return {
+          ...defaultSettings,
+          ...data,
+          heroBgImages: data.heroBgImages && data.heroBgImages.length > 0 ? data.heroBgImages : defaultSettings.heroBgImages,
+          heroScrollImages: data.heroScrollImages && data.heroScrollImages.length > 0 ? data.heroScrollImages : defaultSettings.heroScrollImages,
+        };
       }
       return defaultSettings;
     } catch (err) {
@@ -1025,7 +1051,7 @@ export async function getSettings(): Promise<Settings> {
     }
   } else {
     const db = await getMockDB();
-    return db.settings || defaultSettings;
+    return { ...defaultSettings, ...(db.settings || {}) };
   }
 }
 
@@ -1350,24 +1376,62 @@ export async function deleteReport(id: string): Promise<boolean> {
 // ─── TEAM MEMBERS ─────────────────────────────────────────────────────────
 
 export async function getTeamMembers(): Promise<TeamMember[]> {
+  const sortFn = (a: TeamMember, b: TeamMember) => {
+    if (typeof a.order === 'number' && typeof b.order === 'number') {
+      return a.order - b.order;
+    }
+    if (typeof a.order === 'number') return -1;
+    if (typeof b.order === 'number') return 1;
+    return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+  };
+
   if (isFirebaseConfigured && firestore) {
     try {
-      const q = query(collection(firestore, 'team_members'), orderBy('created_at', 'asc'));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(d => d.data() as TeamMember);
+      const snap = await getDocs(collection(firestore, 'team_members'));
+      const list: TeamMember[] = [];
+      snap.forEach(docSnap => {
+        list.push({ id: docSnap.id, ...docSnap.data() } as TeamMember);
+      });
+      return list.sort(sortFn);
     } catch (err) {
       console.error('Firebase getTeamMembers error:', err);
       return [];
     }
   }
   const db = await getMockDB();
-  return db.team_members || [];
+  return [...(db.team_members || [])].sort(sortFn);
+}
+
+export async function reorderTeamMembers(orderedIds: string[]): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const batchPromises = orderedIds.map((id, index) => {
+        const docRef = doc(firestore!, 'team_members', id);
+        return updateDoc(docRef, { order: index });
+      });
+      await Promise.all(batchPromises);
+      return true;
+    } catch (err) {
+      console.error('Firebase reorderTeamMembers error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.team_members) return false;
+    orderedIds.forEach((id, index) => {
+      const member = db.team_members.find(m => m.id === id);
+      if (member) member.order = index;
+    });
+    await saveMockDB(db);
+    return true;
+  }
 }
 
 export async function createTeamMember(data: Omit<TeamMember, 'id' | 'created_at'>): Promise<TeamMember | null> {
   const newMember: TeamMember = {
     ...data,
     id: 'team-' + Math.random().toString(36).substring(2, 9),
+    order: data.order ?? 999,
     created_at: new Date().toISOString(),
   };
 

@@ -9,6 +9,8 @@ import { useTranslations } from '@/components/TranslationProvider';
 interface HeroProps {
   lang: string;
   onDonateClick: () => void;
+  bgImages?: string[];
+  scrollImages?: string[];
   stats: {
     totalRaised: number;
     totalDonors: number;
@@ -17,9 +19,51 @@ interface HeroProps {
   };
 }
 
-export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
+const defaultHeroBgImages = [
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prarthana/blob_prkxfm.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
+];
+
+const defaultHeroScrollImages = [
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg',
+  'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg',
+];
+
+export default function Hero({ lang, onDonateClick, stats, bgImages: propBgImages, scrollImages: propScrollImages }: HeroProps) {
   const router = useRouter();
   const t = useTranslations((lang === 'mr' ? 'mr' : 'en') as 'en'|'mr');
+
+  const [heroBgImages, setHeroBgImages] = useState<string[]>(
+    propBgImages && propBgImages.length > 0 ? propBgImages : defaultHeroBgImages
+  );
+  const [heroScrollImages, setHeroScrollImages] = useState<string[]>(
+    propScrollImages && propScrollImages.length > 0 ? propScrollImages : defaultHeroScrollImages
+  );
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.settings) {
+          if (data.settings.heroBgImages && data.settings.heroBgImages.length > 0) {
+            setHeroBgImages(data.settings.heroBgImages);
+          }
+          if (data.settings.heroScrollImages && data.settings.heroScrollImages.length > 0) {
+            setHeroScrollImages(data.settings.heroScrollImages);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const badgeItems = [
     {
@@ -54,29 +98,22 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
     },
   ];
 
-  const heroImages = [
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg',
-  ];
-
   const [bgIndex, setBgIndex] = useState(0);
 
   useEffect(() => {
+    if (heroBgImages.length === 0) return;
     const timer = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % heroImages.length);
+      setBgIndex((prev) => (prev + 1) % heroBgImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [heroImages.length]);
+  }, [heroBgImages.length]);
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0d1a14] pt-32 pb-20 text-white z-0">
       {/* Cinematic Background Carousel */}
-      {heroImages.map((src, i) => (
+      {heroBgImages.map((src, i) => (
         <motion.div
-          key={src}
+          key={`${src}-${i}`}
           className="absolute inset-0 bg-cover bg-center pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: i === bgIndex ? 0.3 : 0 }}
@@ -199,7 +236,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
               transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
               className="w-1/2 flex flex-col gap-3 sm:gap-4"
             >
-              {[...heroImages, ...heroImages].map((src, i) => (
+              {[...heroScrollImages, ...heroScrollImages].map((src, i) => (
                 <div key={`col1-${i}`} className="w-full h-44 sm:h-64 rounded-2xl overflow-hidden relative flex-shrink-0">
                   <img src={src} className="w-full h-full object-cover" alt="Prathana Foundation Solapur" />
                   <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />
@@ -213,7 +250,7 @@ export default function Hero({ lang, onDonateClick, stats }: HeroProps) {
               transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
               className="w-1/2 flex flex-col gap-3 sm:gap-4"
             >
-              {[...[...heroImages].reverse(), ...[...heroImages].reverse()].map((src, i) => (
+              {[...[...heroScrollImages].reverse(), ...[...heroScrollImages].reverse()].map((src, i) => (
                 <div key={`col2-${i}`} className="w-full h-56 sm:h-80 rounded-2xl overflow-hidden relative flex-shrink-0">
                   <img src={src} className="w-full h-full object-cover" alt="Prathana Foundation Solapur" />
                   <div className="absolute inset-0 bg-brand-charcoal/20 mix-blend-overlay" />

@@ -16,17 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { upiId, bankName, accountName, accountNumber, ifscCode, branch, qrCodeUrl } = body;
-
-    const updated = await updateSettings({
-      upiId,
-      bankName,
-      accountName,
-      accountNumber,
-      ifscCode,
-      branch,
-      qrCodeUrl
-    });
+    const updated = await updateSettings(body);
 
     if (updated) {
       return NextResponse.json({ success: true, settings: updated });
@@ -36,4 +26,8 @@ export async function POST(req: Request) {
     console.error('API /settings POST Error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
+}
+
+export async function PUT(req: Request) {
+  return POST(req);
 }

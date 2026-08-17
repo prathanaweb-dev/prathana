@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Campaign, Donation } from '@/lib/db';
+import { Campaign, Donation, Settings } from '@/lib/db';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import LiveActivity from '@/components/LiveActivity';
@@ -23,6 +23,7 @@ interface HomeClientProps {
   initialCampaigns: Campaign[];
   initialDonations: Donation[];
   initialStats: any;
+  initialSettings?: Settings;
 }
 
 export default function HomeClient({
@@ -30,10 +31,12 @@ export default function HomeClient({
   initialCampaigns,
   initialDonations,
   initialStats,
+  initialSettings,
 }: HomeClientProps) {
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [donations, setDonations] = useState<Donation[]>(initialDonations.filter(d => d.payment_status === 'success'));
   const [stats, setStats] = useState(initialStats);
+  const [settings, setSettings] = useState<Settings | undefined>(initialSettings);
 
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | undefined>(undefined);
@@ -59,6 +62,10 @@ export default function HomeClient({
       const statsRes = await fetch('/api/donations?stats=true');
       const statsData = await statsRes.json();
       if (statsData.success) setStats(statsData.stats);
+
+      const settingsRes = await fetch('/api/settings');
+      const settingsData = await settingsRes.json();
+      if (settingsData.success) setSettings(settingsData.settings);
     } catch (err) {
       console.error('Error loading data:', err);
     }
@@ -85,6 +92,8 @@ export default function HomeClient({
       <Hero
         lang={lang}
         onDonateClick={() => handleDonateOpen()}
+        bgImages={settings?.heroBgImages}
+        scrollImages={settings?.heroScrollImages}
         stats={{
           totalRaised: stats.totalRaised,
           totalDonors: stats.totalDonors,
