@@ -1741,10 +1741,12 @@ export default function AdminDashboard() {
                                   {r.description && <p className="text-[11px] text-white/35 mt-0.5 line-clamp-1">{r.description}</p>}
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0">
-                                  <a href={r.file_url} target="_blank" rel="noopener noreferrer"
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-white/50 hover:bg-amber-500/15 hover:text-amber-400 text-[11px] font-semibold transition-colors">
-                                    <ArrowUpRight size={11} /> View
-                                  </a>
+                                  <button
+                                    onClick={() => setViewDocModal({ title: r.title, url: r.file_url })}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-white/70 hover:bg-amber-500/15 hover:text-amber-400 text-[11px] font-semibold transition-colors cursor-pointer"
+                                  >
+                                    <Eye size={12} /> View
+                                  </button>
                                   <button onClick={() => deleteReport(r.id)} className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400/50 hover:text-red-400 flex items-center justify-center cursor-pointer transition-colors">
                                     <Trash2 size={12} />
                                   </button>
@@ -2417,14 +2419,20 @@ export default function AdminDashboard() {
           <textarea value={rDesc} onChange={e => setRDesc(e.target.value)} className={inputCls + ' resize-none h-16'} placeholder="Brief summary of the report..." />
         </Field>
 
-        <Field label="PDF / File URL">
+        <DocumentUpload
+          label="Upload Report PDF / Document"
+          value={rFileUrl}
+          onChange={setRFileUrl}
+        />
+
+        <Field label="Or paste external Document URL">
           <input
             value={rFileUrl}
             onChange={e => setRFileUrl(e.target.value)}
             className={inputCls}
-            placeholder="https://... (Google Drive, Dropbox, or direct PDF link)"
+            placeholder="https://... (Google Drive, Cloudinary, or PDF link)"
           />
-          <p className="text-[10px] text-white/20 mt-1">Paste a shareable link to the PDF. Use Google Drive → Share → Anyone with link.</p>
+          <p className="text-[10px] text-white/20 mt-1">Upload a PDF directly or paste a shareable Google Drive / Cloud link.</p>
         </Field>
 
         <button

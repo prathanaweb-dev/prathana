@@ -1,4 +1,4 @@
-import { getEvents } from '@/lib/db';
+import { getEvents, getReports } from '@/lib/db';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventsClient from './EventsClient';
@@ -10,6 +10,7 @@ interface EventsPageProps {
 export default async function EventsPage({ params }: EventsPageProps) {
   const { lang } = await params;
   const events = await getEvents();
+  const reports = await getReports();
 
   return (
     <div className="relative min-h-screen bg-brand-paper bg-grid-pattern overflow-hidden flex flex-col justify-between">
@@ -23,6 +24,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
         <EventsClient
           lang={lang}
           initialEvents={events}
+          initialReports={reports}
         />
       </main>
 
