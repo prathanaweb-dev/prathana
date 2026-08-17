@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Campaign, Donation, Settings } from '@/lib/db';
+import { Campaign, Donation, Settings, Testimonial } from '@/lib/db';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import LiveActivity from '@/components/LiveActivity';
@@ -24,6 +24,7 @@ interface HomeClientProps {
   initialDonations: Donation[];
   initialStats: any;
   initialSettings?: Settings;
+  initialTestimonials?: Testimonial[];
 }
 
 export default function HomeClient({
@@ -32,6 +33,7 @@ export default function HomeClient({
   initialDonations,
   initialStats,
   initialSettings,
+  initialTestimonials,
 }: HomeClientProps) {
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [donations, setDonations] = useState<Donation[]>(initialDonations.filter(d => d.payment_status === 'success'));
@@ -126,7 +128,7 @@ export default function HomeClient({
       <Team lang={lang} />
 
       {/* Speech bubbles Testimonials */}
-      <Testimonials lang={lang} />
+      <Testimonials lang={lang} initialTestimonials={initialTestimonials} />
 
       {/* Grayscale activity photo strip */}
       <GalleryStrip />

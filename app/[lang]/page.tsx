@@ -1,4 +1,4 @@
-import { getCampaigns, getDonations, getAggregatedStats, getSettings } from '@/lib/db';
+import { getCampaigns, getDonations, getAggregatedStats, getSettings, getTestimonials } from '@/lib/db';
 import HomeClient from './HomeClient';
 
 interface PageProps {
@@ -13,6 +13,7 @@ export default async function Page({ params }: PageProps) {
   const donations = await getDonations();
   const stats = await getAggregatedStats();
   const settings = await getSettings();
+  const testimonials = await getTestimonials();
 
   return (
     <HomeClient
@@ -21,6 +22,7 @@ export default async function Page({ params }: PageProps) {
       initialDonations={donations}
       initialStats={stats}
       initialSettings={settings}
+      initialTestimonials={testimonials}
     />
   );
 }

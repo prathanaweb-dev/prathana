@@ -13,12 +13,22 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { url, title, title_mr, desc, category } = body;
+    const { url, thumbnail_url, media_type, title, title_mr, desc, desc_mr, category } = body;
     if (!url || !title || !category) {
       return NextResponse.json({ error: 'url, title and category are required' }, { status: 400 });
     }
-    const photo = await addGalleryPhoto({ url, title, title_mr, desc, category });
-    if (!photo) return NextResponse.json({ error: 'Failed to add photo' }, { status: 500 });
+    const isVid = media_type === 'video' || url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('youtube.com') || url.includes('youtu.be');
+    const photo = await addGalleryPhoto({
+      url,
+      thumbnail_url,
+      media_type: isVid ? 'video' : 'image',
+      title,
+      title_mr,
+      desc,
+      desc_mr,
+      category,
+    });
+    if (!photo) return NextResponse.json({ error: 'Failed to add gallery item' }, { status: 500 });
     return NextResponse.json({ success: true, photo }, { status: 201 });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

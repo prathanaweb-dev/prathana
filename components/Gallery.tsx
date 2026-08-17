@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Maximize2, Play, Video as VideoIcon, Film } from 'lucide-react';
 import { useTranslations } from '@/components/TranslationProvider';
 
 interface GalleryPhotoItem {
   id?: string;
   url: string;
+  thumbnail_url?: string;
+  media_type?: 'image' | 'video';
   title: string;
   title_mr?: string;
   desc?: string;
@@ -18,6 +20,12 @@ interface GalleryPhotoItem {
 interface GalleryProps {
   lang: string;
   initialPhotos?: GalleryPhotoItem[];
+}
+
+function getYouTubeEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : null;
 }
 
 export default function Gallery({ lang, initialPhotos }: GalleryProps) {
@@ -88,12 +96,27 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
       .catch(() => {});
   }, []);
 
+  const checkIsVideo = (item?: GalleryPhotoItem) => {
+    if (!item) return false;
+    return (
+      item.media_type === 'video' ||
+      item.category === 'videos' ||
+      item.url?.endsWith('.mp4') ||
+      item.url?.endsWith('.webm') ||
+      item.url?.includes('youtube.com') ||
+      item.url?.includes('youtu.be')
+    );
+  };
+
   const filteredPhotos = activeCategory === 'all'
     ? photos
-    : photos.filter(p => p.category === activeCategory);
+    : activeCategory === 'videos'
+      ? photos.filter(checkIsVideo)
+      : photos.filter(p => p.category === activeCategory);
 
   const categories = [
     { id: 'all', label: lang === 'mr' ? 'सर्व' : 'All' },
+    { id: 'videos', label: lang === 'mr' ? '🎥 व्हिडिओ' : '🎥 Videos' },
     { id: 'balgram', label: lang === 'mr' ? 'बालग्राम' : 'Balgram' },
     { id: 'farming', label: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural Farming' },
     { id: 'vrudhashram', label: lang === 'mr' ? 'वृद्धाश्रम' : 'Old Age Home' },
@@ -121,6 +144,10 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
     if (lightboxIndex === null) return;
     setLightboxIndex((prev) => (prev !== null && prev < filteredPhotos.length - 1 ? prev + 1 : 0));
   };
+
+  const currentItem = lightboxIndex !== null ? filteredPhotos[lightboxIndex] : null;
+  const currentIsVideo = checkIsVideo(currentItem || undefined);
+  const ytEmbed = currentItem?.url ? getYouTubeEmbedUrl(currentItem.url) : null;
 
   return (
     <section id="gallery" className="py-32 bg-brand-paper bg-grid-pattern relative overflow-hidden">
@@ -159,7 +186,7 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
                 setActiveCategory(cat.id);
                 setLightboxIndex(null);
               }}
-              className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-300 shadow-sm ${
+              className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-300 shadow-sm cursor-pointer ${
                 activeCategory === cat.id
                   ? 'bg-brand-forest text-white border-brand-forest shadow-md'
                   : 'bg-white/60 text-brand-muted border-brand-clay/60 hover:bg-brand-sand/55 hover:text-brand-charcoal hover:border-brand-yellow/30'
@@ -170,53 +197,87 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
           ))}
         </div>
 
-        {/* Uniform 3-column Photo Grid */}
+        {/* Uniform 3-column Media Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPhotos.map((photo, idx) => (
-            <motion.div
-              key={photo.url}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5, delay: (idx % 6) * 0.07 }}
-              className="relative h-[260px] rounded-2xl overflow-hidden group cursor-pointer"
-              onClick={() => setLightboxIndex(idx)}
-            >
-              {/* Image */}
-              <img
-                src={photo.url}
-                alt={getLocalizedTitle(photo)}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                loading="lazy"
-              />
+          {filteredPhotos.map((photo, idx) => {
+            const isVid = checkIsVideo(photo);
+            return (
+              <motion.div
+                key={photo.id || photo.url + idx}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: (idx % 6) * 0.07 }}
+                className="relative h-[260px] rounded-2xl overflow-hidden group cursor-pointer bg-brand-charcoal shadow-sm"
+                onClick={() => setLightboxIndex(idx)}
+              >
+                {/* Media Image / Video Thumbnail */}
+                {isVid ? (
+                  <div className="w-full h-full relative bg-brand-charcoal flex items-center justify-center">
+                    {photo.thumbnail_url ? (
+                      <img
+                        src={photo.thumbnail_url}
+                        alt={getLocalizedTitle(photo)}
+                        className="w-full h-full object-cover opacity-85 transition-transform duration-700 group-hover:scale-[1.06]"
+                        loading="lazy"
+                      />
+                    ) : photo.url?.endsWith('.mp4') || photo.url?.endsWith('.webm') ? (
+                      <video src={photo.url} className="w-full h-full object-cover opacity-85" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-forest to-brand-charcoal">
+                        <Film size={40} className="text-brand-yellow/60" />
+                      </div>
+                    )}
 
-              {/* Permanent gradient + title */}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-charcoal/70 via-brand-charcoal/20 to-transparent p-4 group-hover:opacity-0 transition-opacity duration-300">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-white/90">{getLocalizedTitle(photo)}</span>
-              </div>
+                    {/* Central Play Button */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-brand-yellow text-brand-charcoal flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-white transition-all duration-300">
+                        <Play size={20} className="fill-current ml-0.5" />
+                      </div>
+                    </div>
 
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-brand-charcoal/0 group-hover:bg-brand-charcoal/45 transition-all duration-500" />
+                    {/* Video Tag Badge */}
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md text-brand-yellow text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 border border-brand-yellow/30 z-10">
+                      <VideoIcon size={11} /> Video
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={photo.url}
+                    alt={getLocalizedTitle(photo)}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                    loading="lazy"
+                  />
+                )}
 
-              {/* Hover text — slides up */}
-              <div className="absolute inset-x-0 bottom-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-brand-yellow">{getLocalizedTitle(photo)}</span>
-                <p className="text-white/85 text-xs mt-1.5 font-light leading-relaxed line-clamp-2">{getLocalizedDesc(photo)}</p>
-              </div>
+                {/* Permanent gradient + title */}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-charcoal/80 via-brand-charcoal/30 to-transparent p-4 group-hover:opacity-0 transition-opacity duration-300">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-white/90">{getLocalizedTitle(photo)}</span>
+                </div>
 
-              {/* Expand icon */}
-              <div className="absolute top-3 right-3 p-1.5 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <Maximize2 className="w-3 h-3 text-white" />
-              </div>
-            </motion.div>
-          ))}
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-brand-charcoal/0 group-hover:bg-brand-charcoal/45 transition-all duration-500" />
+
+                {/* Hover text — slides up */}
+                <div className="absolute inset-x-0 bottom-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-10">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-brand-yellow">{getLocalizedTitle(photo)}</span>
+                  <p className="text-white/85 text-xs mt-1.5 font-light leading-relaxed line-clamp-2">{getLocalizedDesc(photo)}</p>
+                </div>
+
+                {/* Expand icon */}
+                <div className="absolute top-3 right-3 p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Maximize2 className="w-3.5 h-3.5 text-white" />
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
 
       </div>
 
-      {/* Lightbox Overlay */}
+      {/* Lightbox Modal Player */}
       <AnimatePresence>
-        {lightboxIndex !== null && (
+        {lightboxIndex !== null && currentItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -229,11 +290,11 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
             {/* Top Bar Controls */}
             <div className="absolute top-5 inset-x-0 px-6 md:px-12 flex justify-between items-center z-10 text-white">
               <span className="font-mono text-xs text-white/60">
-                {lightboxIndex + 1} / {filteredPhotos.length}
+                {lightboxIndex + 1} / {filteredPhotos.length} {currentIsVideo ? '· 🎥 Video' : ''}
               </span>
               <button
                 onClick={() => setLightboxIndex(null)}
-                className="p-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-colors"
+                className="p-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-colors cursor-pointer"
                 aria-label="Close lightbox"
               >
                 <X className="w-5 h-5" />
@@ -243,41 +304,63 @@ export default function Gallery({ lang, initialPhotos }: GalleryProps) {
             {/* Left/Right Arrow Navigation */}
             <button
               onClick={handlePrev}
-              className="absolute left-4 md:left-8 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white z-10 transition-colors"
-              aria-label="Previous image"
+              className="absolute left-4 md:left-8 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white z-10 transition-colors cursor-pointer"
+              aria-label="Previous media"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
 
             <button
               onClick={handleNext}
-              className="absolute right-4 md:right-8 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white z-10 transition-colors"
-              aria-label="Next image"
+              className="absolute right-4 md:right-8 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white z-10 transition-colors cursor-pointer"
+              aria-label="Next media"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
 
-            {/* Centered Image Container */}
+            {/* Centered Media Player Container */}
             <div className="relative max-w-4xl max-h-[70vh] w-full h-full flex items-center justify-center z-0 p-4">
-              <motion.img
-                key={lightboxIndex}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                src={filteredPhotos[lightboxIndex].url}
-                alt={getLocalizedTitle(filteredPhotos[lightboxIndex])}
-                className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-white/5"
-              />
+              {currentIsVideo ? (
+                ytEmbed ? (
+                  <div className="w-full aspect-video max-w-3xl rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+                    <iframe
+                      src={ytEmbed}
+                      title={getLocalizedTitle(currentItem)}
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <video
+                    key={currentItem.url}
+                    src={currentItem.url}
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-full rounded-2xl shadow-2xl border border-white/10 bg-black"
+                  />
+                )
+              ) : (
+                <motion.img
+                  key={currentItem.url}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  src={currentItem.url}
+                  alt={getLocalizedTitle(currentItem)}
+                  className="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-white/5"
+                />
+              )}
             </div>
 
-            {/* Image Details Bottom Bar */}
+            {/* Media Details Bottom Bar */}
             <div className="absolute bottom-8 text-center max-w-xl z-10 px-4 text-white">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold">
-                {getLocalizedTitle(filteredPhotos[lightboxIndex])}
+              <span className="text-[10px] uppercase font-bold tracking-widest text-brand-yellow">
+                {getLocalizedTitle(currentItem)}
               </span>
               <p className="text-white/80 text-sm mt-1.5 font-light leading-relaxed">
-                {getLocalizedDesc(filteredPhotos[lightboxIndex])}
+                {getLocalizedDesc(currentItem)}
               </p>
             </div>
           </motion.div>

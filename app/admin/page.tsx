@@ -28,7 +28,8 @@ import {
   ChevronRight, TrendingUp, Heart, Menu, Bell, Search,
   RefreshCw, Loader2, CheckCircle, AlertCircle, Eye,
   Calendar, Tag, ArrowUpRight, Shield, UserCheck, Clock,
-  FileText, Layers, Award, BarChart3, ChevronDown, ChevronUp, Upload, ImageIcon, Settings as SettingsIcon, Save
+  FileText, Layers, Award, BarChart3, ChevronDown, ChevronUp, Upload, ImageIcon, Settings as SettingsIcon, Save,
+  Star, Video, Film, Play
 } from 'lucide-react';
 import PageFormEditor from '@/components/admin/PageFormEditor';
 import DocumentViewerModal from '@/components/DocumentViewerModal';
@@ -43,6 +44,8 @@ interface EventItem { id: string; title: string; title_mr?: string; content: str
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
 interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; linkedin?: string; facebook?: string; instagram?: string; order?: number; created_at: string; }
+interface Testimonial { id: string; name: string; name_mr?: string; role: string; role_mr?: string; text: string; text_mr?: string; rating: number; image?: string; order?: number; created_at: string; }
+interface GalleryItem { id: string; url: string; thumbnail_url?: string; media_type?: 'image' | 'video'; title: string; title_mr?: string; desc?: string; desc_mr?: string; category: string; created_at: string; }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 function Toast({ msg, type, onClose }: { msg: string; type: 'success'|'error'; onClose: () => void }) {
@@ -258,8 +261,85 @@ function DocumentUpload({ value, onChange, label = 'Document' }: { value: string
   );
 }
 
+function VideoUpload({ value, onChange, label = 'Video File (MP4, WebM, MOV)' }: { value: string; onChange: (url: string) => void; label?: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'prathana/videos');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        onChange(data.secure_url);
+      } else {
+        throw new Error(data.error?.message || 'Video upload failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Video upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  const isYouTube = value.includes('youtube.com') || value.includes('youtu.be');
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1.5">{label}</label>
+
+      {/* Video Preview */}
+      {value && (
+        <div className="relative w-full h-44 rounded-xl overflow-hidden border border-white/10 bg-black group flex items-center justify-center">
+          {isYouTube ? (
+            <div className="text-center p-4">
+              <Film size={28} className="mx-auto text-amber-400 mb-1" />
+              <p className="text-xs text-white/80 font-mono truncate max-w-xs">{value}</p>
+            </div>
+          ) : (
+            <video src={value} controls className="w-full h-full object-contain" />
+          )}
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500"
+          >
+            <X size={13} />
+          </button>
+        </div>
+      )}
+
+      {/* Upload button */}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-amber-500/40 hover:text-amber-400 transition-all text-xs font-semibold cursor-pointer disabled:opacity-50"
+      >
+        {uploading ? <Loader2 size={15} className="animate-spin" /> : <Video size={15} />}
+        {uploading ? 'Uploading Video to Cloudinary…' : value ? 'Replace Video File' : 'Upload Video File'}
+      </button>
+
+      {error && <p className="text-red-400 text-[11px]">{error}</p>}
+      <input ref={inputRef} type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" className="hidden" onChange={handleFile} />
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
-type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'content'|'messages'|'gallery'|'settings'|'csrdocs';
+type Tab = 'dashboard'|'campaigns'|'donations'|'volunteers'|'team'|'testimonials'|'content'|'messages'|'gallery'|'settings'|'csrdocs';
 type ContentSub = 'activities'|'projects'|'events'|'reports'|'pages';
 
 export default function AdminDashboard() {
@@ -346,12 +426,25 @@ export default function AdminDashboard() {
   const [projects, setProjects]     = useState<Project[]>([]);
   const [events, setEvents]         = useState<EventItem[]>([]);
   const [contacts, setContacts]     = useState<Contact[]>([]);
-  const [gallery, setGallery]       = useState<{id:string;url:string;title:string;title_mr?:string;desc?:string;category:string;created_at:string}[]>([]);
+  const [gallery, setGallery]       = useState<GalleryItem[]>([]);
   const [reports, setReports]       = useState<Report[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [bankSettings, setBankSettings] = useState<any>(null);
   const [savingSettings, setSavingSettings] = useState(false);
   const [csrDocs, setCsrDocs]       = useState<any[]>([]);
+
+  // Reviews / Testimonials form
+  const [revDrawer, setRevDrawer]   = useState(false);
+  const [editRev, setEditRev]       = useState<Testimonial|null>(null);
+  const [revName, setRevName]       = useState('');
+  const [revNameMr, setRevNameMr]   = useState('');
+  const [revRole, setRevRole]       = useState('');
+  const [revRoleMr, setRevRoleMr]   = useState('');
+  const [revText, setRevText]       = useState('');
+  const [revTextMr, setRevTextMr]   = useState('');
+  const [revRating, setRevRating]   = useState(5);
+  const [revImage, setRevImage]     = useState('');
 
   // Team form
   const [tDrawer, setTDrawer]     = useState(false);
@@ -365,13 +458,17 @@ export default function AdminDashboard() {
   const [tInstagram, setTInstagram] = useState('');
 
   // Gallery form
-  const [gDrawer, setGDrawer]   = useState(false);
-  const [gUrl, setGUrl]         = useState('');
-  const [gTitle, setGTitle]     = useState('');
-  const [gTitleMr, setGTitleMr] = useState('');
-  const [gDesc, setGDesc]       = useState('');
-  const [gCat, setGCat]         = useState('general');
-  const [gFilter, setGFilter]   = useState('all');
+  const [gDrawer, setGDrawer]             = useState(false);
+  const [gMediaType, setGMediaType]       = useState<'image' | 'video'>('image');
+  const [gUrl, setGUrl]                   = useState('');
+  const [gThumbnailUrl, setGThumbnailUrl] = useState('');
+  const [gTitle, setGTitle]               = useState('');
+  const [gTitleMr, setGTitleMr]           = useState('');
+  const [gDesc, setGDesc]                 = useState('');
+  const [gDescMr, setGDescMr]             = useState('');
+  const [gCat, setGCat]                   = useState('general');
+  const [gFilter, setGFilter]             = useState('all');
+  const [gMediaFilter, setGMediaFilter]   = useState<'all' | 'image' | 'video'>('all');
 
   // Report form
   const [rDrawer, setRDrawer]     = useState(false);
@@ -449,7 +546,7 @@ export default function AdminDashboard() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [c, d, v, a, p, e, co, g, rp, tm, setRes, csrRes] = await Promise.all([
+      const [c, d, v, a, p, e, co, g, rp, tm, setRes, csrRes, testRes] = await Promise.all([
         fetch('/api/campaigns').then(r => r.json()),
         fetch('/api/donations').then(r => r.json()),
         fetch('/api/volunteers').then(r => r.json()),
@@ -461,7 +558,8 @@ export default function AdminDashboard() {
         fetch('/api/reports').then(r => r.json()),
         fetch('/api/team').then(r => r.json()),
         fetch('/api/settings').then(r => r.json()),
-        fetch('/api/csr-docs').then(r => r.json())
+        fetch('/api/csr-docs').then(r => r.json()),
+        fetch('/api/testimonials').then(r => r.json()),
       ]);
       const camps = c.campaigns || [];
       const dons  = d.donations  || [];
@@ -476,6 +574,7 @@ export default function AdminDashboard() {
       setGallery(g.photos || []);
       setReports(rp.reports || []);
       setTeamMembers(tm.team_members || []);
+      setTestimonials(testRes.testimonials || []);
       if (setRes.settings) {
         setBankSettings(setRes.settings);
       }
@@ -504,17 +603,45 @@ export default function AdminDashboard() {
   };
 
   // ── Gallery CRUD ──
-  const openGalleryDrawer = () => { setGUrl(''); setGTitle(''); setGTitleMr(''); setGDesc(''); setGCat('general'); setGDrawer(true); };
+  const openGalleryDrawer = () => {
+    setGMediaType('image');
+    setGUrl('');
+    setGThumbnailUrl('');
+    setGTitle('');
+    setGTitleMr('');
+    setGDesc('');
+    setGDescMr('');
+    setGCat('general');
+    setGDrawer(true);
+  };
   const addPhoto = async () => {
-    if (!gUrl || !gTitle) return notify('Photo and title are required', 'error');
+    if (!gUrl || !gTitle) return notify('Media file/URL and title are required', 'error');
     setFormBusy(true);
     try {
-      const res = await fetch('/api/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: gUrl, title: gTitle, title_mr: gTitleMr, desc: gDesc, category: gCat }) });
+      const res = await fetch('/api/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: gUrl,
+          thumbnail_url: gThumbnailUrl,
+          media_type: gMediaType,
+          title: gTitle,
+          title_mr: gTitleMr,
+          desc: gDesc,
+          desc_mr: gDescMr,
+          category: gCat,
+        }),
+      });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Failed');
-      notify('Photo added!'); setGDrawer(false); fetchAll();
-    } catch (e: any) { notify(e.message, 'error'); }
-    finally { setFormBusy(false); }
+      notify(gMediaType === 'video' ? 'Video added to gallery!' : 'Photo added to gallery!');
+      setGDrawer(false);
+      fetchAll();
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
+      setFormBusy(false);
+    }
   };
   const deletePhoto = async (id: string) => {
     if (!confirm('Remove this photo?')) return;
@@ -789,6 +916,91 @@ export default function AdminDashboard() {
     }
   };
 
+  // ── Testimonials / Reviews CRUD ──
+  const openRevDrawer = (rev?: Testimonial) => {
+    setEditRev(rev || null);
+    setRevName(rev?.name || '');
+    setRevNameMr(rev?.name_mr || '');
+    setRevRole(rev?.role || '');
+    setRevRoleMr(rev?.role_mr || '');
+    setRevText(rev?.text || '');
+    setRevTextMr(rev?.text_mr || '');
+    setRevRating(rev?.rating ?? 5);
+    setRevImage(rev?.image || '');
+    setRevDrawer(true);
+  };
+
+  const saveReview = async () => {
+    if (!revName || !revText) return notify('Name and Review Text are required', 'error');
+    setFormBusy(true);
+    try {
+      const body = {
+        name: revName,
+        name_mr: revNameMr,
+        role: revRole || 'Donor / Supporter',
+        role_mr: revRoleMr,
+        text: revText,
+        text_mr: revTextMr,
+        rating: Number(revRating) || 5,
+        image: revImage,
+      };
+      const method = editRev ? 'PUT' : 'POST';
+      const payload = editRev ? { id: editRev.id, ...body } : body;
+      const res = await fetch('/api/testimonials', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed');
+      notify(editRev ? 'Review updated!' : 'Review created!');
+      setRevDrawer(false);
+      fetchAll();
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
+      setFormBusy(false);
+    }
+  };
+
+  const deleteReview = async (id: string) => {
+    if (!confirm('Delete this public review?')) return;
+    const res = await fetch(`/api/testimonials?id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      notify('Review deleted');
+      fetchAll();
+    } else {
+      notify('Delete failed', 'error');
+    }
+  };
+
+  const handleMoveReview = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= testimonials.length) return;
+
+    const newReviews = [...testimonials];
+    const [moved] = newReviews.splice(index, 1);
+    newReviews.splice(targetIndex, 0, moved);
+
+    setTestimonials(newReviews);
+
+    try {
+      const orderedIds = newReviews.map(r => r.id);
+      const res = await fetch('/api/testimonials', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to update order');
+      notify('Reviews sequence updated!');
+    } catch (err: any) {
+      notify(err.message, 'error');
+      fetchAll();
+    }
+  };
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bankSettings) return;
@@ -882,12 +1094,13 @@ export default function AdminDashboard() {
     { id: 'campaigns',  icon: <Megaphone size={18} />,       label: 'Campaigns',  badge: stats.activeCampaigns },
     { id: 'donations',  icon: <HandCoins size={18} />,       label: 'Donations',  badge: stats.totalDonors },
     { id: 'volunteers', icon: <Users size={18} />,           label: 'Volunteers', badge: volunteers.filter(v => v.status === 'pending').length || undefined },
-    { id: 'team',       icon: <UserCheck size={18} />,       label: 'Team Management' },
-    { id: 'content',    icon: <BookOpen size={18} />,        label: 'Content' },
-    { id: 'csrdocs',    icon: <FileText size={18} />,        label: 'CSR Docs' },
-    { id: 'gallery',    icon: <ImageIcon size={18} />,       label: 'Gallery',    badge: gallery.length || undefined },
-    { id: 'messages',   icon: <MessageSquare size={18} />,   label: 'Messages',   badge: stats.unreadMessages || undefined },
-    { id: 'settings',   icon: <SettingsIcon size={18} />,    label: 'Settings' },
+    { id: 'team',         icon: <UserCheck size={18} />,       label: 'Team Management' },
+    { id: 'testimonials', icon: <Star size={18} />,            label: 'Public Reviews',   badge: testimonials.length || undefined },
+    { id: 'content',      icon: <BookOpen size={18} />,        label: 'Content' },
+    { id: 'csrdocs',      icon: <FileText size={18} />,        label: 'CSR Docs' },
+    { id: 'gallery',      icon: <ImageIcon size={18} />,       label: 'Gallery',          badge: gallery.length || undefined },
+    { id: 'messages',     icon: <MessageSquare size={18} />,   label: 'Messages',         badge: stats.unreadMessages || undefined },
+    { id: 'settings',     icon: <SettingsIcon size={18} />,    label: 'Settings' },
   ];
 
   const fmtCurrency = (n: number) => '₹' + n.toLocaleString('en-IN');
@@ -1524,6 +1737,136 @@ export default function AdminDashboard() {
                 </div>
               )}
 
+              {/* ════ PUBLIC REVIEWS & TESTIMONIALS ════ */}
+              {tab === 'testimonials' && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-white font-bold text-lg">Public Reviews & Testimonials ({testimonials.length})</h2>
+                      <p className="text-[11px] text-white/40 mt-0.5">
+                        Manage donor and supporter feedback displayed in the speech bubble reviews section on the homepage
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => openRevDrawer()}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 text-amber-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer shadow-sm"
+                    >
+                      <Plus size={15} /> Add Review
+                    </button>
+                  </div>
+
+                  <div className="bg-[#1a1f2e] border border-white/5 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-white/5 bg-black/20">
+                            <th className="text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/30 w-20">Order</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/30">Reviewer</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/30">Rating</th>
+                            <th className="text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/30">Feedback / Speech Bubble Text</th>
+                            <th className="px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/30 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {testimonials.map((rev, idx) => (
+                            <tr key={rev.id} className="hover:bg-white/[0.02] transition-colors group">
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="w-6 h-6 rounded-md bg-amber-500/10 text-amber-400 font-mono font-bold text-[11px] flex items-center justify-center flex-shrink-0 border border-amber-500/20">
+                                    #{idx + 1}
+                                  </span>
+                                  <div className="flex flex-col gap-0.5">
+                                    <button
+                                      disabled={idx === 0}
+                                      onClick={() => handleMoveReview(idx, 'up')}
+                                      title="Move Up"
+                                      className="w-5 h-5 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      <ChevronUp size={11} />
+                                    </button>
+                                    <button
+                                      disabled={idx === testimonials.length - 1}
+                                      onClick={() => handleMoveReview(idx, 'down')}
+                                      title="Move Down"
+                                      className="w-5 h-5 rounded bg-white/5 hover:bg-amber-500/20 text-white/40 hover:text-amber-400 flex items-center justify-center disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      <ChevronDown size={11} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex items-center gap-3">
+                                  {rev.image ? (
+                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex-shrink-0 border border-white/10">
+                                      <img src={rev.image} alt={rev.name} className="w-full h-full object-cover" />
+                                    </div>
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm flex-shrink-0 border border-amber-500/30">
+                                      {rev.name?.[0]?.toUpperCase() || 'R'}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div className="font-bold text-white text-sm">{rev.name}</div>
+                                    {rev.name_mr && <div className="text-[11px] text-amber-400/80 font-marathi">मराठी: {rev.name_mr}</div>}
+                                    <div className="text-[11px] text-white/40 mt-0.5">{rev.role}</div>
+                                    {rev.role_mr && <div className="text-[10px] text-white/30 font-marathi">{rev.role_mr}</div>}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex items-center gap-0.5 text-amber-400">
+                                  {[...Array(rev.rating || 5)].map((_, i) => (
+                                    <Star key={i} size={13} className="fill-current text-amber-400" />
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top max-w-md">
+                                <p className="text-white/80 text-xs italic leading-relaxed line-clamp-3 bg-black/20 p-2.5 rounded-xl border border-white/5">
+                                  &ldquo;{rev.text}&rdquo;
+                                </p>
+                                {rev.text_mr && (
+                                  <p className="text-amber-400/70 text-[11px] font-marathi mt-1.5 line-clamp-2 px-1">
+                                    मराठी: &ldquo;{rev.text_mr}&rdquo;
+                                  </p>
+                                )}
+                              </td>
+                              <td className="px-5 py-4 align-top text-right">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    onClick={() => openRevDrawer(rev)}
+                                    className="p-2 text-white/40 hover:text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors cursor-pointer"
+                                    title="Edit Review"
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => deleteReview(rev.id)}
+                                    className="p-2 text-white/40 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer"
+                                    title="Delete Review"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          {testimonials.length === 0 && (
+                            <tr>
+                              <td colSpan={5} className="text-center py-16 text-white/30">
+                                <Star size={32} className="mx-auto mb-2 opacity-20 text-amber-400" />
+                                <p>No public reviews yet</p>
+                                <p className="text-xs text-white/20 mt-1">Click "Add Review" to publish donor testimonials on the homepage</p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* ════ CONTENT ════ */}
               {tab === 'content' && (
                 <div className="space-y-4">
@@ -1786,47 +2129,125 @@ export default function AdminDashboard() {
               )}
 
 
-              {/* ════ GALLERY ════ */}
+              {/* ════ GALLERY (PHOTOS & VIDEOS) ════ */}
               {tab === 'gallery' && (
                 <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-white font-bold">Photo Gallery ({gallery.length})</h2>
-                    <button onClick={openGalleryDrawer} className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-colors cursor-pointer">
-                      <Plus size={14} /> Add Photo
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-white font-bold text-lg">Media Gallery ({gallery.length})</h2>
+                      <p className="text-[11px] text-white/40 mt-0.5">Manage photos and video stories shown in the public gallery</p>
+                    </div>
+                    <button
+                      onClick={openGalleryDrawer}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition-colors cursor-pointer shadow-sm"
+                    >
+                      <Plus size={15} /> Add Media (Photo / Video)
                     </button>
                   </div>
 
-                  {/* Category filter */}
-                  <div className="flex flex-wrap gap-2">
-                    {['all','balgram','farming','vrudhashram','shala','awards','general'].map(cat => (
-                      <button key={cat} onClick={() => setGFilter(cat)}
-                        className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                          gFilter === cat ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40 hover:bg-white/10'
-                        }`}>
-                        {cat}
+                  {/* Media Type & Category Filters */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-[#1a1f2e] p-3 rounded-2xl border border-white/5">
+                    {/* Media type filter */}
+                    <div className="flex items-center gap-1.5 bg-black/30 p-1 rounded-xl border border-white/5">
+                      <button
+                        onClick={() => setGMediaFilter('all')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${gMediaFilter === 'all' ? 'bg-amber-500 text-black' : 'text-white/40 hover:text-white'}`}
+                      >
+                        All Media ({gallery.length})
                       </button>
-                    ))}
+                      <button
+                        onClick={() => setGMediaFilter('image')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${gMediaFilter === 'image' ? 'bg-amber-500 text-black' : 'text-white/40 hover:text-white'}`}
+                      >
+                        <ImageIcon size={13} /> Photos ({gallery.filter(p => p.media_type !== 'video' && !p.url?.endsWith('.mp4') && !p.url?.includes('youtube') && !p.url?.includes('youtu.be')).length})
+                      </button>
+                      <button
+                        onClick={() => setGMediaFilter('video')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${gMediaFilter === 'video' ? 'bg-amber-500 text-black' : 'text-white/40 hover:text-white'}`}
+                      >
+                        <Video size={13} /> Videos ({gallery.filter(p => p.media_type === 'video' || p.url?.endsWith('.mp4') || p.url?.includes('youtube') || p.url?.includes('youtu.be')).length})
+                      </button>
+                    </div>
+
+                    {/* Category filter */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {['all','balgram','farming','vrudhashram','shala','awards','general','videos'].map(cat => (
+                        <button key={cat} onClick={() => setGFilter(cat)}
+                          className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                            gFilter === cat ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-white/40 hover:bg-white/10'
+                          }`}>
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
                     {gallery
-                      .filter(p => gFilter === 'all' || p.category === gFilter)
-                      .map(photo => (
-                        <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-white/8 aspect-square bg-[#1a1f2e]">
-                          <img src={photo.url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                            <p className="text-white text-[11px] font-semibold leading-tight">{photo.title}</p>
-                            <p className="text-white/50 text-[10px] capitalize mt-0.5">{photo.category}</p>
+                      .filter(p => {
+                        const isVid = p.media_type === 'video' || p.url?.endsWith('.mp4') || p.url?.endsWith('.webm') || p.url?.includes('youtube.com') || p.url?.includes('youtu.be');
+                        if (gMediaFilter === 'image' && isVid) return false;
+                        if (gMediaFilter === 'video' && !isVid) return false;
+                        if (gFilter !== 'all' && p.category !== gFilter) return false;
+                        return true;
+                      })
+                      .map(photo => {
+                        const isVid = photo.media_type === 'video' || photo.url?.endsWith('.mp4') || photo.url?.endsWith('.webm') || photo.url?.includes('youtube.com') || photo.url?.includes('youtu.be');
+                        return (
+                          <div key={photo.id} className="relative group rounded-2xl overflow-hidden border border-white/8 aspect-square bg-[#1a1f2e] shadow-md">
+                            {isVid ? (
+                              <div className="w-full h-full relative bg-black flex items-center justify-center">
+                                {photo.thumbnail_url ? (
+                                  <img src={photo.thumbnail_url} alt={photo.title} className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300" />
+                                ) : photo.url?.endsWith('.mp4') || photo.url?.endsWith('.webm') ? (
+                                  <video src={photo.url} className="w-full h-full object-cover opacity-80" />
+                                ) : (
+                                  <div className="text-center p-3">
+                                    <Film size={28} className="mx-auto text-amber-400 opacity-60 mb-1" />
+                                  </div>
+                                )}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-10 h-10 rounded-full bg-amber-500/90 text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                    <Play size={16} className="fill-current ml-0.5" />
+                                  </div>
+                                </div>
+                                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-amber-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 border border-amber-500/30">
+                                  <Video size={10} /> Video
+                                </span>
+                              </div>
+                            ) : (
+                              <img src={photo.url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            )}
+
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                              <p className="text-white text-xs font-semibold leading-tight line-clamp-1">{photo.title}</p>
+                              {photo.title_mr && <p className="text-amber-400/80 text-[10px] font-marathi mt-0.5 line-clamp-1">{photo.title_mr}</p>}
+                              <p className="text-white/50 text-[10px] uppercase font-bold tracking-wider mt-1">{photo.category}</p>
+                            </div>
+
+                            <button
+                              onClick={() => deletePhoto(photo.id)}
+                              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 text-white/70 hover:bg-red-500 hover:text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer shadow-md"
+                              title="Delete Item"
+                            >
+                              <Trash2 size={12} />
+                            </button>
                           </div>
-                          <button onClick={() => deletePhoto(photo.id)}
-                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white/70 hover:bg-red-500 hover:text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      ))}
-                    {gallery.filter(p => gFilter === 'all' || p.category === gFilter).length === 0 && (
-                      <div className="col-span-4 text-center py-16 text-white/20 text-sm">No photos yet — click Add Photo to upload</div>
+                        );
+                      })}
+                    {gallery.filter(p => {
+                      const isVid = p.media_type === 'video' || p.url?.endsWith('.mp4') || p.url?.endsWith('.webm') || p.url?.includes('youtube.com') || p.url?.includes('youtu.be');
+                      if (gMediaFilter === 'image' && isVid) return false;
+                      if (gMediaFilter === 'video' && !isVid) return false;
+                      if (gFilter !== 'all' && p.category !== gFilter) return false;
+                      return true;
+                    }).length === 0 && (
+                      <div className="col-span-4 text-center py-20 text-white/30 text-sm border border-dashed border-white/10 rounded-2xl">
+                        <ImageIcon size={36} className="mx-auto mb-2 opacity-20 text-amber-400" />
+                        <p>No media items found matching this filter</p>
+                        <p className="text-xs text-white/20 mt-1">Click "Add Media" to upload photos or videos</p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -2387,19 +2808,97 @@ export default function AdminDashboard() {
       </Drawer>
 
       {/* Gallery drawer */}
-      <Drawer open={gDrawer} title="Add Photo to Gallery" onClose={() => setGDrawer(false)}>
-        <ImageUpload value={gUrl} onChange={setGUrl} label="Photo" />
-        <Field label="Title (English)"><input value={gTitle} onChange={e => setGTitle(e.target.value)} className={inputCls} placeholder="Photo title" /></Field>
-        <Field label="Title (Marathi)"><input value={gTitleMr} onChange={e => setGTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
-        <Field label="Description"><input value={gDesc} onChange={e => setGDesc(e.target.value)} className={inputCls} placeholder="Short caption..." /></Field>
+      <Drawer open={gDrawer} title="Add Media (Photo / Video) to Gallery" onClose={() => setGDrawer(false)}>
+        {/* Media Type Selector */}
+        <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-xl border border-white/10 mb-4">
+          <button
+            type="button"
+            onClick={() => {
+              setGMediaType('image');
+              if (gCat === 'videos') setGCat('general');
+            }}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              gMediaType === 'image' ? 'bg-amber-500 text-black shadow' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            <ImageIcon size={14} /> Photo
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setGMediaType('video');
+              setGCat('videos');
+            }}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              gMediaType === 'video' ? 'bg-amber-500 text-black shadow' : 'text-white/50 hover:text-white'
+            }`}
+          >
+            <Video size={14} /> Video
+          </button>
+        </div>
+
+        {gMediaType === 'image' ? (
+          <>
+            <ImageUpload value={gUrl} onChange={setGUrl} label="Gallery Photo" />
+            <Field label="Or Paste Photo URL (Cloudinary, external link)">
+              <input
+                value={gUrl}
+                onChange={e => setGUrl(e.target.value)}
+                className={inputCls}
+                placeholder="https://..."
+              />
+            </Field>
+          </>
+        ) : (
+          <>
+            <VideoUpload value={gUrl} onChange={setGUrl} label="Upload Video (MP4/WebM) to Cloudinary" />
+            <Field label="Or Paste Video URL (YouTube link or MP4 link)">
+              <input
+                value={gUrl}
+                onChange={e => setGUrl(e.target.value)}
+                className={inputCls}
+                placeholder="https://www.youtube.com/watch?v=... or https://...mp4"
+              />
+              <p className="text-[10px] text-white/20 mt-1">Upload a video or paste a YouTube / direct video link.</p>
+            </Field>
+            <ImageUpload value={gThumbnailUrl} onChange={setGThumbnailUrl} label="Custom Video Thumbnail / Poster (Optional)" />
+          </>
+        )}
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Title (English)">
+            <input value={gTitle} onChange={e => setGTitle(e.target.value)} required className={inputCls} placeholder="e.g. Balgram Children" />
+          </Field>
+          <Field label="Title (Marathi)">
+            <input value={gTitleMr} onChange={e => setGTitleMr(e.target.value)} className={inputCls} placeholder="e.g. बालग्राम मुले" />
+          </Field>
+        </div>
+
+        <Field label="Description / Caption (English)">
+          <input value={gDesc} onChange={e => setGDesc(e.target.value)} className={inputCls} placeholder="Short caption..." />
+        </Field>
+
+        <Field label="Description / Caption (Marathi)">
+          <input value={gDescMr} onChange={e => setGDescMr(e.target.value)} className={inputCls} placeholder="मराठीत संक्षिप्त माहिती..." />
+        </Field>
+
         <Field label="Category">
           <select value={gCat} onChange={e => setGCat(e.target.value)} className={selectCls}>
-            {['balgram','farming','vrudhashram','shala','awards','general'].map(c => <option key={c} value={c}>{c}</option>)}
+            {['balgram','farming','vrudhashram','shala','awards','general','videos'].map(c => (
+              <option key={c} value={c}>
+                {c === 'videos' ? '🎥 Videos' : c.charAt(0).toUpperCase() + c.slice(1)}
+              </option>
+            ))}
           </select>
         </Field>
-        <button onClick={addPhoto} disabled={formBusy || !gUrl} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">
-          {formBusy ? <Loader2 size={16} className="animate-spin" /> : <Upload size={15} />}
-          Add to Gallery
+
+        <button
+          onClick={addPhoto}
+          disabled={formBusy || !gUrl || !gTitle}
+          className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 shadow-md text-sm mt-4"
+        >
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : gMediaType === 'video' ? <Video size={16} /> : <Upload size={16} />}
+          {gMediaType === 'video' ? 'Add Video to Gallery' : 'Add Photo to Gallery'}
         </button>
       </Drawer>
 
@@ -2453,6 +2952,67 @@ export default function AdminDashboard() {
         >
           {formBusy ? <Loader2 size={16} className="animate-spin" /> : <FileText size={15} />}
           Publish Report
+        </button>
+      </Drawer>
+
+      {/* Review / Testimonial Drawer */}
+      <Drawer open={revDrawer} title={editRev ? '⭐ Edit Public Review' : '⭐ Add Public Review'} onClose={() => setRevDrawer(false)}>
+        <ImageUpload value={revImage} onChange={setRevImage} label="Reviewer Photo / Avatar" />
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Reviewer Name (English)">
+            <input value={revName} onChange={e => setRevName(e.target.value)} required className={inputCls} placeholder="e.g. Amit Deshmukh" />
+          </Field>
+          <Field label="Reviewer Name (Marathi)">
+            <input value={revNameMr} onChange={e => setRevNameMr(e.target.value)} className={inputCls} placeholder="e.g. अमित देशमुख" />
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Role / Location (English)">
+            <input value={revRole} onChange={e => setRevRole(e.target.value)} className={inputCls} placeholder="e.g. Regular Donor, Pune" />
+          </Field>
+          <Field label="Role / Location (Marathi)">
+            <input value={revRoleMr} onChange={e => setRevRoleMr(e.target.value)} className={inputCls} placeholder="e.g. नियमित देणगीदार, पुणे" />
+          </Field>
+        </div>
+
+        <Field label="Star Rating">
+          <select value={revRating} onChange={e => setRevRating(Number(e.target.value))} className={selectCls}>
+            <option value={5}>⭐⭐⭐⭐⭐ (5 Stars)</option>
+            <option value={4}>⭐⭐⭐⭐ (4 Stars)</option>
+            <option value={3}>⭐⭐⭐ (3 Stars)</option>
+            <option value={2}>⭐⭐ (2 Stars)</option>
+            <option value={1}>⭐ (1 Star)</option>
+          </select>
+        </Field>
+
+        <Field label="Feedback / Speech Bubble Text (English)">
+          <textarea
+            value={revText}
+            onChange={e => setRevText(e.target.value)}
+            required
+            className={inputCls + ' resize-none h-24 text-xs leading-relaxed'}
+            placeholder="Write the quote or testimonial shown in the homepage speech bubble..."
+          />
+        </Field>
+
+        <Field label="Feedback / Speech Bubble Text (Marathi)">
+          <textarea
+            value={revTextMr}
+            onChange={e => setRevTextMr(e.target.value)}
+            className={inputCls + ' resize-none h-24 text-xs leading-relaxed font-marathi'}
+            placeholder="मराठीत अभिप्राय किंवा कोट..."
+          />
+        </Field>
+
+        <button
+          onClick={saveReview}
+          disabled={formBusy || !revName || !revText}
+          className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm shadow-md"
+        >
+          {formBusy ? <Loader2 size={16} className="animate-spin" /> : <Save size={15} />}
+          {editRev ? 'Update Review' : 'Publish Review to Homepage'}
         </button>
       </Drawer>
 

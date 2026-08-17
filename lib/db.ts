@@ -129,10 +129,13 @@ export interface EventItem {
 export interface GalleryPhoto {
   id: string;
   url: string;
+  thumbnail_url?: string;
+  media_type?: 'image' | 'video';
   title: string;
   title_mr?: string;
   desc?: string;
-  category: 'balgram' | 'farming' | 'vrudhashram' | 'shala' | 'awards' | 'general';
+  desc_mr?: string;
+  category: 'balgram' | 'farming' | 'vrudhashram' | 'shala' | 'awards' | 'general' | 'videos';
   created_at: string;
 }
 
@@ -181,6 +184,20 @@ export interface SiteContent {
   updated_at: string;
 }
 
+export interface Testimonial {
+  id: string;
+  name: string;
+  name_mr?: string;
+  role: string;
+  role_mr?: string;
+  text: string;
+  text_mr?: string;
+  rating: number;
+  image?: string;
+  order?: number;
+  created_at: string;
+}
+
 interface MockDBSchema {
   campaigns: Campaign[];
   donations: Donation[];
@@ -192,6 +209,7 @@ interface MockDBSchema {
   gallery: GalleryPhoto[];
   reports: Report[];
   team_members: TeamMember[];
+  testimonials: Testimonial[];
   settings: Settings;
   site_content: SiteContent[];
 }
@@ -212,6 +230,7 @@ async function getMockDB(): Promise<MockDBSchema> {
     gallery: [],
     reports: [],
     team_members: [],
+    testimonials: [],
     settings: {
       upiId: 'prathanafoundation@sbi',
       bankName: 'State Bank of India',
@@ -1539,6 +1558,178 @@ export async function updatePageContent(pageId: string, data: any): Promise<bool
     } else {
       db.site_content.push({ id: pageId, data, updated_at: new Date().toISOString() });
     }
+    await saveMockDB(db);
+    return true;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TESTIMONIALS / REVIEWS METHODS
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const defaultTestimonials: Testimonial[] = [
+  {
+    id: 'test-1',
+    name: 'Amit Deshmukh',
+    name_mr: 'अमित देशमुख',
+    role: 'Regular Donor, Pune',
+    role_mr: 'नियमित देणगीदार, पुणे',
+    text: 'The transparency of Prathana Foundation is unmatched. Seeing exactly where my donations go and how they benefit children brings immense peace of mind.',
+    text_mr: 'प्रार्थना फाउंडेशनची पारदर्शकता अत्यंत वाखाणण्याजोगी आहे. आपल्या देणगीचा प्रत्येक रुपया कुठे खर्च होतो हे पाहणे मनाला समाधान देते.',
+    rating: 5,
+    image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg',
+    order: 0,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'test-2',
+    name: 'Supriya Patil',
+    name_mr: 'सुप्रिया पाटील',
+    role: 'Social Worker, Solapur',
+    role_mr: 'सामाजिक कार्यकर्ता, सोलापूर',
+    text: 'They are doing real, impactful on-ground work in Solapur. Helping street children study and get proper nutrition is a beautiful cause.',
+    text_mr: 'सोलापूरमधील रस्त्यावरील मुलांसाठी त्यांचे काम अतिशय मोलाचे आहे. मुलांना शिक्षण आणि सकस अन्न देऊन ते समाज घडवत आहेत.',
+    rating: 5,
+    image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg',
+    order: 1,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'test-3',
+    name: 'Rajesh Kulkarni',
+    name_mr: 'राजेश कुलकर्णी',
+    role: 'Supporter, Solapur',
+    role_mr: 'हितचिंतक, सोलापूर',
+    text: 'Prasad and Anus story is deeply inspiring. Reclaiming their life tragedy to build a safe home for kids and elderly is a remarkable service.',
+    text_mr: 'प्रसाद आणि अनू मोहिते यांचे कार्य प्रेरणादायी आहे. वैयक्तिक दुःखातून त्यांनी उभं केलेलं हे सामाजिक काम खरोखरच कौतुकास्पद आहे.',
+    rating: 5,
+    image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg',
+    order: 2,
+    created_at: new Date().toISOString(),
+  },
+];
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  const sortFn = (a: Testimonial, b: Testimonial) => {
+    if (typeof a.order === 'number' && typeof b.order === 'number') {
+      return a.order - b.order;
+    }
+    if (typeof a.order === 'number') return -1;
+    if (typeof b.order === 'number') return 1;
+    return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const snap = await getDocs(collection(firestore, 'testimonials'));
+      if (snap.empty) {
+        return defaultTestimonials;
+      }
+      const list: Testimonial[] = [];
+      snap.forEach(docSnap => {
+        list.push({ id: docSnap.id, ...docSnap.data() } as Testimonial);
+      });
+      return list.sort(sortFn);
+    } catch (err) {
+      console.error('Firebase getTestimonials error:', err);
+      return defaultTestimonials;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.testimonials || db.testimonials.length === 0) {
+      return defaultTestimonials;
+    }
+    return [...db.testimonials].sort(sortFn);
+  }
+}
+
+export async function createTestimonial(data: Omit<Testimonial, 'id' | 'created_at'>): Promise<Testimonial | null> {
+  const newTestimonial: Testimonial = {
+    ...data,
+    id: 'rev-' + Math.random().toString(36).substring(2, 9),
+    order: data.order ?? 999,
+    created_at: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'testimonials', newTestimonial.id);
+      await setDoc(docRef, { ...newTestimonial });
+      return newTestimonial;
+    } catch (err) {
+      console.error('Firebase createTestimonial error:', err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.testimonials) db.testimonials = [];
+    db.testimonials.push(newTestimonial);
+    await saveMockDB(db);
+    return newTestimonial;
+  }
+}
+
+export async function updateTestimonial(id: string, updates: Partial<Testimonial>): Promise<Testimonial | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'testimonials', id);
+      await setDoc(docRef, { ...updates }, { merge: true });
+      const snap = await getDoc(docRef);
+      return snap.exists() ? ({ id: snap.id, ...snap.data() } as Testimonial) : null;
+    } catch (err) {
+      console.error('Firebase updateTestimonial error:', err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.testimonials) return null;
+    const idx = db.testimonials.findIndex(t => t.id === id);
+    if (idx === -1) return null;
+    db.testimonials[idx] = { ...db.testimonials[idx], ...updates };
+    await saveMockDB(db);
+    return db.testimonials[idx];
+  }
+}
+
+export async function deleteTestimonial(id: string): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'testimonials', id);
+      await deleteDoc(docRef);
+      return true;
+    } catch (err) {
+      console.error('Firebase deleteTestimonial error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.testimonials) return false;
+    db.testimonials = db.testimonials.filter(t => t.id !== id);
+    await saveMockDB(db);
+    return true;
+  }
+}
+
+export async function reorderTestimonials(orderedIds: string[]): Promise<boolean> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const batchPromises = orderedIds.map((id, index) => {
+        const docRef = doc(firestore!, 'testimonials', id);
+        return updateDoc(docRef, { order: index });
+      });
+      await Promise.all(batchPromises);
+      return true;
+    } catch (err) {
+      console.error('Firebase reorderTestimonials error:', err);
+      return false;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.testimonials) return false;
+    orderedIds.forEach((id, index) => {
+      const t = db.testimonials.find(item => item.id === id);
+      if (t) t.order = index;
+    });
     await saveMockDB(db);
     return true;
   }
