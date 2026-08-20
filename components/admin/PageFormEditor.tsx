@@ -1,7 +1,99 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Save, Code, Layout, Globe, ChevronRight, HelpCircle, Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Save, Code, Layout, Globe, ChevronRight, HelpCircle, Plus, Trash2, Upload, ImageIcon, Loader2 } from 'lucide-react';
+
+const CLOUD_NAME = 'djoklzpse';
+const UPLOAD_PRESET = 'prathana_preset';
+
+function FormImageUpload({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'prathana');
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: fd,
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        onChange(data.secure_url);
+      } else {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="space-y-1.5 bg-[#0b0e14]/60 p-3 rounded-xl border border-white/5">
+      <label className="block text-[11px] font-bold uppercase tracking-wider text-amber-400/90">{label}</label>
+      <div className="flex items-center gap-3">
+        {value ? (
+          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/15 bg-black flex-shrink-0 group">
+            <img src={value} alt="Preview" className="w-full h-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-red-400 hover:text-red-300 transition-opacity cursor-pointer"
+              title="Remove image"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        ) : (
+          <div className="w-16 h-16 rounded-xl border border-dashed border-white/15 flex items-center justify-center text-white/20 flex-shrink-0 bg-black/20">
+            <ImageIcon size={18} />
+          </div>
+        )}
+        <div className="flex-1 space-y-1.5 min-w-0">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="Paste Image URL or upload →"
+              className="flex-1 min-w-0 bg-[#0b0e14] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white outline-none focus:border-amber-500 font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+              className="px-3 py-1.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 flex-shrink-0 disabled:opacity-50"
+            >
+              {uploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+              {uploading ? 'Uploading...' : 'Upload'}
+            </button>
+          </div>
+          {error && <p className="text-red-400 text-[10px]">{error}</p>}
+        </div>
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+    </div>
+  );
+}
 
 interface PageFormEditorProps {
   selectedPage: 'home' | 'about';
@@ -91,7 +183,8 @@ export default function PageFormEditor({
     { id: 'prathana', label: "🕊️ Prathana's Legacy" },
     { id: 'timeline', label: '🗓️ Timeline Milestones' },
     { id: 'founders', label: "👥 Founders' Messages" },
-    { id: 'sacrifice', label: '🌾 Land Sacrifice' },
+    { id: 'sacrifice', label: '🌾 Land Sacrifice & Photos' },
+    { id: 'gallery', label: '🖼️ Our Story Gallery' },
     { id: 'values', label: '💎 Vision & Core Values' },
     { id: 'cta', label: '🎯 Call to Action' },
   ];
@@ -545,6 +638,12 @@ export default function PageFormEditor({
                     Our Story Hero Banner ({activeLang.toUpperCase()})
                   </h4>
 
+                  <FormImageUpload
+                    label="Hero Background Photo"
+                    value={getVal(['hero', 'bgImage'])}
+                    onChange={(url) => updateField(['hero', 'bgImage'], url)}
+                  />
+
                   <div>
                     <label className="block text-xs font-semibold text-white/60 mb-1.5">Eyebrow Badge</label>
                     <input
@@ -587,6 +686,11 @@ export default function PageFormEditor({
                   {/* Chapter 1 */}
                   <div className="space-y-3 bg-[#0b0e14] p-4 rounded-xl border border-white/5">
                     <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider">Chapter 01: Tragedy</h5>
+                    <FormImageUpload
+                      label="Chapter 01 Photo (Tragedy)"
+                      value={getVal(['chapters', 'c1', 'image'])}
+                      onChange={(url) => updateField(['chapters', 'c1', 'image'], url)}
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Title</label>
@@ -621,6 +725,11 @@ export default function PageFormEditor({
                   {/* Chapter 2 */}
                   <div className="space-y-3 bg-[#0b0e14] p-4 rounded-xl border border-white/5">
                     <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider">Chapter 02: A Promise</h5>
+                    <FormImageUpload
+                      label="Chapter 02 Photo (Promise)"
+                      value={getVal(['chapters', 'c2', 'image'])}
+                      onChange={(url) => updateField(['chapters', 'c2', 'image'], url)}
+                    />
                     <div>
                       <label className="block text-[11px] font-semibold text-white/60 mb-1">Chapter Quote</label>
                       <input
@@ -790,7 +899,7 @@ export default function PageFormEditor({
                     <h5 className="text-xs font-bold text-amber-300">Timeline Milestone Cards</h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {(getVal(['timeline', 'nodes'], []) || []).map((item: any, idx: number) => (
-                        <div key={idx} className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-2">
+                        <div key={idx} className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-3">
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-bold text-amber-400">Milestone #{idx + 1}</span>
                           </div>
@@ -816,6 +925,11 @@ export default function PageFormEditor({
                             onChange={(e) => updateField(['timeline', 'nodes', idx, 'desc'], e.target.value)}
                             placeholder="Description story"
                             className="w-full bg-[#141923] border border-white/10 rounded px-3 py-1.5 text-xs text-white resize-y"
+                          />
+                          <FormImageUpload
+                            label="Milestone Photo"
+                            value={item.img || ''}
+                            onChange={(url) => updateField(['timeline', 'nodes', idx, 'img'], url)}
                           />
                         </div>
                       ))}
@@ -855,6 +969,11 @@ export default function PageFormEditor({
                   {/* Prasad */}
                   <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-3">
                     <h5 className="text-xs font-bold text-amber-300">Prasad Mohite (Founder)</h5>
+                    <FormImageUpload
+                      label="Prasad Mohite Portrait Photo"
+                      value={getVal(['founders', 'prasad', 'image'])}
+                      onChange={(url) => updateField(['founders', 'prasad', 'image'], url)}
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] text-white/60 mb-1">Name</label>
@@ -889,6 +1008,11 @@ export default function PageFormEditor({
                   {/* Anu */}
                   <div className="bg-[#0b0e14] p-4 rounded-xl border border-white/5 space-y-3">
                     <h5 className="text-xs font-bold text-amber-300">Anu Mohite (Co-Founder)</h5>
+                    <FormImageUpload
+                      label="Anu Mohite Portrait Photo"
+                      value={getVal(['founders', 'anu', 'image'])}
+                      onChange={(url) => updateField(['founders', 'anu', 'image'], url)}
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] text-white/60 mb-1">Name</label>
@@ -978,6 +1102,141 @@ export default function PageFormEditor({
                         onChange={(e) => updateField(['sacrifice', 'after'], e.target.value)}
                         className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-amber-500"
                       />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <FormImageUpload
+                      label="Before Photo (Street School / Old Days)"
+                      value={getVal(['sacrifice', 'beforeImg'])}
+                      onChange={(url) => updateField(['sacrifice', 'beforeImg'], url)}
+                    />
+                    <FormImageUpload
+                      label="After Photo (Permanent Campus / Sanctuary)"
+                      value={getVal(['sacrifice', 'afterImg'])}
+                      onChange={(url) => updateField(['sacrifice', 'afterImg'], url)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* ────────────────── ABOUT: GALLERY ────────────────── */}
+              {selectedPage === 'about' && activeSection === 'gallery' && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                    <div>
+                      <h4 className="text-sm font-bold text-amber-400">
+                        Our Story Page Gallery Mosaic ({activeLang.toUpperCase()})
+                      </h4>
+                      <p className="text-[11px] text-white/40 mt-0.5">
+                        Manage photos shown in the photo gallery section of the Our Story page
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentItems = getVal(['gallery', 'items'], []);
+                        updateField(['gallery', 'items'], [
+                          ...currentItems,
+                          { img: '', category: 'studying', caption: '' },
+                        ]);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                    >
+                      <Plus size={13} /> Add Gallery Photo
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Eyebrow</label>
+                      <input
+                        type="text"
+                        value={getVal(['gallery', 'eyebrow'])}
+                        onChange={(e) => updateField(['gallery', 'eyebrow'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Title</label>
+                      <input
+                        type="text"
+                        value={getVal(['gallery', 'title'])}
+                        onChange={(e) => updateField(['gallery', 'title'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-white/60 mb-1.5">Section Subtitle / Description</label>
+                      <input
+                        type="text"
+                        value={getVal(['gallery', 'sub'])}
+                        onChange={(e) => updateField(['gallery', 'sub'], e.target.value)}
+                        className="w-full bg-[#0b0e14] border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-3 border-t border-white/5">
+                    <h5 className="text-xs font-bold text-amber-300">Gallery Photos List</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(getVal(['gallery', 'items'], []) || []).map((item: any, idx: number) => (
+                        <div key={idx} className="bg-[#0b0e14] p-4 rounded-xl border border-white/10 space-y-3 relative group">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold text-amber-400">Photo #{idx + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentItems = [...(getVal(['gallery', 'items'], []) || [])];
+                                currentItems.splice(idx, 1);
+                                updateField(['gallery', 'items'], currentItems);
+                              }}
+                              className="p-1 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs transition-colors cursor-pointer"
+                              title="Delete photo"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+
+                          <FormImageUpload
+                            label="Photo"
+                            value={item.img || ''}
+                            onChange={(url) => updateField(['gallery', 'items', idx, 'img'], url)}
+                          />
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[10px] text-white/50 mb-1">Category</label>
+                              <select
+                                value={item.category || 'studying'}
+                                onChange={(e) => updateField(['gallery', 'items', idx, 'category'], e.target.value)}
+                                className="w-full bg-[#141923] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-amber-500 cursor-pointer"
+                              >
+                                <option value="studying">Children (studying)</option>
+                                <option value="farming">Farming (farming)</option>
+                                <option value="seniors">Seniors (seniors)</option>
+                                <option value="celebrations">Celebrations (celebrations)</option>
+                                <option value="volunteers">Volunteers (volunteers)</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[10px] text-white/50 mb-1">Caption</label>
+                              <input
+                                type="text"
+                                value={item.caption || ''}
+                                onChange={(e) => updateField(['gallery', 'items', idx, 'caption'], e.target.value)}
+                                placeholder="Caption / Description"
+                                className="w-full bg-[#141923] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-amber-500"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {(getVal(['gallery', 'items'], []) || []).length === 0 && (
+                        <div className="col-span-2 text-center py-8 border border-dashed border-white/10 rounded-xl text-white/30 text-xs">
+                          No custom gallery photos added. Default photos will be displayed. Click "Add Gallery Photo" to add.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

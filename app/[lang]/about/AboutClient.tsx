@@ -264,7 +264,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  const galleryItems = [
+  const defaultGalleryItems = [
     { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_bxsdsq.jpg', category: 'studying', caption: lang === 'mr' ? 'अभ्यास करणारी मुले' : 'Children studying at the centre' },
     { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951887/prathana/blob_apwasc.jpg', category: 'studying', caption: lang === 'mr' ? 'वंचितांच्या शाळेतील वर्ग' : 'Vanchitanchi Shala classrooms' },
     { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg', category: 'farming', caption: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural farming in action' },
@@ -276,7 +276,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
     { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg', category: 'volunteers', caption: lang === 'mr' ? 'समर्पित स्वयंसेवक' : 'Dedicated volunteers supporting the cause' },
     { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg', category: 'volunteers', caption: lang === 'mr' ? 'पोषण आहार वितरण' : 'Community meals outreach' },
   ];
-  const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter(i => i.category === galleryFilter);
+  const galleryItems = (local.gallery?.items && local.gallery.items.length > 0) ? local.gallery.items : defaultGalleryItems;
+  const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter((i: any) => i.category === galleryFilter);
 
   return (
     <div className="relative min-h-screen bg-brand-paper flex flex-col font-sans antialiased text-brand-charcoal">
@@ -313,7 +314,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
           {/* Background image */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: "url('https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg')" }}
+            style={{ backgroundImage: `url('${local.hero?.bgImage || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg'}')` }}
           />
           {/* Gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20" />
@@ -400,7 +401,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg" alt="2006"
+                <img src={local.chapters?.c1?.image || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg"} alt={local.chapters?.c1?.title || "2006"}
                   className="w-full h-[440px] object-cover editorial-img" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-5 left-5">
@@ -435,7 +436,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="lg:order-2 relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg" alt="Promise"
+                <img src={local.chapters?.c2?.image || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg"} alt={local.chapters?.c2?.title || "Promise"}
                   className="w-full h-[440px] object-cover editorial-img" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               </motion.div>
@@ -604,8 +605,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                { data: local.founders.prasad, img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg', delay: 0 },
-                { data: local.founders.anu, img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg', delay: 0.1 },
+                { data: local.founders.prasad, img: local.founders?.prasad?.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg', delay: 0 },
+                { data: local.founders.anu, img: local.founders?.anu?.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg', delay: 0.1 },
               ].map(({ data, img, delay }) => (
                 <motion.div key={data.name}
                   initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -664,8 +665,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
               <div className="lg:col-span-7">
                 <BeforeAfterSlider
-                  beforeImg="https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg"
-                  afterImg="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg"
+                  beforeImg={local.sacrifice?.beforeImg || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg"}
+                  afterImg={local.sacrifice?.afterImg || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg"}
                   beforeLabel={local.sacrifice.before}
                   afterLabel={local.sacrifice.after}
                 />
@@ -703,7 +704,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
             {/* Masonry */}
             <motion.div layout className="columns-1 sm:columns-2 md:columns-3 gap-5 space-y-5">
               <AnimatePresence>
-                {filtered.map((item) => (
+                {filtered.map((item: any) => (
                   <motion.div key={item.img} layout
                     initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}

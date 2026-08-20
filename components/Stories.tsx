@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -10,6 +11,7 @@ interface StoriesProps {
 
 export default function Stories({ lang }: StoriesProps) {
   const router = useRouter();
+  const [dynamicArticles, setDynamicArticles] = useState<any[] | null>(null);
 
   const isMarathi = lang === 'mr';
 
@@ -21,7 +23,7 @@ export default function Stories({ lang }: StoriesProps) {
     comments: isMarathi ? 'टिप्पण्या' : 'Comments',
   };
 
-  const articles = [
+  const defaultArticles = [
     {
       date: isMarathi ? '२० जून २०२६' : '20 June 2026',
       commentsCount: 2,
@@ -56,6 +58,26 @@ export default function Stories({ lang }: StoriesProps) {
       image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_g4lenb.jpg',
     },
   ];
+
+  useEffect(() => {
+    fetch('/api/events')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const formatted = data.slice(0, 3).map((item: any) => ({
+            date: item.date || (isMarathi ? 'ताजी बातमी' : 'Latest News'),
+            commentsCount: item.comments_count || 0,
+            title: isMarathi ? (item.title_mr || item.title_en || item.title) : (item.title_en || item.title_mr || item.title),
+            desc: isMarathi ? (item.description_mr || item.description_en || item.description) : (item.description_en || item.description_mr || item.description),
+            image: item.image_url || item.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+          }));
+          setDynamicArticles(formatted);
+        }
+      })
+      .catch(() => {});
+  }, [isMarathi]);
+
+  const articles = (dynamicArticles && dynamicArticles.length > 0) ? dynamicArticles : defaultArticles;
 
   return (
     <section id="stories" className="py-24 bg-brand-paper relative overflow-hidden">
