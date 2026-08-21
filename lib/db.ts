@@ -343,16 +343,23 @@ export async function getCampaignById(id: string): Promise<Campaign | null> {
   }
 }
 
-export async function createCampaign(campaign: Omit<Campaign, 'id' | 'amount_raised' | 'status' | 'is_completed' | 'created_at' | 'slug'>): Promise<Campaign | null> {
-  const slug = campaign.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+export async function createCampaign(campaign: Partial<Campaign> & { title: string; goal_amount: number }): Promise<Campaign | null> {
+  const slug = campaign.slug || campaign.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `campaign-${Date.now()}`;
   const newCampaign: Campaign = {
-    id: 'campaign-' + Math.random().toString(36).substring(2, 9),
-    ...campaign,
+    id: campaign.id || 'campaign-' + Math.random().toString(36).substring(2, 9),
+    title: campaign.title,
+    title_mr: campaign.title_mr || '',
     slug,
-    amount_raised: 0,
-    is_completed: false,
-    status: 'active',
-    created_at: new Date().toISOString(),
+    description: campaign.description || '',
+    description_mr: campaign.description_mr || '',
+    content: campaign.content || '',
+    content_mr: campaign.content_mr || '',
+    goal_amount: Number(campaign.goal_amount) || 0,
+    amount_raised: Number(campaign.amount_raised) || 0,
+    image: campaign.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    is_completed: campaign.status === 'completed' || campaign.is_completed || false,
+    status: campaign.status || (campaign.is_completed ? 'completed' : 'active'),
+    created_at: campaign.created_at || new Date().toISOString(),
   };
 
   if (isFirebaseConfigured && firestore) {
@@ -364,11 +371,13 @@ export async function createCampaign(campaign: Omit<Campaign, 'id' | 'amount_rai
         slug: newCampaign.slug,
         description: newCampaign.description,
         description_mr: newCampaign.description_mr || '',
+        content: newCampaign.content || '',
+        content_mr: newCampaign.content_mr || '',
         goal_amount: Number(newCampaign.goal_amount),
-        amount_raised: 0,
+        amount_raised: Number(newCampaign.amount_raised),
         image: newCampaign.image,
-        is_completed: false,
-        status: 'active',
+        is_completed: newCampaign.is_completed,
+        status: newCampaign.status,
         created_at: newCampaign.created_at,
       });
       return newCampaign;
@@ -385,11 +394,28 @@ export async function createCampaign(campaign: Omit<Campaign, 'id' | 'amount_rai
 }
 
 export async function updateCampaign(id: string, updates: Partial<Campaign>): Promise<Campaign | null> {
+  let is_completed = updates.is_completed;
+  if (updates.status === 'completed') {
+    is_completed = true;
+  } else if (updates.status === 'active') {
+    is_completed = false;
+  }
+
+  const cleanUpdates: any = { ...updates };
+  delete cleanUpdates.id;
+  if (is_completed !== undefined) {
+    cleanUpdates.is_completed = is_completed;
+  }
+  if (cleanUpdates.goal_amount !== undefined) {
+    cleanUpdates.goal_amount = Number(cleanUpdates.goal_amount);
+  }
+  if (cleanUpdates.amount_raised !== undefined) {
+    cleanUpdates.amount_raised = Number(cleanUpdates.amount_raised);
+  }
+
   if (isFirebaseConfigured && firestore) {
     try {
       const docRef = doc(firestore, 'campaigns', id);
-      const cleanUpdates: any = { ...updates };
-      delete cleanUpdates.id; // cannot modify doc id inside fields
       await updateDoc(docRef, cleanUpdates);
       const snap = await getDoc(docRef);
       return { id: snap.id, ...snap.data() } as Campaign;
@@ -403,18 +429,10 @@ export async function updateCampaign(id: string, updates: Partial<Campaign>): Pr
     if (index === -1) return null;
     const current = db.campaigns[index];
     
-    // Auto-update is_completed if status changes
-    let is_completed = updates.is_completed !== undefined ? updates.is_completed : current.is_completed;
-    if (updates.status === 'completed') {
-      is_completed = true;
-    } else if (updates.status === 'active') {
-      is_completed = false;
-    }
-    
     const updated = {
       ...current,
-      ...updates,
-      is_completed
+      ...cleanUpdates,
+      is_completed: is_completed !== undefined ? is_completed : current.is_completed,
     };
     db.campaigns[index] = updated;
     await saveMockDB(db);

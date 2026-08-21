@@ -499,7 +499,7 @@ export default function AdminDashboard() {
   const [cTitle, setCTitle] = useState(''); const [cTitleMr, setCTitleMr] = useState('');
   const [cDesc, setCDesc]   = useState(''); const [cDescMr, setCDescMr]   = useState('');
   const [cContent, setCContent] = useState(''); const [cContentMr, setCContentMr] = useState('');
-  const [cGoal, setCGoal]   = useState(''); const [cImage, setCImage]     = useState('');
+  const [cGoal, setCGoal]   = useState(''); const [cRaised, setCRaised] = useState(''); const [cImage, setCImage] = useState('');
   const [cStatus, setCStatus] = useState<'active'|'completed'>('active');
 
   // Activity form
@@ -676,7 +676,9 @@ export default function AdminDashboard() {
     setCTitle(camp?.title || ''); setCTitleMr(camp?.title_mr || '');
     setCDesc(camp?.description || ''); setCDescMr(camp?.description_mr || '');
     setCContent(camp?.content || ''); setCContentMr(camp?.content_mr || '');
-    setCGoal(camp?.goal_amount?.toString() || ''); setCImage(camp?.image || '');
+    setCGoal(camp?.goal_amount?.toString() || '');
+    setCRaised(camp?.amount_raised !== undefined ? camp.amount_raised.toString() : '0');
+    setCImage(camp?.image || '');
     setCStatus(camp?.status || 'active');
     setCampDrawer(true);
   };
@@ -684,7 +686,20 @@ export default function AdminDashboard() {
     if (!cTitle || !cGoal) return notify('Title and goal are required', 'error');
     setFormBusy(true);
     try {
-      const body = { title: cTitle, title_mr: cTitleMr, description: cDesc, description_mr: cDescMr, content: cContent, content_mr: cContentMr, goal_amount: Number(cGoal), amount_raised: editCamp?.amount_raised || 0, image: cImage, is_completed: cStatus === 'completed', status: cStatus, slug: cTitle.toLowerCase().replace(/\s+/g, '-') };
+      const body = {
+        title: cTitle,
+        title_mr: cTitleMr,
+        description: cDesc,
+        description_mr: cDescMr,
+        content: cContent,
+        content_mr: cContentMr,
+        goal_amount: Number(cGoal),
+        amount_raised: Number(cRaised) || 0,
+        image: cImage,
+        is_completed: cStatus === 'completed',
+        status: cStatus,
+        slug: cTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `campaign-${Date.now()}`,
+      };
       const url = '/api/campaigns';
       const method = editCamp ? 'PUT' : 'POST';
       const payload = editCamp ? { id: editCamp.id, ...body } : body;
@@ -2605,16 +2620,20 @@ export default function AdminDashboard() {
       {/* Campaign drawer */}
       <Drawer open={campDrawer} title={editCamp ? 'Edit Campaign' : 'New Campaign'} onClose={() => setCampDrawer(false)}>
         <Field label="Title (English)"><input value={cTitle} onChange={e => setCTitle(e.target.value)} className={inputCls} placeholder="Campaign title" /></Field>
-        <Field label="Title (Marathi)"><input value={cTitleMr} onChange={e => setCTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
-        <Field label="Short Description (English)"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-20'} placeholder="Short excerpt..." /></Field>
-        <Field label="Full Content (English)"><textarea value={cContent} onChange={e => setCContent(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="Full campaign details..." /></Field>
-        <Field label="Full Content (Marathi) [Optional]"><textarea value={cContentMr} onChange={e => setCContentMr(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="संपूर्ण माहिती..." /></Field>
-        <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
-        <ImageUpload value={cImage} onChange={setCImage} label="Campaign Photo" />
+        <Field label="Title (Marathi / मराठी)"><input value={cTitleMr} onChange={e => setCTitleMr(e.target.value)} className={inputCls} placeholder="मराठी शीर्षक" /></Field>
+        <Field label="Short Excerpt (English)"><textarea value={cDesc} onChange={e => setCDesc(e.target.value)} className={inputCls + ' resize-none h-20'} placeholder="Short excerpt for cards..." /></Field>
+        <Field label="Short Excerpt (Marathi / मराठी)"><textarea value={cDescMr} onChange={e => setCDescMr(e.target.value)} className={inputCls + ' resize-none h-20'} placeholder="कार्डवरील संक्षिप्त माहिती..." /></Field>
+        <Field label="Full Content Story (English)"><textarea value={cContent} onChange={e => setCContent(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="Full campaign details..." /></Field>
+        <Field label="Full Content Story (Marathi / मराठी)"><textarea value={cContentMr} onChange={e => setCContentMr(e.target.value)} className={inputCls + ' resize-y h-32'} placeholder="संपूर्ण सविस्तर माहिती..." /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
+          <Field label="Amount Raised (₹)"><input type="number" value={cRaised} onChange={e => setCRaised(e.target.value)} className={inputCls} placeholder="0" /></Field>
+        </div>
+        <ImageUpload value={cImage} onChange={setCImage} label="Campaign Cover Photo" />
         <Field label="Status">
           <select value={cStatus} onChange={e => setCStatus(e.target.value as any)} className={selectCls}>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
+            <option value="active">Active (सक्रिय)</option>
+            <option value="completed">Completed (यशस्वी / पूर्ण)</option>
           </select>
         </Field>
         <button onClick={saveCampaign} disabled={formBusy} className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60">

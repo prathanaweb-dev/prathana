@@ -15,21 +15,17 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { title, description, goal_amount, image } = await request.json();
+    const body = await request.json();
+    const { title, goal_amount } = body;
 
-    if (!title || !description || !goal_amount) {
+    if (!title || !goal_amount) {
       return NextResponse.json(
-        { error: 'Missing required campaign details' },
+        { error: 'Title and goal amount are required' },
         { status: 400 }
       );
     }
 
-    const campaign = await createCampaign({
-      title,
-      description,
-      goal_amount: Number(goal_amount),
-      image: image || '/balgram/Balgram/486262788_4051383418425113_5954660625716303688_n.jpg',
-    });
+    const campaign = await createCampaign(body);
 
     if (!campaign) {
       return NextResponse.json(
@@ -49,11 +45,14 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { id, updates } = await request.json();
+    const body = await request.json();
+    const id = body.id;
+    const updates = body.updates ? body.updates : { ...body };
+    delete updates.id;
 
-    if (!id || !updates) {
+    if (!id) {
       return NextResponse.json(
-        { error: 'Missing required update parameters' },
+        { error: 'Missing campaign id' },
         { status: 400 }
       );
     }
