@@ -67,8 +67,11 @@ export default function CSRPage() {
         <section ref={heroRef} className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-[#0d1a14] overflow-hidden">
           {/* Parallax Background */}
           <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-[url('/awards/Awards/FB_IMG_1541862550370.jpg')] bg-cover bg-center opacity-30 mix-blend-luminosity scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0d1a14]/90 via-[#0d1a14]/60 to-[#0d1a14] pointer-events-none" />
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity scale-105"
+              style={{ backgroundImage: `url('https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg')` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0d1a14]/85 via-[#0d1a14]/50 to-[#0d1a14] pointer-events-none" />
             <div className="absolute inset-0 bg-[url('/grain.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
             <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-brand-green/20 rounded-full blur-[150px] pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-brand-yellow/10 rounded-full blur-[150px] pointer-events-none" />
