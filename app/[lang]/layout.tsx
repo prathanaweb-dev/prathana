@@ -18,36 +18,93 @@ const dmSans = DM_Sans({
 
 export async function generateMetadata({ params }: { params: Promise<{ lang?: string }> }): Promise<Metadata> {
   const { lang } = await params;
+  const isMr = lang === 'mr';
   
   const translations = {
     en: {
-      title: 'Prathana Foundation Solapur — Transparent Humanitarian Aid',
-      description: 'Prathana Foundation is a grassroots collective in Solapur providing nutrition, school kits, and mobile healthcare to families in need. Every donation is transparently tracked.',
+      title: 'Prathana Foundation Solapur — Transparent Humanitarian Aid & Child Rehabilitation',
+      description: 'Prathana Foundation is a government-registered NGO in Solapur providing 24/7 child sanctuary at Prathana Balgram, nutrition, education, elderly care, and disaster relief with 100% donation transparency and 80G tax benefits.',
     },
     mr: {
-      title: 'प्रार्थना फाउंडेशन सोलापूर — पारदर्शक मानवतावादी मदत',
-      description: 'प्रार्थना फाउंडेशन सोलापूरमधील एक तळागाळातील चळवळ आहे जी गरजू कुटुंबांना पोषण, शालेय साहित्य आणि मोबाईल आरोग्य सेवा पुरवते. प्रत्येक देणगी पारदर्शकपणे नोंदवली जाते.',
+      title: 'प्रार्थना फाउंडेशन सोलापूर — पारदर्शक मानवतावादी मदत व बालग्राम पुनर्वसन',
+      description: 'प्रार्थना फाउंडेशन सोलापूरमधील शासनमान्य सामाजिक संस्था आहे जी गरजू बालकांना हक्काचा निवारा (प्रार्थना बालग्राम), शिक्षण, पोषण, वृद्धाश्रम सेवा आणि १००% पारदर्शक देणगी प्रणालीसह ८०जी करसवलत प्रदान करते.',
     }
   };
 
-  const meta = translations[lang === 'mr' ? 'mr' : 'en'];
+  const meta = translations[isMr ? 'mr' : 'en'];
+  const canonicalUrl = `https://prarthanafoundation.org/${lang || 'en'}`;
 
   return {
-    title: meta.title,
+    metadataBase: new URL('https://prarthanafoundation.org'),
+    title: {
+      default: meta.title,
+      template: '%s | Prathana Foundation Solapur',
+    },
     description: meta.description,
     keywords: [
-      'NGO Solapur',
       'Prathana Foundation',
-      'Donate India',
-      'Child Education',
+      'NGO Solapur',
+      'Prathana Balgram',
+      'Prasad Shinde Solapur',
+      'Donate India 80G',
+      'Child Rehabilitation Solapur',
+      'Old Age Home Solapur',
       'Food Drive Maharashtra',
-      'Transparent Charity',
+      'Transparent Charity India',
     ],
-    authors: [{ name: 'Prathana Foundation Solapur' }],
+    authors: [{ name: 'Prathana Foundation Solapur', url: 'https://prarthanafoundation.org' }],
+    creator: 'Prathana Foundation',
+    publisher: 'Prathana Foundation',
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: 'https://prarthanafoundation.org/en',
+        mr: 'https://prarthanafoundation.org/mr',
+        'x-default': 'https://prarthanafoundation.org/en',
+      },
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      url: canonicalUrl,
+      siteName: 'Prathana Foundation Solapur',
+      locale: isMr ? 'mr_IN' : 'en_IN',
+      type: 'website',
+      images: [
+        {
+          url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Prathana Foundation Solapur - Humanitarian Impact',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.title,
+      description: meta.description,
+      images: ['https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg'],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     icons: {
-      icon: '/logo.png',
-      shortcut: '/logo.png',
-      apple: '/logo.png',
+      icon: '/icon.png',
+      shortcut: '/icon.png',
+      apple: '/apple-icon.png',
     },
   };
 }
@@ -61,11 +118,36 @@ export default async function RootLayout({
 }>) {
   const { lang } = await params;
 
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'NGO',
+    name: 'Prathana Foundation',
+    alternateName: ['प्रार्थना फाउंडेशन', 'Prathana Foundation Solapur', 'Prathana Balgram'],
+    url: 'https://prarthanafoundation.org',
+    logo: 'https://prarthanafoundation.org/icon.png',
+    image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    description: 'A grassroots humanitarian NGO in Solapur providing 24/7 child sanctuary, senior care, nutrition, and education with complete transparency and 80G tax benefit certification.',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Solapur',
+      addressRegion: 'Maharashtra',
+      addressCountry: 'IN',
+    },
+    nonprofitStatus: 'Nonprofit501c3',
+    taxID: '80G Certified NGO',
+  };
+
   return (
     <html
       lang={lang || 'en'}
       className={`${fraunces.variable} ${dmSans.variable} h-full`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-brand-paper text-brand-charcoal font-sans antialiased">
         <TranslationProvider translations={await getPageContent('home')}>
           {children}

@@ -63,13 +63,14 @@ export default function Stories({ lang }: StoriesProps) {
     fetch('/api/events')
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const formatted = data.slice(0, 3).map((item: any) => ({
-            date: item.date || (isMarathi ? 'ताजी बातमी' : 'Latest News'),
+        const list = Array.isArray(data) ? data : (data?.events || data?.stories || []);
+        if (Array.isArray(list) && list.length > 0) {
+          const formatted = list.slice(0, 3).map((item: any) => ({
+            date: item.published_date || item.date || (isMarathi ? 'ताजी बातमी' : 'Latest News'),
             commentsCount: item.comments_count || 0,
             title: isMarathi ? (item.title_mr || item.title_en || item.title) : (item.title_en || item.title_mr || item.title),
-            desc: isMarathi ? (item.description_mr || item.description_en || item.description) : (item.description_en || item.description_mr || item.description),
-            image: item.image_url || item.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+            desc: isMarathi ? (item.excerpt_mr || item.description_mr || item.content_mr || item.description || item.content) : (item.excerpt || item.description_en || item.content || item.description),
+            image: item.featured_image || item.image_url || item.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
           }));
           setDynamicArticles(formatted);
         }

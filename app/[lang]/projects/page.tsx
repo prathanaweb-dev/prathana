@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getProjects } from '@/lib/db';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -5,6 +6,39 @@ import ProjectsClient from './ProjectsClient';
 
 interface ProjectsPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({ params }: ProjectsPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  const isMr = lang === 'mr';
+
+  const title = isMr
+    ? 'सर्व प्रकल्प व सामाजिक उपक्रम | प्रार्थना फाउंडेशन सोलापूर'
+    : 'Our Key Initiatives & Sustainable Projects | Prathana Foundation';
+  const description = isMr
+    ? 'प्रार्थना बालग्राम, वंचितांची शाळा, फिरते रुग्णालय, अन्नछत्र आणि सेंद्रिय शेती प्रकल्प.'
+    : 'Explore our key humanitarian projects in Solapur: Balgram shelter, mobile health clinic, daily nutrition drives, and sustainable rural development.';
+
+  const url = `https://prarthanafoundation.org/${lang}/projects`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'Prathana Foundation Solapur',
+      images: ['https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg'],
+    },
+    alternates: {
+      canonical: url,
+      languages: {
+        en: 'https://prarthanafoundation.org/en/projects',
+        mr: 'https://prarthanafoundation.org/mr/projects',
+      },
+    },
+  };
 }
 
 export default async function ProjectsPage({ params }: ProjectsPageProps) {

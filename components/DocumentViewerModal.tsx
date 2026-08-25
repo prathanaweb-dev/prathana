@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, FileText, Loader2, Maximize2 } from 'lucide-react';
+import { X, ExternalLink, FileText, Loader2, Download } from 'lucide-react';
+import { getEmbeddableDocumentInfo } from '@/lib/documentUtils';
 
 interface DocumentViewerModalProps {
   isOpen: boolean;
@@ -20,12 +21,10 @@ export default function DocumentViewerModal({
   lang = 'en',
 }: DocumentViewerModalProps) {
   const [loading, setLoading] = useState(true);
-  const [viewerType, setViewerType] = useState<'google' | 'direct'>('google');
 
   if (!isOpen || !url) return null;
 
-  const isPdf = url.toLowerCase().includes('.pdf');
-  const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+  const docInfo = getEmbeddableDocumentInfo(url);
 
   return (
     <AnimatePresence>
@@ -56,19 +55,24 @@ export default function DocumentViewerModal({
               <div className="min-w-0">
                 <h3 className="text-sm md:text-base font-bold text-white truncate">{title}</h3>
                 <span className="text-[11px] text-white/40 block truncate">
-                  {lang === 'mr' ? 'दस्तऐवज पूर्वावलोकन' : 'Document In-App Viewer'}
+                  {docInfo.isGoogleDrive ? (lang === 'mr' ? 'गुगल ड्राइव्ह दस्तऐवज' : 'Google Drive Document') : (lang === 'mr' ? 'दस्तऐवज पूर्वावलोकन' : 'Document In-App Viewer')}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
-              {isPdf && (
-                <button
-                  onClick={() => setViewerType(prev => (prev === 'google' ? 'direct' : 'google'))}
-                  className="hidden sm:inline-flex text-[11px] px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer"
+              {docInfo.directUrl && (
+                <a
+                  href={docInfo.directUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                  title={lang === 'mr' ? 'डाउनलोड करा' : 'Download document'}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/15 text-white/70 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
                 >
-                  {viewerType === 'google' ? 'Switch to Native Viewer' : 'Switch to Google Viewer'}
-                </button>
+                  <Download size={15} />
+                  <span className="hidden sm:inline">{lang === 'mr' ? 'डाउनलोड' : 'Download'}</span>
+                </a>
               )}
               <a
                 href={url}
@@ -100,23 +104,13 @@ export default function DocumentViewerModal({
               </div>
             )}
 
-            {isPdf ? (
-              <iframe
-                src={viewerType === 'google' ? googleViewerUrl : url}
-                className="w-full h-full border-0 bg-white"
-                title={title}
-                onLoad={() => setLoading(false)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center p-4 overflow-auto">
-                <img
-                  src={url}
-                  alt={title}
-                  onLoad={() => setLoading(false)}
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                />
-              </div>
-            )}
+            <iframe
+              src={docInfo.embedUrl}
+              className="w-full h-full border-0 bg-white"
+              title={title}
+              allow="autoplay"
+              onLoad={() => setLoading(false)}
+            />
           </div>
         </motion.div>
       </div>

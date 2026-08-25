@@ -13,21 +13,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, title_mr, content, content_mr, featured_image, published_date } = body;
+    const { title, content } = body;
 
-    if (!title || !content || !featured_image || !published_date) {
-      return NextResponse.json({ success: false, error: 'Title, content, featured image, and published date are required' }, { status: 400 });
+    if (!title || !content) {
+      return NextResponse.json({ success: false, error: 'Title and content are required' }, { status: 400 });
     }
 
-    const newEvt = await createEvent({
-      title,
-      title_mr: title_mr || '',
-      content,
-      content_mr: content_mr || '',
-      featured_image,
-      published_date,
-    });
-
+    const newEvt = await createEvent(body);
     if (!newEvt) throw new Error('Creation failed');
 
     return NextResponse.json({ success: true, event: newEvt });
@@ -39,10 +31,12 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, updates } = body;
+    const id = body.id;
+    const updates = body.updates ? body.updates : { ...body };
+    delete updates.id;
 
-    if (!id || !updates) {
-      return NextResponse.json({ success: false, error: 'Id and updates are required' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Id is required' }, { status: 400 });
     }
 
     const updated = await updateEvent(id, updates);

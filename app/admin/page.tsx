@@ -35,12 +35,12 @@ import PageFormEditor from '@/components/admin/PageFormEditor';
 import DocumentViewerModal from '@/components/DocumentViewerModal';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface Campaign { id: string; title: string; title_mr?: string; description: string; description_mr?: string; content?: string; content_mr?: string; goal_amount: number; amount_raised: number; image: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
+interface Campaign { id: string; title: string; title_mr?: string; description: string; description_mr?: string; content?: string; content_mr?: string; goal_amount: number; amount_raised: number; image: string; donate_url?: string; upi_link?: string; external_link?: string; is_completed: boolean; status: 'active' | 'completed'; created_at: string; }
 interface Donation  { id: string; campaign_id: string; donor_name: string; donor_email: string; amount: number; payment_id: string; payment_status: 'pending'|'success'|'failed'; utr?: string; screenshot?: string; created_at: string; }
 interface Volunteer { id: string; name: string; phone: string; email: string; city: string; occupation: string; interests: string; age?: string; gender?: string; address?: string; availability?: string; experience?: string; status: 'pending'|'approved'|'rejected'; assigned_activity?: string; created_at: string; }
-interface Activity  { id: string; title: string; description: string; image: string; category: string; created_at: string; }
+interface Activity  { id: string; title: string; title_mr?: string; description: string; description_mr?: string; image: string; category: string; created_at: string; }
 interface Project   { id: string; title: string; title_mr?: string; description: string; description_mr?: string; image: string; gallery?: string[]; status: 'planned'|'active'|'completed'; start_date?: string; end_date?: string; created_at: string; }
-interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
+interface EventItem { id: string; title: string; title_mr?: string; content: string; content_mr?: string; excerpt?: string; excerpt_mr?: string; tag?: string; featured_image: string; published_date: string; created_at: string; }
 interface Contact   { id: string; name: string; email: string; phone?: string; message: string; read: boolean; created_at: string; }
 interface Report    { id: string; title: string; title_mr?: string; description?: string; type: 'annual'|'financial'|'impact'|'audit'|'other'; year: string; file_url: string; cover_image?: string; created_at: string; }
 interface TeamMember { id: string; name: string; position: string; position_mr?: string; image: string; linkedin?: string; facebook?: string; instagram?: string; order?: number; created_at: string; }
@@ -500,6 +500,7 @@ export default function AdminDashboard() {
   const [cDesc, setCDesc]   = useState(''); const [cDescMr, setCDescMr]   = useState('');
   const [cContent, setCContent] = useState(''); const [cContentMr, setCContentMr] = useState('');
   const [cGoal, setCGoal]   = useState(''); const [cRaised, setCRaised] = useState(''); const [cImage, setCImage] = useState('');
+  const [cDonateUrl, setCDonateUrl] = useState(''); const [cUpiLink, setCUpiLink] = useState(''); const [cExtLink, setCExtLink] = useState('');
   const [cStatus, setCStatus] = useState<'active'|'completed'>('active');
 
   // Activity form
@@ -517,7 +518,8 @@ export default function AdminDashboard() {
   // Event form
   const [eTitle, setETitle]     = useState(''); const [eTitleMr, setETitleMr]   = useState('');
   const [eContent, setEContent] = useState(''); const [eContentMr, setEContentMr] = useState('');
-  const [eExcerpt, setEExcerpt] = useState(''); const [eTag, setETag]           = useState('news');
+  const [eExcerpt, setEExcerpt] = useState(''); const [eExcerptMr, setEExcerptMr] = useState('');
+  const [eTag, setETag]         = useState('news');
   const [eImage, setEImage]     = useState(''); const [eDate, setEDate]         = useState('');
 
   const [formBusy, setFormBusy] = useState(false);
@@ -679,6 +681,9 @@ export default function AdminDashboard() {
     setCGoal(camp?.goal_amount?.toString() || '');
     setCRaised(camp?.amount_raised !== undefined ? camp.amount_raised.toString() : '0');
     setCImage(camp?.image || '');
+    setCDonateUrl(camp?.donate_url || '');
+    setCUpiLink(camp?.upi_link || '');
+    setCExtLink(camp?.external_link || '');
     setCStatus(camp?.status || 'active');
     setCampDrawer(true);
   };
@@ -696,6 +701,9 @@ export default function AdminDashboard() {
         goal_amount: Number(cGoal),
         amount_raised: Number(cRaised) || 0,
         image: cImage,
+        donate_url: cDonateUrl,
+        upi_link: cUpiLink,
+        external_link: cExtLink,
         is_completed: cStatus === 'completed',
         status: cStatus,
         slug: cTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `campaign-${Date.now()}`,
@@ -822,8 +830,9 @@ export default function AdminDashboard() {
     setEditEvt(evt || null);
     setETitle(evt?.title || '');   setETitleMr(evt?.title_mr || '');
     setEContent(evt?.content || ''); setEContentMr(evt?.content_mr || '');
-    setEExcerpt((evt as any)?.excerpt || '');
-    setETag((evt as any)?.tag || 'news');
+    setEExcerpt(evt?.excerpt || (evt as any)?.description || '');
+    setEExcerptMr(evt?.excerpt_mr || (evt as any)?.description_mr || '');
+    setETag(evt?.tag || 'news');
     setEImage(evt?.featured_image || ''); setEDate(evt?.published_date || new Date().toISOString().split('T')[0]);
     setEvtDrawer(true);
   };
@@ -835,6 +844,7 @@ export default function AdminDashboard() {
         title: eTitle, title_mr: eTitleMr,
         content: eContent, content_mr: eContentMr,
         excerpt: eExcerpt || eContent.slice(0, 160),
+        excerpt_mr: eExcerptMr || (eContentMr ? eContentMr.slice(0, 160) : ''),
         tag: eTag,
         featured_image: eImage,
         published_date: eDate || new Date().toISOString().split('T')[0],
@@ -2629,6 +2639,19 @@ export default function AdminDashboard() {
           <Field label="Goal Amount (₹)"><input type="number" value={cGoal} onChange={e => setCGoal(e.target.value)} className={inputCls} placeholder="100000" /></Field>
           <Field label="Amount Raised (₹)"><input type="number" value={cRaised} onChange={e => setCRaised(e.target.value)} className={inputCls} placeholder="0" /></Field>
         </div>
+        <div className="pt-2 border-t border-white/10 space-y-3">
+          <span className="block text-[11px] font-bold uppercase tracking-widest text-amber-400">Custom Links & Payment URLs [Optional]</span>
+          <Field label="Direct Donation URL (e.g. ImpactGuru / Milaap / Custom Link)">
+            <input value={cDonateUrl} onChange={e => setCDonateUrl(e.target.value)} className={inputCls + ' text-xs'} placeholder="https://impactguru.com/s/7IWQqD or custom payment link" />
+          </Field>
+          <Field label="Direct UPI Link or UPI ID">
+            <input value={cUpiLink} onChange={e => setCUpiLink(e.target.value)} className={inputCls + ' text-xs'} placeholder="upi://pay?... or prathana@upi or short link" />
+          </Field>
+          <Field label="External Reference / Read More URL">
+            <input value={cExtLink} onChange={e => setCExtLink(e.target.value)} className={inputCls + ' text-xs'} placeholder="https://..." />
+          </Field>
+        </div>
+
         <ImageUpload value={cImage} onChange={setCImage} label="Campaign Cover Photo" />
         <Field label="Status">
           <select value={cStatus} onChange={e => setCStatus(e.target.value as any)} className={selectCls}>
@@ -2733,7 +2756,7 @@ export default function AdminDashboard() {
         </Field>
 
         {/* Excerpt */}
-        <Field label="Excerpt / Summary">
+        <Field label="Excerpt / Summary (English)">
           <textarea
             value={eExcerpt}
             onChange={e => setEExcerpt(e.target.value)}
@@ -2744,13 +2767,24 @@ export default function AdminDashboard() {
           <p className="text-[10px] text-white/20 text-right mt-1">{eExcerpt.length}/200</p>
         </Field>
 
+        <Field label="Excerpt / Summary (Marathi / मराठी सारांश)">
+          <textarea
+            value={eExcerptMr}
+            onChange={e => setEExcerptMr(e.target.value)}
+            className={inputCls + ' resize-none h-16 text-xs'}
+            placeholder="ब्लॉग सूचीवर दिसणारा संक्षिप्त मराठी सारांश..."
+            maxLength={200}
+          />
+          <p className="text-[10px] text-white/20 text-right mt-1">{eExcerptMr.length}/200</p>
+        </Field>
+
         {/* Body */}
-        <Field label="Article Body">
+        <Field label="Article Body (English)">
           <div className="relative">
             <textarea
               value={eContent}
               onChange={e => setEContent(e.target.value)}
-              className={inputCls + ' resize-none h-56 leading-relaxed text-sm'}
+              className={inputCls + ' resize-none h-48 leading-relaxed text-sm'}
               placeholder="Write the full article here. Paragraphs, details, quotes — everything goes here."
             />
             <div className="flex items-center justify-between mt-1.5">
@@ -2762,20 +2796,23 @@ export default function AdminDashboard() {
           </div>
         </Field>
 
-        {/* Marathi body (collapsible hint) */}
-        <details className="group">
-          <summary className="text-[10px] text-amber-400/60 uppercase tracking-widest font-bold cursor-pointer select-none hover:text-amber-400 transition-colors list-none flex items-center gap-1">
-            <ChevronDown size={12} className="group-open:rotate-180 transition-transform" /> Add Marathi Body (optional)
-          </summary>
-          <div className="mt-2">
+        {/* Marathi body */}
+        <Field label="Article Body (Marathi / मराठी संपूर्ण लेख)">
+          <div className="relative">
             <textarea
               value={eContentMr}
               onChange={e => setEContentMr(e.target.value)}
-              className={inputCls + ' resize-none h-36 mt-1'}
-              placeholder="मराठी लेखाचा मजकूर..."
+              className={inputCls + ' resize-none h-48 leading-relaxed text-sm'}
+              placeholder="मराठी लेखाचा सविस्तर मजकूर येथे लिहा..."
             />
+            <div className="flex items-center justify-between mt-1.5">
+              <p className="text-[10px] text-white/20">
+                {eContentMr.split(/\s+/).filter(Boolean).length} words
+              </p>
+              <p className="text-[10px] text-white/20">{eContentMr.length} chars</p>
+            </div>
           </div>
-        </details>
+        </Field>
 
         {/* Publish button */}
         <button

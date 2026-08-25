@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Project } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Briefcase } from 'lucide-react';
@@ -16,12 +16,24 @@ export default function ProjectsClient({
   lang,
   initialProjects,
 }: ProjectsClientProps) {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [activeTab, setActiveTab] = useState<'all' | 'planned' | 'active' | 'completed'>('all');
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.projects)) {
+          setProjects(data.projects);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const filtered = activeTab === 'all'
-    ? initialProjects
-    : initialProjects.filter((proj) => proj.status === activeTab);
+    ? projects
+    : projects.filter((proj) => proj.status === activeTab);
 
   const statuses = [
     { id: 'all', label: t.projects.status.all },

@@ -200,6 +200,7 @@ export default function EventsClient({
                     {events.map((evt, idx) => {
                       const title = (lang === 'mr' && evt.title_mr) ? evt.title_mr : evt.title;
                       const content = (lang === 'mr' && evt.content_mr) ? evt.content_mr : evt.content;
+                      const excerpt = (lang === 'mr' && evt.excerpt_mr) ? evt.excerpt_mr : (evt.excerpt || content);
 
                       return (
                         <motion.div
@@ -237,7 +238,7 @@ export default function EventsClient({
                               </h3>
 
                               <p className="text-brand-muted text-xs leading-relaxed font-light line-clamp-3">
-                                {content}
+                                {excerpt}
                               </p>
                             </div>
 

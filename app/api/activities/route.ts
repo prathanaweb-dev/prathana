@@ -39,10 +39,12 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, updates } = body;
+    const id = body.id;
+    const updates = body.updates ? body.updates : { ...body };
+    delete updates.id;
 
-    if (!id || !updates) {
-      return NextResponse.json({ success: false, error: 'Id and updates are required' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Id is required' }, { status: 400 });
     }
 
     const updated = await updateActivity(id, updates);

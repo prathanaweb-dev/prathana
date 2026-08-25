@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getGalleryPhotos, addGalleryPhoto, deleteGalleryPhoto } from '@/lib/db';
+import { getGalleryPhotos, addGalleryPhoto, updateGalleryPhoto, deleteGalleryPhoto } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -30,6 +30,33 @@ export async function POST(req: Request) {
     });
     if (!photo) return NextResponse.json({ error: 'Failed to add gallery item' }, { status: 500 });
     return NextResponse.json({ success: true, photo }, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const id = body.id;
+    const updates = body.updates ? body.updates : { ...body };
+    delete updates.id;
+
+    if (!id) {
+      return NextResponse.json({ error: 'id required' }, { status: 400 });
+    }
+
+    if (updates.url) {
+      const url = updates.url;
+      const isVid = updates.media_type === 'video' || url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('youtube.com') || url.includes('youtu.be');
+      if (updates.media_type === undefined) {
+        updates.media_type = isVid ? 'video' : 'image';
+      }
+    }
+
+    const photo = await updateGalleryPhoto(id, updates);
+    if (!photo) return NextResponse.json({ error: 'Gallery item not found or update failed' }, { status: 404 });
+    return NextResponse.json({ success: true, photo });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }

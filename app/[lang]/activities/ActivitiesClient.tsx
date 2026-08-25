@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Activity } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import { translations } from '@/lib/translations';
@@ -14,12 +14,24 @@ export default function ActivitiesClient({
   lang,
   initialActivities,
 }: ActivitiesClientProps) {
+  const [activities, setActivities] = useState<Activity[]>(initialActivities);
   const [activeTab, setActiveTab] = useState<'all' | 'nutrition' | 'education' | 'healthcare'>('all');
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
+  useEffect(() => {
+    fetch('/api/activities')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.activities)) {
+          setActivities(data.activities);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const filtered = activeTab === 'all'
-    ? initialActivities
-    : initialActivities.filter((act) => act.category === activeTab);
+    ? activities
+    : activities.filter((act) => act.category === activeTab);
 
   const categories = [
     { id: 'all', label: t.activities.categories.all },

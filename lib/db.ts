@@ -45,6 +45,9 @@ export interface Campaign {
   goal_amount: number;
   amount_raised: number;
   image: string;
+  donate_url?: string;
+  upi_link?: string;
+  external_link?: string;
   is_completed: boolean;
   status: 'active' | 'completed';
   created_at: string;
@@ -119,10 +122,14 @@ export interface EventItem {
   id: string;
   title: string;
   title_mr?: string;
+  excerpt?: string;
+  excerpt_mr?: string;
   content: string;
   content_mr?: string;
   featured_image: string;
   published_date: string;
+  tag?: string;
+  author?: string;
   created_at: string;
 }
 
@@ -357,6 +364,9 @@ export async function createCampaign(campaign: Partial<Campaign> & { title: stri
     goal_amount: Number(campaign.goal_amount) || 0,
     amount_raised: Number(campaign.amount_raised) || 0,
     image: campaign.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    donate_url: campaign.donate_url || '',
+    upi_link: campaign.upi_link || '',
+    external_link: campaign.external_link || '',
     is_completed: campaign.status === 'completed' || campaign.is_completed || false,
     status: campaign.status || (campaign.is_completed ? 'completed' : 'active'),
     created_at: campaign.created_at || new Date().toISOString(),
@@ -376,6 +386,9 @@ export async function createCampaign(campaign: Partial<Campaign> & { title: stri
         goal_amount: Number(newCampaign.goal_amount),
         amount_raised: Number(newCampaign.amount_raised),
         image: newCampaign.image,
+        donate_url: newCampaign.donate_url || '',
+        upi_link: newCampaign.upi_link || '',
+        external_link: newCampaign.external_link || '',
         is_completed: newCampaign.is_completed,
         status: newCampaign.status,
         created_at: newCampaign.created_at,
@@ -1017,6 +1030,33 @@ export async function addCsrDocument(docInfo: Omit<CsrDocument, 'id' | 'created_
   }
 }
 
+export async function updateCsrDocument(id: string, updates: Partial<CsrDocument>): Promise<CsrDocument | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'csr_documents', id);
+      const cleanUpdates: any = { ...updates };
+      delete cleanUpdates.id;
+      await updateDoc(docRef, cleanUpdates);
+      const snap = await getDoc(docRef);
+      return { id: snap.id, ...snap.data() } as CsrDocument;
+    } catch (err) {
+      console.error(`Firebase updateCsrDocument(${id}) error:`, err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.csrDocuments) return null;
+    const idx = db.csrDocuments.findIndex((d: CsrDocument) => d.id === id);
+    if (idx === -1) return null;
+    const cleanUpdates: any = { ...updates };
+    delete cleanUpdates.id;
+    const updated = { ...db.csrDocuments[idx], ...cleanUpdates };
+    db.csrDocuments[idx] = updated;
+    await saveMockDB(db);
+    return updated;
+  }
+}
+
 export async function deleteCsrDocument(id: string): Promise<boolean> {
   if (isFirebaseConfigured && firestore) {
     try {
@@ -1165,25 +1205,26 @@ export async function getEvents(): Promise<EventItem[]> {
   }
 }
 
-export async function createEvent(event: Omit<EventItem, 'id' | 'created_at'>): Promise<EventItem | null> {
+export async function createEvent(event: Partial<EventItem> & { title: string; content: string }): Promise<EventItem | null> {
   const newEvt: EventItem = {
-    id: 'evt-' + Math.random().toString(36).substring(2, 9),
-    ...event,
-    created_at: new Date().toISOString(),
+    id: event.id || 'evt-' + Math.random().toString(36).substring(2, 9),
+    title: event.title,
+    title_mr: event.title_mr || '',
+    excerpt: event.excerpt || (event.content ? event.content.slice(0, 160) : ''),
+    excerpt_mr: event.excerpt_mr || (event.content_mr ? event.content_mr.slice(0, 160) : ''),
+    content: event.content,
+    content_mr: event.content_mr || '',
+    featured_image: event.featured_image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    published_date: event.published_date || new Date().toISOString().split('T')[0],
+    tag: event.tag || 'news',
+    author: event.author || 'Admin',
+    created_at: event.created_at || new Date().toISOString(),
   };
 
   if (isFirebaseConfigured && firestore) {
     try {
       const docRef = doc(firestore, 'events', newEvt.id);
-      await setDoc(docRef, {
-        title: newEvt.title,
-        title_mr: newEvt.title_mr || '',
-        content: newEvt.content,
-        content_mr: newEvt.content_mr || '',
-        featured_image: newEvt.featured_image,
-        published_date: newEvt.published_date,
-        created_at: newEvt.created_at,
-      });
+      await setDoc(docRef, newEvt);
       return newEvt;
     } catch (err) {
       console.error('Firebase createEvent error:', err);
@@ -1214,7 +1255,9 @@ export async function updateEvent(id: string, updates: Partial<EventItem>): Prom
     const db = await getMockDB();
     const idx = db.events.findIndex(e => e.id === id);
     if (idx === -1) return null;
-    const updated = { ...db.events[idx], ...updates };
+    const cleanUpdates: any = { ...updates };
+    delete cleanUpdates.id;
+    const updated = { ...db.events[idx], ...cleanUpdates };
     db.events[idx] = updated;
     await saveMockDB(db);
     return updated;
@@ -1334,6 +1377,33 @@ export async function addGalleryPhoto(photo: Omit<GalleryPhoto, 'id' | 'created_
   return newPhoto;
 }
 
+export async function updateGalleryPhoto(id: string, updates: Partial<GalleryPhoto>): Promise<GalleryPhoto | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'gallery', id);
+      const cleanUpdates: any = { ...updates };
+      delete cleanUpdates.id;
+      await updateDoc(docRef, cleanUpdates);
+      const snap = await getDoc(docRef);
+      return { id: snap.id, ...snap.data() } as GalleryPhoto;
+    } catch (err) {
+      console.error(`Firebase updateGalleryPhoto(${id}) error:`, err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.gallery) return null;
+    const idx = db.gallery.findIndex(p => p.id === id);
+    if (idx === -1) return null;
+    const cleanUpdates: any = { ...updates };
+    delete cleanUpdates.id;
+    const updated = { ...db.gallery[idx], ...cleanUpdates };
+    db.gallery[idx] = updated;
+    await saveMockDB(db);
+    return updated;
+  }
+}
+
 export async function deleteGalleryPhoto(id: string): Promise<boolean> {
   if (isFirebaseConfigured && firestore) {
     try {
@@ -1391,6 +1461,33 @@ export async function addReport(report: Omit<Report, 'id' | 'created_at'>): Prom
   db.reports.push(newReport);
   await saveMockDB(db);
   return newReport;
+}
+
+export async function updateReport(id: string, updates: Partial<Report>): Promise<Report | null> {
+  if (isFirebaseConfigured && firestore) {
+    try {
+      const docRef = doc(firestore, 'reports', id);
+      const cleanUpdates: any = { ...updates };
+      delete cleanUpdates.id;
+      await updateDoc(docRef, cleanUpdates);
+      const snap = await getDoc(docRef);
+      return { id: snap.id, ...snap.data() } as Report;
+    } catch (err) {
+      console.error(`Firebase updateReport(${id}) error:`, err);
+      return null;
+    }
+  } else {
+    const db = await getMockDB();
+    if (!db.reports) return null;
+    const idx = db.reports.findIndex(r => r.id === id);
+    if (idx === -1) return null;
+    const cleanUpdates: any = { ...updates };
+    delete cleanUpdates.id;
+    const updated = { ...db.reports[idx], ...cleanUpdates };
+    db.reports[idx] = updated;
+    await saveMockDB(db);
+    return updated;
+  }
 }
 
 export async function deleteReport(id: string): Promise<boolean> {
