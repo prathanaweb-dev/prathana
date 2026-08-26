@@ -88,7 +88,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
               const cardImages = [
-                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951858/prathana/blob_ru8oxl.jpg',
+                '/food.jpeg',
                 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg',
                 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_h6qnum.jpg',
               ];
