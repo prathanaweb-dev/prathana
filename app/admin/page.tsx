@@ -2606,7 +2606,9 @@ export default function AdminDashboard() {
                               className={inputCls}
                               placeholder="https://... (direct PDF or shareable link)"
                             />
-                            <p className="text-[10px] text-white/20 mt-1">Upload a file directly or paste any direct/shareable PDF link.</p>
+                            <p className="text-[11px] text-amber-400/80 mt-1">
+                              💡 <strong>Tip:</strong> Direct PDF uploads render immediately in high-definition. If pasting a <strong>Google Drive link</strong>, make sure the file in Google Drive is set to <em>&quot;Anyone with the link&quot;</em> (Viewer).
+                            </p>
                           </Field>
 
                           <div className="pt-6">
@@ -2998,7 +3000,9 @@ export default function AdminDashboard() {
             className={inputCls}
             placeholder="https://... (Google Drive, Cloudinary, or PDF link)"
           />
-          <p className="text-[10px] text-white/20 mt-1">Upload a PDF directly or paste a shareable Google Drive / Cloud link.</p>
+          <p className="text-[11px] text-amber-400/80 mt-1">
+            💡 <strong>Tip:</strong> Direct PDF uploads render immediately in high-definition. If pasting a <strong>Google Drive link</strong>, ensure the file in Google Drive is set to <em>&quot;Anyone with the link&quot;</em> (Viewer).
+          </p>
         </Field>
 
         <button

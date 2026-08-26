@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MessageSquare, ArrowRight } from 'lucide-react';
+import { MessageSquare, ArrowRight, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface StoriesProps {
@@ -147,8 +147,8 @@ export default function Stories({ lang }: StoriesProps) {
                   </p>
                 </div>
 
-                {/* Read more link */}
-                <div className="pt-2">
+                {/* Read more link & quick share */}
+                <div className="pt-2 flex items-center justify-between border-t border-brand-clay/15">
                   <a
                     href={`/${lang}/events`}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-charcoal hover:text-brand-forest transition-colors"
@@ -156,6 +156,21 @@ export default function Stories({ lang }: StoriesProps) {
                     <span>{tLocal.readMore}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </a>
+
+                  <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const text = `*${art.title}*\n\n${art.desc}\n\n*Read more on Prarthana Foundation:*\nhttps://prarthanafoundation.org/${lang}/events`;
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                      }}
+                      title="Share on WhatsApp"
+                      className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                    >
+                      <MessageCircle size={13} className="fill-current" />
+                    </button>
+                  </div>
                 </div>
               </div>
 

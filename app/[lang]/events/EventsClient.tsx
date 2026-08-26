@@ -5,7 +5,8 @@ import { EventItem, Report } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar, ArrowLeft, ArrowRight, User, FileText,
-  Eye, ExternalLink, Download, Filter, BookOpen, Layers
+  Eye, ExternalLink, Download, Filter, BookOpen, Layers,
+  Share2, MessageCircle, Copy, Check
 } from 'lucide-react';
 import { translations } from '@/lib/translations';
 import DocumentViewerModal from '@/components/DocumentViewerModal';
@@ -27,6 +28,7 @@ export default function EventsClient({
   const [events, setEvents] = useState<EventItem[]>(initialEvents);
   const [reports, setReports] = useState<Report[]>(initialReports);
   const [viewDocModal, setViewDocModal] = useState<{ title: string; url: string } | null>(null);
+  const [copiedEventId, setCopiedEventId] = useState<string | null>(null);
 
   const t = translations[lang === 'mr' ? 'mr' : 'en'] || translations.en;
 
@@ -48,6 +50,32 @@ export default function EventsClient({
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
     return date.toLocaleDateString(lang === 'mr' ? 'mr-IN' : 'en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const getBlogShareText = (evt: EventItem) => {
+    const blogTitle = (lang === 'mr' && evt.title_mr) ? evt.title_mr : evt.title;
+    const content = (lang === 'mr' && evt.content_mr) ? evt.content_mr : evt.content;
+    const excerpt = (lang === 'mr' && evt.excerpt_mr) ? evt.excerpt_mr : (evt.excerpt || content);
+    const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}/${lang}/events` : `https://prarthanafoundation.org/${lang}/events`;
+    const snippet = excerpt ? (excerpt.length > 200 ? excerpt.slice(0, 200) + '...' : excerpt) : '';
+
+    return `*${blogTitle}*\n\n${snippet}\n\n*Read the full story on Prarthana Foundation:*\n${currentUrl}\n\n*Prarthana Foundation Solapur*`;
+  };
+
+  const handleWhatsAppShare = (evt: EventItem, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const text = encodeURIComponent(getBlogShareText(evt));
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  };
+
+  const handleCopyShare = async (evt: EventItem, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const text = getBlogShareText(evt);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+      setCopiedEventId(evt.id);
+      setTimeout(() => setCopiedEventId(null), 2500);
+    }
   };
 
   const selectedEvent = events.find(e => e.id === selectedEventId);
@@ -135,6 +163,37 @@ export default function EventsClient({
                   <p key={i}>{para}</p>
                 ))
               }
+            </div>
+
+            {/* ── Share Story Section ── */}
+            <div className="p-6 bg-white border border-brand-clay/40 rounded-3xl space-y-4 shadow-sm">
+              <div className="flex items-center gap-2 text-brand-forest">
+                <Share2 className="w-5 h-5" />
+                <h4 className="font-serif-display text-lg font-bold text-brand-charcoal">
+                  {lang === 'mr' ? 'ही बातमी / ब्लॉग शेअर करा' : 'Share this Story'}
+                </h4>
+              </div>
+              <p className="text-xs text-brand-muted leading-relaxed">
+                {lang === 'mr'
+                  ? 'प्रार्थना फाउंडेशनचे सेवाकार्य जास्तीत जास्त लोकांपर्यंत पोहोचवण्यासाठी व्हॉट्सॲपवर शेअर करा.'
+                  : 'Help us spread awareness of our grassroots humanitarian work in Solapur. Share with your friends and family.'}
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <button
+                  onClick={() => handleWhatsAppShare(selectedEvent)}
+                  className="flex-1 min-w-[160px] py-3 px-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-2 shadow-md transition-transform hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  <span>{lang === 'mr' ? 'व्हॉट्सॲपवर शेअर करा' : 'Share on WhatsApp'}</span>
+                </button>
+                <button
+                  onClick={() => handleCopyShare(selectedEvent)}
+                  className="py-3 px-5 bg-brand-sand hover:bg-brand-clay/30 text-brand-charcoal font-bold text-xs rounded-2xl flex items-center justify-center gap-2 border border-brand-clay/40 transition-colors cursor-pointer"
+                >
+                  {copiedEventId === selectedEvent.id ? <Check className="w-4 h-4 text-brand-green" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedEventId === selectedEvent.id ? (lang === 'mr' ? 'कॉपी झाले!' : 'Copied!') : (lang === 'mr' ? 'मेसेज कॉपी करा' : 'Copy Message')}</span>
+                </button>
+              </div>
             </div>
           </motion.div>
         ) : (
@@ -242,9 +301,31 @@ export default function EventsClient({
                               </p>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-brand-clay/30 text-xs font-bold text-brand-forest group-hover:text-brand-yellow transition-colors">
-                              <span>{t.events.readMore}</span>
-                              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            <div className="flex items-center justify-between pt-4 border-t border-brand-clay/30 text-xs font-bold text-brand-forest">
+                              <div className="flex items-center gap-1.5 group-hover:text-brand-yellow transition-colors">
+                                <span>{t.events.readMore}</span>
+                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                              </div>
+
+                              {/* Quick Share Buttons on Card */}
+                              <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleWhatsAppShare(evt, e)}
+                                  title="Share on WhatsApp"
+                                  className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                                >
+                                  <MessageCircle size={14} className="fill-current" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleCopyShare(evt, e)}
+                                  title="Copy message & link"
+                                  className="w-8 h-8 rounded-full bg-neutral-100 text-neutral-600 hover:bg-brand-charcoal hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+                                >
+                                  {copiedEventId === evt.id ? <Check size={14} className="text-emerald-500" /> : <Share2 size={13} />}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </motion.div>

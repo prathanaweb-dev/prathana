@@ -6,6 +6,7 @@
 export interface FormattedDocInfo {
   embedUrl: string;
   directUrl: string;
+  googleViewerUrl?: string;
   isGoogleDrive: boolean;
   isPdf: boolean;
   fileId?: string;
@@ -54,7 +55,8 @@ export function getEmbeddableDocumentInfo(rawUrl: string): FormattedDocInfo {
     if (fileId) {
       return {
         embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
-        directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`,
+        directUrl: `https://drive.google.com/file/d/${fileId}/view?usp=sharing`,
+        googleViewerUrl: `https://drive.google.com/file/d/${fileId}/preview`,
         isGoogleDrive: true,
         isPdf: true,
         fileId,
@@ -66,8 +68,9 @@ export function getEmbeddableDocumentInfo(rawUrl: string): FormattedDocInfo {
   if (lower.includes('dropbox.com')) {
     const directDropbox = trimmed.replace('?dl=0', '?raw=1').replace('&dl=0', '&raw=1');
     return {
-      embedUrl: `https://docs.google.com/viewer?url=${encodeURIComponent(directDropbox)}&embedded=true`,
+      embedUrl: directDropbox,
       directUrl: directDropbox,
+      googleViewerUrl: `https://docs.google.com/viewer?url=${encodeURIComponent(directDropbox)}&embedded=true`,
       isGoogleDrive: false,
       isPdf: lower.includes('.pdf'),
     };
@@ -84,12 +87,13 @@ export function getEmbeddableDocumentInfo(rawUrl: string): FormattedDocInfo {
   }
 
   // 4. Standard Direct PDF or Cloudinary or HTTPS Document Link
-  const isPdf = lower.includes('.pdf');
+  const isPdf = lower.includes('.pdf') || lower.includes('/docs/') || lower.includes('raw/upload');
   const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`;
 
   return {
-    embedUrl: googleViewerUrl,
+    embedUrl: trimmed, // Direct URL allows native browser PDF viewer (bypasses Google 403 / No Preview error)
     directUrl: trimmed,
+    googleViewerUrl,
     isGoogleDrive: false,
     isPdf,
   };
