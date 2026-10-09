@@ -129,6 +129,27 @@ export default function VolunteerForm({ lang }: VolunteerFormProps) {
                 </div>
               </li>
             </ul>
+
+            {/* Photo Card with Field Volunteer Badge */}
+            <div className="relative rounded-3xl overflow-hidden border border-brand-clay/40 shadow-lg mt-6 group">
+              <div className="h-48 w-full bg-brand-sand">
+                <img
+                  src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg"
+                  alt="Volunteers in action with children at Solapur"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-yellow">
+                  {lang === 'mr' ? '५०+ सक्रिय स्वयंसेवक' : '50+ Active Field Volunteers'}
+                </span>
+                <p className="text-xs text-white/90 font-medium leading-tight mt-1">
+                  {lang === 'mr' ? 'प्रत्येक रविवार बालकांच्या चेहऱ्यावर हास्य फुलवण्यासाठी समर्पित.' : 'Dedicated weekends bringing smiles to children and elders across Solapur.'}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

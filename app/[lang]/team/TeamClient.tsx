@@ -20,6 +20,65 @@ export default function TeamClient({ lang, teamMembers, volunteers }: { lang: st
     noTeam: isMr ? 'अद्याप कोणतेही टीम सदस्य जोडले नाहीत.' : 'No team members added yet.'
   };
 
+  const defaultMembers: TeamMember[] = [
+    {
+      id: 'core-1',
+      name: isMr ? 'प्रसाद मोहिते' : 'Prasad Mohite',
+      position: 'Founder & President',
+      position_mr: 'संस्थापक आणि अध्यक्ष',
+      image: '/team/Team/Prasad%20Mohite%20(Founder%20%26%20President)).jpg',
+      order: 1,
+      created_at: '2018-01-01',
+    },
+    {
+      id: 'core-2',
+      name: isMr ? 'अनू मोहिते' : 'Anu Mohite',
+      position: 'Secretary',
+      position_mr: 'सचिव',
+      image: '/team/Team/Anu%20Mohite%20(Secretary).jpg',
+      order: 2,
+      created_at: '2018-01-01',
+    },
+    {
+      id: 'core-3',
+      name: isMr ? 'विष्णू भोसले' : 'Vishnu Bhosale',
+      position: 'CEO',
+      position_mr: 'मुख्य कार्यकारी अधिकारी',
+      image: '/team/Team/Vishnu%20Bhosale%20(CEO).jpeg',
+      order: 3,
+      created_at: '2018-01-01',
+    },
+    {
+      id: 'core-4',
+      name: isMr ? 'पांडुरंग तुपसामुद्रे' : 'Pandurang Tupsamudre',
+      position: 'Vice-President',
+      position_mr: 'उपाध्यक्ष',
+      image: '/team/Team/Pandurang%20Tupsamudre%20(Vice-President).jpeg',
+      order: 4,
+      created_at: '2018-01-01',
+    },
+    {
+      id: 'core-5',
+      name: isMr ? 'सोमनाथ लामगुंडे' : 'Somnath Lamgunde',
+      position: 'Director',
+      position_mr: 'संचालक',
+      image: '/team/Team/Somnath%20Lamgunde%20(Director).jpeg',
+      order: 5,
+      created_at: '2018-01-01',
+    },
+    {
+      id: 'core-6',
+      name: isMr ? 'समाधान वाडणे' : 'Samadhan Vadane',
+      position: 'Project Officer (Agriculture)',
+      position_mr: 'प्रकल्प अधिकारी (कृषी)',
+      image: '/team/Team/Samadhan%20Vadane%20(Project%20Officer%20Agri).jpeg',
+      order: 6,
+      created_at: '2018-01-01',
+    },
+  ];
+
+  const displayTeam = teamMembers && teamMembers.length > 0 ? teamMembers : defaultMembers;
+
   return (
     <div className="min-h-screen bg-brand-sand flex flex-col selection:bg-brand-yellow/30 selection:text-brand-forest">
       <Header lang={lang} />
@@ -46,11 +105,11 @@ export default function TeamClient({ lang, teamMembers, volunteers }: { lang: st
           {/* Core Team */}
           <div className="space-y-12">
             <h2 className="text-3xl font-serif-display font-bold text-brand-charcoal border-b border-brand-clay/50 pb-4">{t.coreTeam}</h2>
-            {teamMembers.length === 0 ? (
+            {displayTeam.length === 0 ? (
               <p className="text-brand-muted italic">{t.noTeam}</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {teamMembers.map((member, i) => (
+                {displayTeam.map((member, i) => (
                   <motion.div 
                     key={member.id}
                     initial={{ opacity: 0, y: 20 }}

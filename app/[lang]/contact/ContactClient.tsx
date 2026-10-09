@@ -146,6 +146,27 @@ export default function ContactClient({ lang }: { lang: string }) {
                     </a>
                   </div>
                 </div>
+
+                {/* Campus Photo Card */}
+                <div className="relative mt-6 rounded-2xl overflow-hidden border border-white/10 shadow-lg group">
+                  <div className="h-40 w-full bg-black/40">
+                    <img
+                      src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg"
+                      alt="Prathana Balgram Campus in Morvanchi, Solapur"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-yellow">
+                      {isMr ? 'मोरवंची कॅम्पस, सोलापूर' : 'Morvanchi Campus, Solapur'}
+                    </span>
+                    <p className="text-[11px] text-white/80 font-light mt-0.5 leading-tight">
+                      {isMr ? 'बालग्राम, वृद्धाश्रम व सेंद्रिय शेती संकुल' : 'Balgram, Old Age Sanctuary & Organic Farm'}
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
 
