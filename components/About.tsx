@@ -89,8 +89,8 @@ export default function About({ lang, onDonateClick }: AboutProps) {
               const Icon = card.icon;
               const cardImages = [
                 '/food.jpeg',
-                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg',
-                'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_h6qnum.jpg',
+                '/medical-care.jpg',
+                '/child-education.jpg',
               ];
               const accentColors = [
                 { accent: 'from-brand-green/90 to-brand-green/70', ring: 'ring-brand-green/40', iconBg: 'bg-brand-green', badge: 'bg-brand-green' },
@@ -170,7 +170,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
               <div className="relative">
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-xl h-[420px]">
                   <img
-                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg"
+                    src="/who-we-are-1.jpg"
                     alt="Children at Prathana Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -191,7 +191,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Top stacked image — taller */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-lg h-[220px]">
                   <img
-                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg"
+                    src="/who-we-are-2.jpg"
                     alt="Outreach activity at Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -200,7 +200,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Bottom stacked image */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-md h-[180px]">
                   <img
-                    src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg"
+                    src="/who-we-are-3.jpg"
                     alt="Natural farming at Balgram campus"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"

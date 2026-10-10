@@ -4,12 +4,12 @@ import { motion } from 'framer-motion';
 
 export default function GalleryStrip() {
   const images = [
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951899/prathana/blob_g4lenb.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951867/prathana/blob_c4tthq.jpg',
-    'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    '/gallery-strip-1.jpg',
+    '/gallery-strip-2.jpg',
+    '/gallery-strip-3.jpg',
+    '/gallery-strip-4.jpg',
+    '/gallery-strip-5.jpg',
+    '/gallery-strip-6.jpg',
   ];
 
   return (
