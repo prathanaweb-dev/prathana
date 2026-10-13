@@ -116,13 +116,28 @@ export default function HomeClient({
       />
 
       {/* About: Charity with Difference & Helping each other collage */}
-      <About lang={lang} onDonateClick={handleDonateOpen} />
+      <About
+        lang={lang}
+        onDonateClick={handleDonateOpen}
+        images={{
+          healthyFood: settings?.healthyFoodImage,
+          medicalCare: settings?.medicalCareImage,
+          childEducation: settings?.childEducationImage,
+          whoWeAre1: settings?.whoWeAreImage1,
+          whoWeAre2: settings?.whoWeAreImage2,
+          whoWeAre3: settings?.whoWeAreImage3,
+        }}
+      />
 
       {/* Campaigns: 3-column Grid layout */}
       <Campaigns lang={lang} campaigns={campaigns} onDonateClick={handleDonateOpen} />
 
       {/* Split CTA Banners (Volunteer & Donation) */}
-      <CTABanners lang={lang} onDonateClick={() => handleDonateOpen()} />
+      <CTABanners
+        lang={lang}
+        onDonateClick={() => handleDonateOpen()}
+        outreachChildImage={settings?.ctaChildImage}
+      />
 
       {/* Volunteer Team profiles */}
       <Team lang={lang} />
@@ -131,7 +146,7 @@ export default function HomeClient({
       <Testimonials lang={lang} initialTestimonials={initialTestimonials} />
 
       {/* Grayscale activity photo strip */}
-      <GalleryStrip />
+      <GalleryStrip images={settings?.galleryStripImages} />
 
       {/* Classroom Donate Support form block */}
       <DonateSupport lang={lang} onDonateClick={handleDonateOpen} />

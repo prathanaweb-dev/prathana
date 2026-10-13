@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 interface CTABannersProps {
   lang: string;
   onDonateClick: () => void;
+  outreachChildImage?: string;
 }
 
-export default function CTABanners({ lang, onDonateClick }: CTABannersProps) {
+export default function CTABanners({ lang, onDonateClick, outreachChildImage }: CTABannersProps) {
   const router = useRouter();
 
   const isMarathi = lang === 'mr';
@@ -61,7 +62,7 @@ export default function CTABanners({ lang, onDonateClick }: CTABannersProps) {
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-8 border-brand-paper bg-brand-sand overflow-hidden hidden md:block z-20 shadow-xl">
         <img
-          src="/outreach-child.jpg"
+          src={outreachChildImage || '/outreach-child.jpg'}
           alt="Outreach child face"
           className="w-full h-full object-cover"
         />

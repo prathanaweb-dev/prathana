@@ -2,8 +2,12 @@
 
 import { motion } from 'framer-motion';
 
-export default function GalleryStrip() {
-  const images = [
+interface GalleryStripProps {
+  images?: string[];
+}
+
+export default function GalleryStrip({ images }: GalleryStripProps) {
+  const displayImages = images && images.length > 0 ? images : [
     '/gallery-strip-1.jpg',
     '/gallery-strip-2.jpg',
     '/gallery-strip-3.jpg',
@@ -15,7 +19,7 @@ export default function GalleryStrip() {
   return (
     <section className="w-full overflow-hidden bg-brand-charcoal">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-0.5">
-        {images.map((img, idx) => (
+        {displayImages.map((img, idx) => (
           <div key={idx} className="relative aspect-[4/3] group overflow-hidden bg-brand-charcoal cursor-pointer">
             {/* Grayscale image */}
             <img

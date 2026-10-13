@@ -178,16 +178,28 @@ function ImageUpload({ value, onChange, label = 'Photo' }: { value: string; onCh
         </div>
       )}
 
-      {/* Upload button */}
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={uploading}
-        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-amber-500/40 hover:text-amber-400 transition-all text-xs font-semibold cursor-pointer disabled:opacity-50"
-      >
-        {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-        {uploading ? 'Uploading…' : value ? 'Replace Photo' : 'Upload Photo'}
-      </button>
+      {/* Upload button and URL input */}
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-amber-500/40 hover:text-amber-400 transition-all text-xs font-semibold cursor-pointer disabled:opacity-50"
+        >
+          {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+          {uploading ? 'Uploading…' : value ? 'Replace via File Upload' : 'Upload Image File'}
+        </button>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Or paste image URL / /path.jpg"
+            className="flex-1 bg-black/20 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white/80 placeholder:text-white/20 focus:outline-none focus:border-amber-500/50"
+          />
+        </div>
+      </div>
 
       {error && <p className="text-red-400 text-[11px]">{error}</p>}
 
@@ -2435,6 +2447,118 @@ export default function AdminDashboard() {
                         )}
                       </div>
                     </div>
+
+                    {/* 3. Help Them When They Are In Need (3 Cards) */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-wider text-amber-400">3. "Help Them When They Are In Need" Section (3 Cards)</label>
+                        <p className="text-[11px] text-white/40">Images displayed on the three primary cause cards below the ticker</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Healthy Food Card"
+                            value={bankSettings?.healthyFoodImage || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, healthyFoodImage: url })}
+                          />
+                        </div>
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Medical Care Card"
+                            value={bankSettings?.medicalCareImage || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, medicalCareImage: url })}
+                          />
+                        </div>
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Child Education Card"
+                            value={bankSettings?.childEducationImage || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, childEducationImage: url })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 4. Who We Are Mosaic Collage (3 Images) */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-wider text-amber-400">4. "Who We Are / Humanity is the True Religion" Collage (3 Photos)</label>
+                        <p className="text-[11px] text-white/40">Photos displayed in the photo mosaic next to "From Personal Tragedy to a Mission of Hope"</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Photo 1 (Tall Portrait - 45+ Children)"
+                            value={bankSettings?.whoWeAreImage1 || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, whoWeAreImage1: url })}
+                          />
+                        </div>
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Photo 2 (Top Stacked Photo)"
+                            value={bankSettings?.whoWeAreImage2 || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, whoWeAreImage2: url })}
+                          />
+                        </div>
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Photo 3 (Bottom Stacked Photo)"
+                            value={bankSettings?.whoWeAreImage3 || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, whoWeAreImage3: url })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5. CTA Banner Center Child Face */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-wider text-amber-400">5. Split CTA Banner (Center Outreach Child Photo)</label>
+                        <p className="text-[11px] text-white/40">Circular child avatar in the center between "Become A Volunteer?" and "Make Donation To Us!"</p>
+                      </div>
+                      <div className="max-w-md bg-black/20 p-3.5 rounded-xl border border-white/5 pt-2">
+                        <ImageUpload
+                          label="Center Child Avatar"
+                          value={bankSettings?.ctaChildImage || ''}
+                          onChange={(url) => setBankSettings({ ...bankSettings, ctaChildImage: url })}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 6. Six-Photo Gallery Strip */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-amber-400">6. Homepage Photo Gallery Strip (6 Photos)</label>
+                          <p className="text-[11px] text-white/40">The 6 activity photos shown in the horizontal strip above the donation form</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
+                        {[0, 1, 2, 3, 4, 5].map((idx) => {
+                          const gallery = bankSettings?.galleryStripImages || [
+                            '/gallery-strip-1.jpg',
+                            '/gallery-strip-2.jpg',
+                            '/gallery-strip-3.jpg',
+                            '/gallery-strip-4.jpg',
+                            '/gallery-strip-5.jpg',
+                            '/gallery-strip-6.jpg',
+                          ];
+                          return (
+                            <div key={idx} className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                              <ImageUpload
+                                label={`Gallery Photo #${idx + 1}`}
+                                value={gallery[idx] || ''}
+                                onChange={(url) => {
+                                  const updated = [...gallery];
+                                  updated[idx] = url;
+                                  setBankSettings({ ...bankSettings, galleryStripImages: updated });
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Bank & UPI Settings */}
@@ -2507,7 +2631,7 @@ export default function AdminDashboard() {
                         className="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold px-6 py-2.5 rounded-xl text-sm transition-all shadow-[0_4px_16px_rgba(245,158,11,0.2)] disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                       >
                         {savingSettings ? <Loader2 size={16} className="animate-spin" /> : <SettingsIcon size={16} />}
-                        Save All Settings & Hero Images
+                        Save All Settings & Website Images
                       </button>
                     </div>
                   </form>

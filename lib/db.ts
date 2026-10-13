@@ -182,6 +182,14 @@ export interface Settings {
   qrCodeUrl?: string;
   heroBgImages?: string[];
   heroScrollImages?: string[];
+  healthyFoodImage?: string;
+  medicalCareImage?: string;
+  childEducationImage?: string;
+  whoWeAreImage1?: string;
+  whoWeAreImage2?: string;
+  whoWeAreImage3?: string;
+  ctaChildImage?: string;
+  galleryStripImages?: string[];
   updated_at?: string;
 }
 
@@ -1106,6 +1114,21 @@ export async function getSettings(): Promise<Settings> {
       'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg',
       'https://res.cloudinary.com/djoklzpse/image/upload/v1786951870/prathana/blob_agf0ba.jpg',
     ],
+    healthyFoodImage: '/food.jpeg',
+    medicalCareImage: '/medical-care.jpg',
+    childEducationImage: '/child-education.jpg',
+    whoWeAreImage1: '/who-we-are-1.jpg',
+    whoWeAreImage2: '/who-we-are-2.jpg',
+    whoWeAreImage3: '/who-we-are-3.jpg',
+    ctaChildImage: '/outreach-child.jpg',
+    galleryStripImages: [
+      '/gallery-strip-1.jpg',
+      '/gallery-strip-2.jpg',
+      '/gallery-strip-3.jpg',
+      '/gallery-strip-4.jpg',
+      '/gallery-strip-5.jpg',
+      '/gallery-strip-6.jpg',
+    ],
   };
 
   if (isFirebaseConfigured && firestore) {
@@ -1119,6 +1142,7 @@ export async function getSettings(): Promise<Settings> {
           ...data,
           heroBgImages: data.heroBgImages && data.heroBgImages.length > 0 ? data.heroBgImages : defaultSettings.heroBgImages,
           heroScrollImages: data.heroScrollImages && data.heroScrollImages.length > 0 ? data.heroScrollImages : defaultSettings.heroScrollImages,
+          galleryStripImages: data.galleryStripImages && data.galleryStripImages.length > 0 ? data.galleryStripImages : defaultSettings.galleryStripImages,
         };
       }
       return defaultSettings;

@@ -7,9 +7,17 @@ import { useRouter } from 'next/navigation';
 interface AboutProps {
   lang: string;
   onDonateClick?: (campaignId?: string) => void;
+  images?: {
+    healthyFood?: string;
+    medicalCare?: string;
+    childEducation?: string;
+    whoWeAre1?: string;
+    whoWeAre2?: string;
+    whoWeAre3?: string;
+  };
 }
 
-export default function About({ lang, onDonateClick }: AboutProps) {
+export default function About({ lang, onDonateClick, images }: AboutProps) {
   const router = useRouter();
 
   const isMarathi = lang === 'mr';
@@ -88,9 +96,9 @@ export default function About({ lang, onDonateClick }: AboutProps) {
             {tLocal.cards.map((card, idx) => {
               const Icon = card.icon;
               const cardImages = [
-                '/food.jpeg',
-                '/medical-care.jpg',
-                '/child-education.jpg',
+                images?.healthyFood || '/food.jpeg',
+                images?.medicalCare || '/medical-care.jpg',
+                images?.childEducation || '/child-education.jpg',
               ];
               const accentColors = [
                 { accent: 'from-brand-green/90 to-brand-green/70', ring: 'ring-brand-green/40', iconBg: 'bg-brand-green', badge: 'bg-brand-green' },
@@ -170,7 +178,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
               <div className="relative">
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-xl h-[420px]">
                   <img
-                    src="/who-we-are-1.jpg"
+                    src={images?.whoWeAre1 || '/who-we-are-1.jpg'}
                     alt="Children at Prathana Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -191,7 +199,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Top stacked image — taller */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-lg h-[220px]">
                   <img
-                    src="/who-we-are-2.jpg"
+                    src={images?.whoWeAre2 || '/who-we-are-2.jpg'}
                     alt="Outreach activity at Balgram"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
@@ -200,7 +208,7 @@ export default function About({ lang, onDonateClick }: AboutProps) {
                 {/* Bottom stacked image */}
                 <div className="rounded-3xl overflow-hidden border border-brand-clay/30 shadow-md h-[180px]">
                   <img
-                    src="/who-we-are-3.jpg"
+                    src={images?.whoWeAre3 || '/who-we-are-3.jpg'}
                     alt="Natural farming at Balgram campus"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
