@@ -17,37 +17,37 @@ export default function Team({ lang }: TeamProps) {
       id: 'default-1',
       name: isMarathi ? 'प्रसाद मोहिते' : 'Prasad Mohite',
       role: isMarathi ? 'संस्थापक आणि अध्यक्ष' : 'Founder & President',
-      image: '/team/Team/Prasad%20Mohite%20(Founder%20%26%20President)).jpg',
+      image: '/team/Prasad%20Mohite%20(Founder%20%26%20President)).jpg',
     },
     {
       id: 'default-2',
       name: isMarathi ? 'अनू मोहिते' : 'Anu Mohite',
       role: isMarathi ? 'सचिव' : 'Secretary',
-      image: '/team/Team/Anu%20Mohite%20(Secretary).jpg',
+      image: '/team/Anu%20Mohite%20(Secretary).jpg',
     },
     {
       id: 'default-3',
       name: isMarathi ? 'विष्णू भोसले' : 'Vishnu Bhosale',
       role: isMarathi ? 'मुख्य कार्यकारी अधिकारी' : 'CEO',
-      image: '/team/Team/Vishnu%20Bhosale%20(CEO).jpeg',
+      image: '/team/Vishnu%20Bhosale%20(CEO).jpeg',
     },
     {
       id: 'default-4',
       name: isMarathi ? 'पांडुरंग तुपसामुद्रे' : 'Pandurang Tupsamudre',
       role: isMarathi ? 'उपाध्यक्ष' : 'Vice-President',
-      image: '/team/Team/Pandurang%20Tupsamudre%20(Vice-President).jpeg',
+      image: '/team/Pandurang%20Tupsamudre%20(Vice-President).jpeg',
     },
     {
       id: 'default-5',
       name: isMarathi ? 'सोमनाथ लामगुंडे' : 'Somnath Lamgunde',
       role: isMarathi ? 'संचालक' : 'Director',
-      image: '/team/Team/Somnath%20Lamgunde%20(Director).jpeg',
+      image: '/team/Somnath%20Lamgunde%20(Director).jpeg',
     },
     {
       id: 'default-6',
       name: isMarathi ? 'समाधान वाडणे' : 'Samadhan Vadane',
       role: isMarathi ? 'प्रकल्प अधिकारी (कृषी)' : 'Project Officer – Agriculture',
-      image: '/team/Team/Samadhan%20Vadane%20(Project%20Officer%20Agri).jpeg',
+      image: '/team/Samadhan%20Vadane%20(Project%20Officer%20Agri).jpeg',
     },
   ];
 
