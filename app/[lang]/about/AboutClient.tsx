@@ -32,6 +32,14 @@ function CountUp({ to, duration = 2 }: { to: number; duration?: number }) {
   return <span ref={ref}>{count.toLocaleString()}</span>;
 }
 
+/* ─── Image Sanitizer & Fallback ────────────────────────────────────────── */
+function safeImg(url?: string | null, fallback: string = '/balgram-home.jpg'): string {
+  if (!url || typeof url !== 'string' || url.trim() === '' || url.includes('cloudinary.com/djoklzpse')) {
+    return fallback;
+  }
+  return url;
+}
+
 /* ─── BeforeAfterSlider ───────────────────────────────────────────────────── */
 function BeforeAfterSlider({ beforeImg, afterImg, beforeLabel, afterLabel }: {
   beforeImg: string; afterImg: string; beforeLabel: string; afterLabel: string;
@@ -61,14 +69,25 @@ function BeforeAfterSlider({ beforeImg, afterImg, beforeLabel, afterLabel }: {
       onTouchStart={() => setDrag(true)}
     >
       {/* BEFORE */}
-      <img src={beforeImg} alt="Before" className="absolute inset-0 w-full h-full object-cover" />
+      <img
+        src={beforeImg}
+        alt="Before"
+        onError={(e) => { e.currentTarget.src = '/street-school.jpg'; }}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <span className="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-sm text-white text-[11px] font-semibold px-3 py-1 rounded-full tracking-wide border border-white/10">
         {beforeLabel}
       </span>
 
       {/* AFTER — clipped */}
       <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
-        <img src={afterImg} alt="After" className="absolute inset-0 w-full h-full object-cover" style={{ width: ref.current?.getBoundingClientRect().width }} />
+        <img
+          src={afterImg}
+          alt="After"
+          onError={(e) => { e.currentTarget.src = '/sanctuary-after.jpg'; }}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ width: ref.current?.getBoundingClientRect().width }}
+        />
         <span className="absolute top-4 right-4 z-20 bg-brand-green/90 backdrop-blur-sm text-white text-[11px] font-semibold px-3 py-1 rounded-full tracking-wide border border-white/10">
           {afterLabel}
         </span>
@@ -160,6 +179,7 @@ function HorizontalTimeline({
                   <img
                     src={node.img}
                     alt={node.title}
+                    onError={(e) => { e.currentTarget.src = '/balgram-home.jpg'; }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -265,18 +285,40 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const defaultGalleryItems = [
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_bxsdsq.jpg', category: 'studying', caption: lang === 'mr' ? 'अभ्यास करणारी मुले' : 'Children studying at the centre' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951887/prathana/blob_apwasc.jpg', category: 'studying', caption: lang === 'mr' ? 'वंचितांच्या शाळेतील वर्ग' : 'Vanchitanchi Shala classrooms' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg', category: 'farming', caption: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural farming in action' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg', category: 'farming', caption: lang === 'mr' ? 'ताज्या भाज्या' : 'Fresh organic harvest on campus' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ndna0l.jpg', category: 'seniors', caption: lang === 'mr' ? 'वृद्धाश्रमातील सहजीवन' : 'Living in harmony at Old Age Home' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg', category: 'seniors', caption: lang === 'mr' ? 'आजी-आजोबांचे स्मित' : 'Dignified care for elderly citizens' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg', category: 'celebrations', caption: lang === 'mr' ? 'आनंदाने सण' : 'Celebrating festivals as a family' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg', category: 'celebrations', caption: lang === 'mr' ? 'सांस्कृतिक कार्यक्रम' : 'Cultural events at Prathana Balgram' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg', category: 'volunteers', caption: lang === 'mr' ? 'समर्पित स्वयंसेवक' : 'Dedicated volunteers supporting the cause' },
-    { img: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg', category: 'volunteers', caption: lang === 'mr' ? 'पोषण आहार वितरण' : 'Community meals outreach' },
+    { img: '/classroom-students.jpg', category: 'studying', caption: lang === 'mr' ? 'अभ्यास करणारी मुले' : 'Children studying at the centre' },
+    { img: '/street-school.jpg', category: 'studying', caption: lang === 'mr' ? 'वंचितांच्या शाळेतील वर्ग' : 'Vanchitanchi Shala classrooms' },
+    { img: '/natural-farming.jpg', category: 'farming', caption: lang === 'mr' ? 'नैसर्गिक शेती' : 'Natural farming in action' },
+    { img: '/who-we-are-3.jpg', category: 'farming', caption: lang === 'mr' ? 'ताज्या भाज्या' : 'Fresh organic harvest on campus' },
+    { img: '/old-age-home.jpg', category: 'seniors', caption: lang === 'mr' ? 'वृद्धाश्रमातील सहजीवन' : 'Living in harmony at Old Age Home' },
+    { img: '/gallery-strip-5.jpg', category: 'seniors', caption: lang === 'mr' ? 'आजी-आजोबांचे स्मित' : 'Dignified care for elderly citizens' },
+    { img: '/outreach-smile.jpg', category: 'celebrations', caption: lang === 'mr' ? 'आनंदाने सण' : 'Celebrating festivals as a family' },
+    { img: '/balgram-home.jpg', category: 'celebrations', caption: lang === 'mr' ? 'सांस्कृतिक कार्यक्रम' : 'Cultural events at Prathana Balgram' },
+    { img: '/award-ceremony.jpg', category: 'volunteers', caption: lang === 'mr' ? 'समर्पित स्वयंसेवक' : 'Dedicated volunteers supporting the cause' },
+    { img: '/food.jpeg', category: 'volunteers', caption: lang === 'mr' ? 'पोषण आहार वितरण' : 'Community meals outreach' },
   ];
-  const galleryItems = (local.gallery?.items && local.gallery.items.length > 0) ? local.gallery.items : defaultGalleryItems;
+
+  const timelineFallbackMap: Record<number, string> = {
+    0: '/who-we-are-1.jpg',
+    1: '/food.jpeg',
+    2: '/street-school.jpg',
+    3: '/balgram-home.jpg',
+    4: '/old-age-home.jpg',
+    5: '/natural-farming.jpg',
+    6: '/child-education.jpg',
+    7: '/medical-care.jpg',
+    8: '/who-we-are-2.jpg',
+  };
+
+  const timelineNodes = (local.timeline?.nodes || []).map((node: any, idx: number) => ({
+    ...node,
+    img: safeImg(node.img, timelineFallbackMap[idx] || '/balgram-home.jpg'),
+  }));
+
+  const rawGalleryItems = (local.gallery?.items && local.gallery.items.length > 0) ? local.gallery.items : defaultGalleryItems;
+  const galleryItems = rawGalleryItems.map((item: any, idx: number) => ({
+    ...item,
+    img: safeImg(item.img, defaultGalleryItems[idx % defaultGalleryItems.length]?.img || '/classroom-students.jpg'),
+  }));
   const filtered = galleryFilter === 'all' ? galleryItems : galleryItems.filter((i: any) => i.category === galleryFilter);
 
   return (
@@ -314,7 +356,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
           {/* Background image */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{ backgroundImage: `url('${local.hero?.bgImage || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg'}')` }}
+            style={{ backgroundImage: `url('${safeImg(local.hero?.bgImage, '/balgram-home.jpg')}')` }}
           />
           {/* Gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a130d] via-[#0d1a14]/70 to-[#0d1a14]/20" />
@@ -401,8 +443,12 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src={local.chapters?.c1?.image || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg"} alt={local.chapters?.c1?.title || "2006"}
-                  className="w-full h-[440px] object-cover editorial-img" />
+                <img
+                  src={safeImg(local.chapters?.c1?.image, "/who-we-are-1.jpg")}
+                  alt={local.chapters?.c1?.title || "2006"}
+                  onError={(e) => { e.currentTarget.src = "/who-we-are-1.jpg"; }}
+                  className="w-full h-[440px] object-cover editorial-img"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-5 left-5">
                   <span className="font-serif-display text-5xl font-bold text-white/20 select-none leading-none">
@@ -436,8 +482,12 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                 viewport={{ once: true }} transition={{ duration: 0.7 }}
                 className="lg:order-2 relative rounded-2xl overflow-hidden shadow-2xl"
               >
-                <img src={local.chapters?.c2?.image || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg"} alt={local.chapters?.c2?.title || "Promise"}
-                  className="w-full h-[440px] object-cover editorial-img" />
+                <img
+                  src={safeImg(local.chapters?.c2?.image, "/who-we-are-2.jpg")}
+                  alt={local.chapters?.c2?.title || "Promise"}
+                  onError={(e) => { e.currentTarget.src = "/who-we-are-2.jpg"; }}
+                  className="w-full h-[440px] object-cover editorial-img"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               </motion.div>
 
@@ -589,7 +639,7 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
         {/* ════════════════════════════════════════
             HORIZONTAL SCROLL JOURNEY
         ════════════════════════════════════════ */}
-        <HorizontalTimeline nodes={local.timeline.nodes} eyebrow={local.timeline.eyebrow} title={local.timeline.title} sub={local.timeline.sub} lang={lang} />
+        <HorizontalTimeline nodes={timelineNodes} eyebrow={local.timeline.eyebrow} title={local.timeline.title} sub={local.timeline.sub} lang={lang} />
 
         {/* ════════════════════════════════════════
             FOUNDERS
@@ -605,9 +655,9 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                { data: local.founders.prasad, img: local.founders?.prasad?.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg', delay: 0 },
-                { data: local.founders.anu, img: local.founders?.anu?.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg', delay: 0.1 },
-              ].map(({ data, img, delay }) => (
+                { data: local.founders.prasad, img: safeImg(local.founders?.prasad?.image, '/prasad-mohite.jpg'), fallback: '/prasad-mohite.jpg', delay: 0 },
+                { data: local.founders.anu, img: safeImg(local.founders?.anu?.image, '/anu-mohite.jpg'), fallback: '/anu-mohite.jpg', delay: 0.1 },
+              ].map(({ data, img, fallback, delay }) => (
                 <motion.div key={data.name}
                   initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }} transition={{ duration: 0.6, delay }}
@@ -617,8 +667,12 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                     {/* Portrait with gradient ring */}
                     <div className="relative flex-shrink-0">
                       <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-brand-saffron to-brand-green opacity-30 blur-[6px] scale-105" />
-                      <img src={img} alt={data.name}
-                        className="relative w-20 h-20 rounded-xl object-cover object-top border-2 border-white shadow-lg" />
+                      <img
+                        src={img}
+                        alt={data.name}
+                        onError={(e) => { e.currentTarget.src = fallback; }}
+                        className="relative w-20 h-20 rounded-xl object-cover object-top border-2 border-white shadow-lg"
+                      />
                     </div>
                     <div>
                       <h3 className="font-serif-display text-lg font-bold text-brand-charcoal">{data.name}</h3>
@@ -665,8 +719,8 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
 
               <div className="lg:col-span-7">
                 <BeforeAfterSlider
-                  beforeImg={local.sacrifice?.beforeImg || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg"}
-                  afterImg={local.sacrifice?.afterImg || "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg"}
+                  beforeImg={safeImg(local.sacrifice?.beforeImg, "/street-school.jpg")}
+                  afterImg={safeImg(local.sacrifice?.afterImg, "/sanctuary-after.jpg")}
                   beforeLabel={local.sacrifice.before}
                   afterLabel={local.sacrifice.after}
                 />
@@ -710,8 +764,12 @@ export default function AboutClient({ lang, initialContent }: { lang: string, in
                     exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}
                     className="break-inside-avoid relative group rounded-xl overflow-hidden shadow-md border border-brand-clay/30 bg-white"
                   >
-                    <img src={item.img} alt={item.caption}
-                      className="w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img
+                      src={item.img}
+                      alt={item.caption}
+                      onError={(e) => { e.currentTarget.src = '/classroom-students.jpg'; }}
+                      className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-4">
                       <span className="text-xs text-white font-medium leading-snug">{item.caption}</span>
                     </div>

@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url,
       siteName: 'Prathana Foundation Solapur',
-      images: ['https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg'],
+      images: ['/balgram-home.jpg'],
     },
     alternates: {
       canonical: url,

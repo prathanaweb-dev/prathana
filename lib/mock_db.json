@@ -9,7 +9,7 @@
       "description_mr": "मोरवंची, सोलापूर येथील प्रार्थना बालग्राममधील ४५ मुलांच्या शिक्षण, आरोग्य आणि संगोपनासाठी मदत. अनेक मुले ही शेतकरी आत्महत्याग्रस्त कुटुंबातील किंवा भीक मागणाऱ्या आणि उपेक्षित कुटुंबातील आहेत.",
       "goal_amount": 300000,
       "amount_raised": 185000,
-      "image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg",
+      "image": "/balgram-home.jpg",
       "is_completed": false,
       "status": "active",
       "created_at": "2026-05-17T04:56:33.870Z",
@@ -134,7 +134,7 @@
       "title_mr": "प्रार्थना बालग्राम बाल संगोपन",
       "description": "Providing shelter, clothing, education, healthcare, and life-skills building for 45 children from farmer-suicide families and vulnerable street situations.",
       "description_mr": "शेतकरी आत्महत्याग्रस्त कुटुंबातील आणि सोलापूरच्या रस्त्यावरील ४५ अनाथ व वंचित मुलांचे संगोपन, निवास, आरोग्य आणि शिक्षण व्यवस्था सायकलवर फिरून सांभाळणे.",
-      "image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg",
+      "image": "/balgram-home.jpg",
       "category": "education",
       "created_at": "2026-06-01T10:00:00.000Z"
     },
@@ -154,7 +154,7 @@
       "title_mr": "नैसर्गिक शेती प्रकल्प",
       "description": "Growing chemical-free crops and 16+ varieties of vegetables on campus, providing fresh nutrition for our residents while teaching kids farming skills.",
       "description_mr": "बालग्राममध्ये रासायनिक खतांशिवाय शाश्वत पद्धतीने १६ हून अधिक प्रकारच्या भाज्या आणि धान्य पिकवणे, ज्यामुळे मुलांचे पोषण होते व ते शेतीचे धडे शिकतात.",
-      "image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg",
+      "image": "/natural-farming.jpg",
       "category": "nutrition",
       "created_at": "2026-06-03T10:00:00.000Z"
     }
@@ -166,7 +166,7 @@
       "title_mr": "युवा विकास प्रकल्प",
       "description": "Inspiring and equipping young people with leadership, personality development, mental well-being, and social responsibility workshops.",
       "description_mr": "तरुणांमध्ये नेतृत्वगुण, व्यक्तिमत्त्व विकास आणि सामाजिक जबाबदारी निर्माण करण्यासाठी निवासी शिबिरे आणि कार्यशाळा राबवणे.",
-      "image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg",
+      "image": "/balgram-home.jpg",
       "status": "active",
       "start_date": "2026-04-01",
       "end_date": "2026-10-31",
@@ -219,7 +219,7 @@
       "title_mr": "शैक्षणिक साहित्य वाटप उपक्रम",
       "content": "Our Education Support Program successfully provided stationery, school bags, notebooks, and uniforms to needy students across Solapur marginalized clusters, removing educational barriers.",
       "content_mr": "सोलापूरमधील गरीब आणि गरजू विद्यार्थ्यांना शालेय साहित्य संच (दप्तर, वह्या, पेन, गणवेश आणि जोडे) यशस्वीरीत्या पुरवले आहेत, जेणेकरून मुले आत्मविश्वासाने शिक्षण घेऊ शकतील.",
-      "featured_image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg",
+      "featured_image": "/balgram-home.jpg",
       "published_date": "2026-06-10",
       "created_at": "2026-06-10T12:00:00.000Z"
     },
@@ -229,7 +229,7 @@
       "title_mr": "बालग्राम आवारात नैसर्गिक शेतीची काढणी",
       "content": "Children and coordinators at Prathana Balgram successfully harvested a fresh crop of organic chemical-free vegetables. Growing food teaches children life-skills and connection with nature.",
       "content_mr": "प्रार्थना बालग्राममधील मुले आणि कार्यकर्त्यांनी रासायनिक खतांशिवाय नैसर्गिक पद्धतीने घेतलेल्या ताज्या भाजीपाल्याची काढणी केली. यामुळे मुले श्रम आणि पर्यावरणाचे मूल्य शिकतात.",
-      "featured_image": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg",
+      "featured_image": "/natural-farming.jpg",
       "published_date": "2026-06-05",
       "created_at": "2026-06-05T12:00:00.000Z"
     }
@@ -281,47 +281,47 @@
     },
     {
       "id": "photo-c28uytp-mswwzw61",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg",
+      "url": "/balgram-home.jpg",
       "title": "Balgram Campus",
       "title_mr": "बालग्राम परिसर",
       "desc": "Children and life at Prathana Balgram campus in Morvanchi.",
       "desc_mr": "मोरवंची येथील प्रार्थना बालग्राममधील मुले आणि दैनंदिन जीवन.",
       "category": "balgram",
       "created_at": "2026-08-17T07:30:55.513Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg"
+      "local_path": "/balgram-home.jpg"
     },
     {
       "id": "photo-i30uowu-mswwzx43",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg",
+      "url": "/balgram-home.jpg",
       "title": "Balgram Campus",
       "title_mr": "बालग्राम परिसर",
       "desc": "Children and life at Prathana Balgram campus in Morvanchi.",
       "desc_mr": "मोरवंची येथील प्रार्थना बालग्राममधील मुले आणि दैनंदिन जीवन.",
       "category": "balgram",
       "created_at": "2026-08-17T07:30:56.739Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg"
+      "local_path": "/balgram-home.jpg"
     },
     {
       "id": "photo-f6f3grh-mswwzx43",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg",
+      "url": "/natural-farming.jpg",
       "title": "Natural Farming",
       "title_mr": "नैसर्गिक शेती",
       "desc": "Chemical-free, organic farming practiced on the campus.",
       "desc_mr": "कॅम्पसवर केली जाणारी सेंद्रिय व विषमुक्त नैसर्गिक शेती.",
       "category": "farming",
       "created_at": "2026-08-17T07:30:56.739Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_kcexgd.jpg"
+      "local_path": "/natural-farming.jpg"
     },
     {
       "id": "photo-uwbwyp9-mswwzx44",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg",
+      "url": "/sanctuary-after.jpg",
       "title": "Balgram Campus",
       "title_mr": "बालग्राम परिसर",
       "desc": "Children and life at Prathana Balgram campus in Morvanchi.",
       "desc_mr": "मोरवंची येथील प्रार्थना बालग्राममधील मुले आणि दैनंदिन जीवन.",
       "category": "balgram",
       "created_at": "2026-08-17T07:30:56.740Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_cz6dfi.jpg"
+      "local_path": "/sanctuary-after.jpg"
     },
     {
       "id": "photo-caxktt1-mswwzx7z",
@@ -523,14 +523,14 @@
     },
     {
       "id": "photo-obetxqf-mswx02m5",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg",
+      "url": "/who-we-are-3.jpg",
       "title": "Natural Farming",
       "title_mr": "नैसर्गिक शेती",
       "desc": "Chemical-free, organic farming practiced on the campus.",
       "desc_mr": "कॅम्पसवर केली जाणारी सेंद्रिय व विषमुक्त नैसर्गिक शेती.",
       "category": "farming",
       "created_at": "2026-08-17T07:31:03.869Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951863/prathana/blob_wkqr0a.jpg"
+      "local_path": "/who-we-are-3.jpg"
     },
     {
       "id": "photo-92s9az0-mswx02o4",
@@ -567,14 +567,14 @@
     },
     {
       "id": "photo-m3s1k3g-mswx03xf",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg",
+      "url": "/natural-farming.jpg",
       "title": "Natural Farming",
       "title_mr": "नैसर्गिक शेती",
       "desc": "Chemical-free, organic farming practiced on the campus.",
       "desc_mr": "कॅम्पसवर केली जाणारी सेंद्रिय व विषमुक्त नैसर्गिक शेती.",
       "category": "farming",
       "created_at": "2026-08-17T07:31:05.571Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951864/prathana/blob_dgvcd9.jpg"
+      "local_path": "/natural-farming.jpg"
     },
     {
       "id": "photo-rsgn952-mswx03xf",
@@ -611,14 +611,14 @@
     },
     {
       "id": "photo-rqdbmnf-mswx03z9",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg",
+      "url": "/gallery-strip-5.jpg",
       "title": "Old Age Home",
       "title_mr": "प्रार्थना वृद्धाश्रम",
       "desc": "Loving care and dignified shelter for abandoned elderly residents.",
       "desc_mr": "निराधार आणि वृद्ध व्यक्तींसाठी सन्मानाचा निवारा आणि आपुलकीची काळजी.",
       "category": "vrudhashram",
       "created_at": "2026-08-17T07:31:05.637Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951865/prathana/blob_prkxfm.jpg"
+      "local_path": "/gallery-strip-5.jpg"
     },
     {
       "id": "photo-knnezoy-mswx05p9",
@@ -732,25 +732,25 @@
     },
     {
       "id": "photo-9jx0okd-mswx0amr",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg",
+      "url": "/street-school.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:14.259Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_yvzcg8.jpg"
+      "local_path": "/street-school.jpg"
     },
     {
       "id": "photo-4uvbps2-mswx0apc",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg",
+      "url": "/who-we-are-1.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:14.352Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_cqtauy.jpg"
+      "local_path": "/who-we-are-1.jpg"
     },
     {
       "id": "photo-49votw6-mswx0aqh",
@@ -765,25 +765,25 @@
     },
     {
       "id": "photo-tsrbo32-mswx0aqi",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ndna0l.jpg",
+      "url": "/old-age-home.jpg",
       "title": "Old Age Home",
       "title_mr": "प्रार्थना वृद्धाश्रम",
       "desc": "Loving care and dignified shelter for abandoned elderly residents.",
       "desc_mr": "निराधार आणि वृद्ध व्यक्तींसाठी सन्मानाचा निवारा आणि आपुलकीची काळजी.",
       "category": "vrudhashram",
       "created_at": "2026-08-17T07:31:14.394Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ndna0l.jpg"
+      "local_path": "/old-age-home.jpg"
     },
     {
       "id": "photo-grn8if1-mswx0ar2",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg",
+      "url": "/street-school.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:14.414Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951873/prathana/blob_ve6z6m.jpg"
+      "local_path": "/street-school.jpg"
     },
     {
       "id": "photo-kbmp33d-mswx0dn3",
@@ -853,14 +853,14 @@
     },
     {
       "id": "photo-d1zrvdn-mswx0gzk",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951881/prathana/blob_yb3ast.jpg",
+      "url": "/food.jpeg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:22.496Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951881/prathana/blob_yb3ast.jpg"
+      "local_path": "/food.jpeg"
     },
     {
       "id": "photo-ia7hr08-mswx0h1m",
@@ -941,14 +941,14 @@
     },
     {
       "id": "photo-78x7kd3-mswx0jum",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_bxsdsq.jpg",
+      "url": "/classroom-students.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:26.206Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951885/prathana/blob_bxsdsq.jpg"
+      "local_path": "/classroom-students.jpg"
     },
     {
       "id": "photo-khx8lj8-mswx0lk3",
@@ -963,14 +963,14 @@
     },
     {
       "id": "photo-jvshj20-mswx0lkv",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951887/prathana/blob_apwasc.jpg",
+      "url": "/street-school.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:28.447Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951887/prathana/blob_apwasc.jpg"
+      "local_path": "/street-school.jpg"
     },
     {
       "id": "photo-x7ly1ll-mswx0lq2",
@@ -996,14 +996,14 @@
     },
     {
       "id": "photo-d13yhea-mswx0spm",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg",
+      "url": "/who-we-are-2.jpg",
       "title": "Vanchitanchi Shala",
       "title_mr": "वंचितांची शाळा",
       "desc": "Informal learning and awareness classes for underprivileged street children.",
       "desc_mr": "वंचित व रस्त्यावरील मुलांसाठी अनौपचारिक शिक्षण आणि जागरूकता वर्ग.",
       "category": "shala",
       "created_at": "2026-08-17T07:31:37.690Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951897/prathana/blob_lrfkqo.jpg"
+      "local_path": "/who-we-are-2.jpg"
     },
     {
       "id": "photo-ghfa2ur-mswx0twt",
@@ -1216,14 +1216,14 @@
     },
     {
       "id": "photo-0tgng2g-mswx196g",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951918/prathana/blob_wbmddr.jpg",
+      "url": "/medical-care.jpg",
       "title": "Recognition & Awards",
       "title_mr": "पुरस्कार व सन्मान",
       "desc": "Felicitations and honours received for humanitarian work.",
       "desc_mr": "मानवतावादी व सामाजिक कार्यासाठी मिळालेले सन्मान व पुरस्कार.",
       "category": "awards",
       "created_at": "2026-08-17T07:31:59.032Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951918/prathana/blob_wbmddr.jpg"
+      "local_path": "/medical-care.jpg"
     },
     {
       "id": "photo-y21priz-mswx1bce",
@@ -1238,14 +1238,14 @@
     },
     {
       "id": "photo-3cpm0t3-mswx1bh9",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg",
+      "url": "/food.jpeg",
       "title": "Recognition & Awards",
       "title_mr": "पुरस्कार व सन्मान",
       "desc": "Felicitations and honours received for humanitarian work.",
       "desc_mr": "मानवतावादी व सामाजिक कार्यासाठी मिळालेले सन्मान व पुरस्कार.",
       "category": "awards",
       "created_at": "2026-08-17T07:32:02.013Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951921/prathana/blob_jgvanm.jpg"
+      "local_path": "/food.jpeg"
     },
     {
       "id": "photo-kfmq6my-mswx1c4y",
@@ -1260,25 +1260,25 @@
     },
     {
       "id": "photo-89rslx8-mswx1c4z",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951922/prathana/blob_zpwyzx.jpg",
+      "url": "/who-we-are-1.jpg",
       "title": "Recognition & Awards",
       "title_mr": "पुरस्कार व सन्मान",
       "desc": "Felicitations and honours received for humanitarian work.",
       "desc_mr": "मानवतावादी व सामाजिक कार्यासाठी मिळालेले सन्मान व पुरस्कार.",
       "category": "awards",
       "created_at": "2026-08-17T07:32:02.867Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951922/prathana/blob_zpwyzx.jpg"
+      "local_path": "/who-we-are-1.jpg"
     },
     {
       "id": "photo-po6xjhe-mswx1e5x",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg",
+      "url": "/award-ceremony.jpg",
       "title": "Recognition & Awards",
       "title_mr": "पुरस्कार व सन्मान",
       "desc": "Felicitations and honours received for humanitarian work.",
       "desc_mr": "मानवतावादी व सामाजिक कार्यासाठी मिळालेले सन्मान व पुरस्कार.",
       "category": "awards",
       "created_at": "2026-08-17T07:32:05.493Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951924/prathana/blob_ceuaiz.jpg"
+      "local_path": "/award-ceremony.jpg"
     },
     {
       "id": "photo-8jpnxi4-mswx1f29",
@@ -1469,14 +1469,14 @@
     },
     {
       "id": "photo-pz3vpi3-mswx1l8c",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg",
+      "url": "/balgram-home.jpg",
       "title": "Recognition & Awards",
       "title_mr": "पुरस्कार व सन्मान",
       "desc": "Felicitations and honours received for humanitarian work.",
       "desc_mr": "मानवतावादी व सामाजिक कार्यासाठी मिळालेले सन्मान व पुरस्कार.",
       "category": "awards",
       "created_at": "2026-08-17T07:32:14.652Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951934/prathana/blob_rnfpji.jpg"
+      "local_path": "/balgram-home.jpg"
     },
     {
       "id": "photo-0l1b7yt-mswx1lc1",
@@ -1612,14 +1612,14 @@
     },
     {
       "id": "photo-a35zy10-mswx1qlf",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg",
+      "url": "/prasad-mohite.jpg",
       "title": "Team & Volunteers",
       "title_mr": "कार्यकर्ते व टीम",
       "desc": "Dedicated leadership and frontline team members.",
       "desc_mr": "संस्थेचे संस्थापक, विश्वस्त आणि समर्पित कार्यकर्ते.",
       "category": "team",
       "created_at": "2026-08-17T07:32:21.603Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_hcnit9.jpg"
+      "local_path": "/prasad-mohite.jpg"
     },
     {
       "id": "photo-yugs1uf-mswx1qm8",
@@ -1656,14 +1656,14 @@
     },
     {
       "id": "photo-hu7wbhe-mswx1qno",
-      "url": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg",
+      "url": "/anu-mohite.jpg",
       "title": "Team & Volunteers",
       "title_mr": "कार्यकर्ते व टीम",
       "desc": "Dedicated leadership and frontline team members.",
       "desc_mr": "संस्थेचे संस्थापक, विश्वस्त आणि समर्पित कार्यकर्ते.",
       "category": "team",
       "created_at": "2026-08-17T07:32:21.684Z",
-      "local_path": "https://res.cloudinary.com/djoklzpse/image/upload/v1786951941/prathana/blob_b6ykxm.jpg"
+      "local_path": "/anu-mohite.jpg"
     },
     {
       "id": "photo-s3w1hy8-mswx1rbg",
