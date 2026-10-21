@@ -2559,6 +2559,30 @@ export default function AdminDashboard() {
                         })}
                       </div>
                     </div>
+
+                    {/* 7. Donate Support Section Images (Classroom & Outreach Smile) */}
+                    <div className="space-y-3 pt-6 border-t border-white/5">
+                      <div>
+                        <label className="text-xs font-bold uppercase tracking-wider text-amber-400">7. "Donate Support" Section Photos</label>
+                        <p className="text-[11px] text-white/40">Photos displayed beside the donation calculator and support amounts</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Main Classroom Image (Students Learning)"
+                            value={bankSettings?.donateSupportClassroomImage || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, donateSupportClassroomImage: url })}
+                          />
+                        </div>
+                        <div className="bg-black/20 p-3.5 rounded-xl border border-white/5">
+                          <ImageUpload
+                            label="Corner Accent Image (Outreach Nutrition Smile)"
+                            value={bankSettings?.donateSupportSmileImage || ''}
+                            onChange={(url) => setBankSettings({ ...bankSettings, donateSupportSmileImage: url })}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Bank & UPI Settings */}

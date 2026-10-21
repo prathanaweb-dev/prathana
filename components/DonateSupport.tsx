@@ -7,9 +7,11 @@ import { Heart, ShieldCheck, FileText } from 'lucide-react';
 interface DonateSupportProps {
   lang: string;
   onDonateClick: (campaignId?: string) => void;
+  classroomImage?: string;
+  smileImage?: string;
 }
 
-export default function DonateSupport({ lang, onDonateClick }: DonateSupportProps) {
+export default function DonateSupport({ lang, onDonateClick, classroomImage, smileImage }: DonateSupportProps) {
   const [tab, setTab] = useState<'monthly' | 'onetime'>('onetime');
   const [amount, setAmount] = useState<number>(1000);
   const [customAmount, setCustomAmount] = useState<string>('');
@@ -57,7 +59,7 @@ export default function DonateSupport({ lang, onDonateClick }: DonateSupportProp
         <div className="lg:col-span-6 relative flex justify-center">
           <div className="relative w-full max-w-[420px] aspect-[4/5] rounded-[40px_10px_40px_10px] overflow-hidden border-8 border-brand-yellow/10 bg-brand-charcoal shadow-xl">
             <img
-              src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951856/prathana/blob_agkzck.jpg"
+              src={classroomImage || '/classroom-students.jpg'}
               alt="Classroom students learning"
               className="w-full h-full object-cover"
               loading="lazy"
@@ -68,7 +70,7 @@ export default function DonateSupport({ lang, onDonateClick }: DonateSupportProp
           {/* Overlapping small image bottom-right */}
           <div className="absolute -bottom-6 -right-6 w-44 sm:w-52 aspect-square rounded-2xl overflow-hidden border-8 border-brand-paper shadow-2xl z-10 hidden sm:block">
             <img
-              src="https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_phkqky.jpg"
+              src={smileImage || '/outreach-smile.jpg'}
               alt="Outreach nutrition drive smile"
               className="w-full h-full object-cover"
               loading="lazy"

@@ -149,7 +149,12 @@ export default function HomeClient({
       <GalleryStrip images={settings?.galleryStripImages} />
 
       {/* Classroom Donate Support form block */}
-      <DonateSupport lang={lang} onDonateClick={handleDonateOpen} />
+      <DonateSupport
+        lang={lang}
+        onDonateClick={handleDonateOpen}
+        classroomImage={settings?.donateSupportClassroomImage}
+        smileImage={settings?.donateSupportSmileImage}
+      />
 
       {/* Blog News Articles */}
       <Stories lang={lang} />

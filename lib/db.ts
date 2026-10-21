@@ -190,6 +190,8 @@ export interface Settings {
   whoWeAreImage3?: string;
   ctaChildImage?: string;
   galleryStripImages?: string[];
+  donateSupportClassroomImage?: string;
+  donateSupportSmileImage?: string;
   updated_at?: string;
 }
 
@@ -1129,6 +1131,8 @@ export async function getSettings(): Promise<Settings> {
       '/gallery-strip-5.jpg',
       '/gallery-strip-6.jpg',
     ],
+    donateSupportClassroomImage: '/classroom-students.jpg',
+    donateSupportSmileImage: '/outreach-smile.jpg',
   };
 
   if (isFirebaseConfigured && firestore) {
