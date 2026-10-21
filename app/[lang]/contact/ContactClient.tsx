@@ -118,7 +118,7 @@ export default function ContactClient({ lang }: { lang: string }) {
                       <p className="font-light text-white/90 leading-relaxed text-sm">
                         +91 95459 92026<br />
                         +91 90490 63829<br />
-                        +91 90223 93906
+                        +91 70380 62114
                       </p>
                     </div>
                   </div>

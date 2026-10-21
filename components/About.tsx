@@ -290,7 +290,7 @@ export default function About({ lang, onDonateClick, images }: AboutProps) {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[10px] text-brand-muted font-medium leading-none">{tLocal.callUs}</span>
-                  <span className="text-xs font-bold text-brand-charcoal mt-1 leading-tight">+91 95459 92026 / 90490 63829 / 90223 93906</span>
+                  <span className="text-xs font-bold text-brand-charcoal mt-1 leading-tight">+91 95459 92026 / 90490 63829 / 70380 62114</span>
                 </div>
               </div>
             </div>
