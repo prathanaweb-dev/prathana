@@ -4,7 +4,8 @@ import { Project } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, ArrowLeft, ChevronLeft, ChevronRight, Heart, Share2, 
-  Check, CheckCircle2, MapPin, Building2, Maximize2, X, Sparkles, ShieldCheck
+  Check, CheckCircle2, MapPin, Building2, Maximize2, X, Sparkles, ShieldCheck,
+  MessageCircle
 } from 'lucide-react';
 import { useState } from 'react';
 import { translations } from '@/lib/translations';
@@ -46,6 +47,12 @@ export default function ProjectDetailClient({ lang, project }: { lang: string, p
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
+  };
+
+  const handleWhatsAppShare = () => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : `https://prarthanafoundation.org/${lang}/projects/${project.id}`;
+    const text = encodeURIComponent(`*${title}*\n\n${desc ? desc.slice(0, 240) : ''}...\n\n*Read More & Support:* ${currentUrl}\n\n*Prathana Foundation Solapur*`);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
   const highlights = isMr ? [
@@ -339,23 +346,33 @@ export default function ProjectDetailClient({ lang, project }: { lang: string, p
                     </Link>
                   </div>
 
-                  {/* Share button */}
-                  <button
-                    onClick={handleShare}
-                    className="w-full border border-stone-300 hover:border-stone-400 bg-white hover:bg-stone-50 text-stone-700 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-xs transition-all shadow-sm"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4 text-emerald-600" />
-                        <span className="text-emerald-700">{isMr ? 'लिंक कॉपी झाली!' : 'Link Copied!'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Share2 className="w-4 h-4 text-stone-500" />
-                        <span>{isMr ? 'हा प्रकल्प शेअर करा' : 'Share This Project'}</span>
-                      </>
-                    )}
-                  </button>
+                  {/* Share buttons */}
+                  <div className="space-y-2 pt-2">
+                    <button
+                      onClick={handleWhatsAppShare}
+                      className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-xs transition-all shadow-sm hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <MessageCircle className="w-4 h-4 fill-current" />
+                      <span>{isMr ? 'व्हॉट्सॲपवर शेअर करा' : 'Share on WhatsApp'}</span>
+                    </button>
+
+                    <button
+                      onClick={handleShare}
+                      className="w-full border border-stone-300 hover:border-stone-400 bg-white hover:bg-stone-50 text-stone-700 font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs transition-all shadow-sm cursor-pointer"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-600" />
+                          <span className="text-emerald-700">{isMr ? 'लिंक कॉपी झाली!' : 'Link Copied!'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-4 h-4 text-stone-500" />
+                          <span>{isMr ? 'लिंक कॉपी करा' : 'Copy Project Link'}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
               </motion.div>
