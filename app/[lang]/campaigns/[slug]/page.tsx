@@ -3,6 +3,20 @@ import { getCampaigns } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import CampaignDetailClient from './CampaignDetailClient';
 
+const SITE_BASE = 'https://prarthanafoundation.org';
+
+/** Converts a relative /public path to an absolute URL WhatsApp can crawl. */
+function absoluteImg(img?: string | null): string {
+  const fallback = `${SITE_BASE}/balgram-home.jpg`;
+  if (!img) return fallback;
+  if (img.startsWith('http')) {
+    // Replace dead Cloudinary domain with local fallback
+    if (img.includes('cloudinary.com/djoklzpse')) return fallback;
+    return img;
+  }
+  return `${SITE_BASE}${img}`;
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ lang: string, slug: string }> }): Promise<Metadata> {
   const { lang, slug } = await params;
   const campaigns = await getCampaigns();
@@ -19,17 +33,19 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const description = (isMr && campaign.description_mr) ? campaign.description_mr : campaign.description;
   const url = `https://prarthanafoundation.org/${lang}/campaigns/${campaign.slug}`;
 
+  const ogImage = absoluteImg(campaign.image);
+
   return {
-    title: `${title} | Prarthana Foundation`,
+    title: `${title} | Prathana Foundation`,
     description: description.slice(0, 160),
     openGraph: {
-      title: `${title} | Prarthana Foundation`,
+      title: `${title} | Prathana Foundation`,
       description: description.slice(0, 200),
       url,
-      siteName: 'Prarthana Foundation Solapur',
+      siteName: 'Prathana Foundation Solapur',
       images: [
         {
-          url: campaign.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: title,
@@ -41,13 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       card: 'summary_large_image',
       title,
       description: description.slice(0, 200),
-      images: [campaign.image || 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prarthana/blob_k1puoc.jpg'],
+      images: [ogImage],
     },
     alternates: {
       canonical: url,
       languages: {
-        en: `https://prarthanafoundation.org/en/campaigns/${campaign.slug}`,
-        mr: `https://prarthanafoundation.org/mr/campaigns/${campaign.slug}`,
+        en: `${SITE_BASE}/en/campaigns/${campaign.slug}`,
+        mr: `${SITE_BASE}/mr/campaigns/${campaign.slug}`,
       },
     },
   };
@@ -72,7 +88,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ lang:
     '@type': 'DonateAction',
     name: title,
     description: description,
-    image: campaign.image,
+    image: absoluteImg(campaign.image),
     recipient: {
       '@type': 'NGO',
       name: 'Prarthana Foundation',

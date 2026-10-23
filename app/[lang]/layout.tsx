@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang?: st
       type: 'website',
       images: [
         {
-          url: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+          url: 'https://prarthanafoundation.org/balgram-home.jpg',
           width: 1200,
           height: 630,
           alt: 'Prathana Foundation Solapur - Humanitarian Impact',
@@ -88,7 +88,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang?: st
       card: 'summary_large_image',
       title: meta.title,
       description: meta.description,
-      images: ['https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg'],
+      images: ['https://prarthanafoundation.org/balgram-home.jpg'],
     },
     robots: {
       index: true,
@@ -125,7 +125,7 @@ export default async function RootLayout({
     alternateName: ['प्रार्थना फाउंडेशन', 'Prathana Foundation Solapur', 'Prathana Balgram'],
     url: 'https://prarthanafoundation.org',
     logo: 'https://prarthanafoundation.org/icon.png',
-    image: 'https://res.cloudinary.com/djoklzpse/image/upload/v1786951854/prathana/blob_k1puoc.jpg',
+    image: 'https://prarthanafoundation.org/balgram-home.jpg',
     description: 'A grassroots humanitarian NGO in Solapur providing 24/7 child sanctuary, senior care, nutrition, and education with complete transparency and 80G tax benefit certification.',
     address: {
       '@type': 'PostalAddress',
